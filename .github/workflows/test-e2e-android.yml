@@ -42,7 +42,7 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ inputs.ref || github.ref }}
 
@@ -57,7 +57,7 @@ jobs:
 
       - name: Restore the AVD
         id: avd-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             ~/.android/avd/*
@@ -125,7 +125,7 @@ jobs:
 
       - name: Upload coverage
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ inputs.artifact_name || 'coverage-e2e-android' }}
           path: coverage/*.lcov.info
@@ -134,7 +134,7 @@ jobs:
 
       - name: Upload screenshots, videos and test reports
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: e2e-android-artifacts
           path: |
