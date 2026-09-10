@@ -1,0 +1,144 @@
+name: E2E tests (iOS simulator)
+
+# Patrol tests on an iOS simulator. The simulator name and device type come
+# from tool/toolchain.env so CI boots the same simulator "./bin/na bootstrap
+# ios" creates locally; the runtime is the newest one the runner ships.
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Git ref to test (defaults to the caller's ref)
+        required: false
+        type: string
+        default: ''
+      artifact_name:
+        description: Name of the coverage artefact
+        required: false
+        type: string
+        default: coverage-e2e-ios
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref to test (defaults to the branch this is run from)
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: macos-15
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+
+      - name: Select Xcode
+        if: vars.XCODE_VERSION != ''
+        run: sudo xcode-select -s "/Applications/Xcode_${{ vars.XCODE_VERSION }}.app"
+
+      - name: Show Xcode
+        run: xcodebuild -version
+
+      - uses: ./.github/actions/setup-toolchain
+        with:
+          patrol: 'true'
+
+      - name: Restore the CocoaPods cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/CocoaPods
+            app/ios/Pods
+          key: pods-${{ runner.os }}-${{ hashFiles('app/ios/Podfile.lock') }}
+          restore-keys: |
+            pods-${{ runner.os }}-
+
+      - name: Boot the simulator
+        id: simulator
+        run: |
+          set -euo pipefail
+          name=$(sed -n 's/^IOS_SIMULATOR_NAME=//p' tool/toolchain.env | head -1)
+          device_type=$(sed -n 's/^IOS_SIMULATOR_DEVICE_TYPE=//p' tool/toolchain.env | head -1)
+          if [ -z "$name" ] || [ -z "$device_type" ]; then
+            echo "::error file=tool/toolchain.env::IOS_SIMULATOR_NAME and IOS_SIMULATOR_DEVICE_TYPE must be set"
+            exit 1
+          fi
+
+          udid=$(xcrun simctl list devices available -j \
+            | jq -r --arg name "$name" '[.devices[][] | select(.name == $name)] | first | .udid // empty')
+
+          if [ -z "$udid" ]; then
+            runtime=$(xcrun simctl list runtimes -j \
+              | jq -r '[.runtimes[] | select(.platform == "iOS" and .isAvailable)] | sort_by(.version | split(".") | map(tonumber)) | last | .identifier')
+            type_id=$(xcrun simctl list devicetypes -j \
+              | jq -r --arg t "$device_type" '[.devicetypes[] | select(.name == $t)] | first | .identifier // empty')
+            if [ -z "$runtime" ] || [ -z "$type_id" ]; then
+              echo "::error::no available iOS runtime or no device type named '$device_type' on this runner"
+              xcrun simctl list runtimes
+              xcrun simctl list devicetypes | grep -i iphone
+              exit 1
+            fi
+            echo "Creating simulator '$name' ($type_id, $runtime)"
+            udid=$(xcrun simctl create "$name" "$type_id" "$runtime")
+          fi
+
+          echo "Booting $name ($udid)"
+          xcrun simctl boot "$udid" 2>/dev/null || true
+          xcrun simctl bootstatus "$udid" -b
+          echo "udid=$udid" >> "$GITHUB_OUTPUT"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+
+      - name: Run the Patrol tests
+        env:
+          SIMULATOR_UDID: ${{ steps.simulator.outputs.udid }}
+        run: ./bin/na test e2e ios --device "$SIMULATOR_UDID" --coverage
+
+      - name: Report in the run summary
+        if: always()
+        run: |
+          set -euo pipefail
+          {
+            echo '### E2E tests (iOS simulator)'
+            echo
+            echo "Simulator \`${{ steps.simulator.outputs.name }}\` (\`${{ steps.simulator.outputs.udid }}\`)"
+            echo
+            if ls coverage/*.lcov.info > /dev/null 2>&1; then
+              for f in coverage/*.lcov.info; do
+                echo "- \`$(basename "$f")\` ($(grep -c '^SF:' "$f") files)"
+              done
+            else
+              echo '_No coverage files were produced._'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact_name || 'coverage-e2e-ios' }}
+          path: coverage/*.lcov.info
+          retention-days: 7
+          if-no-files-found: warn
+
+      - name: Upload simulator logs and screenshots
+        if: failure()
+        run: |
+          set -euo pipefail
+          mkdir -p e2e-ios-artifacts
+          xcrun simctl io "${{ steps.simulator.outputs.udid }}" screenshot e2e-ios-artifacts/last-screen.png || true
+          xcrun simctl spawn "${{ steps.simulator.outputs.udid }}" log show --last 10m --predicate 'process == "Runner"' > e2e-ios-artifacts/runner.log || true
+          cp -R app/build/ios_results e2e-ios-artifacts/ 2>/dev/null || true
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-ios-artifacts
+          path: e2e-ios-artifacts
+          retention-days: 7
+          if-no-files-found: ignore

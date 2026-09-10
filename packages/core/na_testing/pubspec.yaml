@@ -1,0 +1,33 @@
+name: na_testing
+description: Builders, mimics, fake time and test containers shared by every test in the NA Danmark workspace.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.11.0
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_riverpod: ^3.0.0
+  flutter_test:
+    sdk: flutter
+  meta: ^1.16.0
+  na_design:
+    path: ../na_design
+  na_kernel:
+    path: ../na_kernel
+  na_l10n:
+    path: ../na_l10n
+  na_ports:
+    path: ../na_ports
+  riverpod: ^3.0.0
+
+dev_dependencies:
+  custom_lint: ^0.8.0
+  na_lints:
+    path: ../../../tool/na_lints
+  test: ^1.25.0

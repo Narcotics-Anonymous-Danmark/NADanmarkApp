@@ -1,0 +1,27 @@
+name: na_l10n
+description: Localisations of the NA Danmark app (Danish and English) generated from ARB files.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.11.0
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+  na_kernel:
+    path: ../na_kernel
+
+dev_dependencies:
+  custom_lint: ^0.8.0
+  flutter_test:
+    sdk: flutter
+  na_lints:
+    path: ../../../tool/na_lints
+
+flutter:
+  generate: true

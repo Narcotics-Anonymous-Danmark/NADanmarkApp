@@ -1,0 +1,24 @@
+merged_minimum_percent: 80
+
+package_minimum_percent:
+  na_kernel: 95
+  na_ports: 90
+  na_design: 90
+  na_l10n: 50
+  na_testing: 70
+  na_cli: 75
+  na_lints: 80
+  adapter_clock: 90
+  adapter_storage: 90
+  adapter_jft: 90
+  adapter_links: 90
+  adapter_legacy_store: 90
+  na_app: 70
+
+feature_default_minimum_percent: 95
+adapter_default_minimum_percent: 80
+
+exclude_patterns:
+  - "**/*.g.dart"
+  - "**/generated/**"
+  - "**/l10n/generated/**"

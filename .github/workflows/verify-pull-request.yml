@@ -1,0 +1,163 @@
+name: Verify pull request
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  pr-title:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      pull-requests: read
+    steps:
+      - name: The title must be a conventional commit
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            chore
+            refactor
+            docs
+            test
+            ci
+            build
+            perf
+            revert
+          requireScope: false
+          subjectPattern: ^(?![A-Z]).+$
+          subjectPatternError: |
+            The subject "{subject}" must start with a lowercase letter.
+
+  label:
+    needs: pr-title
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Label from the title type so .github/release.yml can group it
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const managed = ['feature', 'bug', 'translations', 'ci', 'chore'];
+            const byType = {
+              feat: 'feature',
+              fix: 'bug',
+              perf: 'feature',
+              revert: 'bug',
+              ci: 'ci',
+              build: 'chore',
+              chore: 'chore',
+              refactor: 'chore',
+              docs: 'chore',
+              test: 'chore',
+            };
+            const colours = {
+              feature: '0e8a16',
+              bug: 'd73a4a',
+              translations: '1d76db',
+              ci: 'fbca04',
+              chore: 'cfd3d7',
+            };
+            const title = context.payload.pull_request.title;
+            const match = /^(\w+)(?:\(([^)]*)\))?!?:/.exec(title);
+            if (!match) {
+              core.setFailed(`"${title}" is not a conventional commit title`);
+              return;
+            }
+            const [, type, scope = ''] = match;
+            const translationScope = /^(l10n|i18n|translations?)$/i.test(scope);
+            const wanted = translationScope ? 'translations' : byType[type];
+            if (!wanted) {
+              core.setFailed(`No label mapping for type "${type}"`);
+              return;
+            }
+
+            const { owner, repo } = context.repo;
+            const number = context.payload.pull_request.number;
+            const current = context.payload.pull_request.labels.map((l) => l.name);
+
+            try {
+              await github.rest.issues.getLabel({ owner, repo, name: wanted });
+            } catch (error) {
+              if (error.status !== 404) throw error;
+              await github.rest.issues.createLabel({ owner, repo, name: wanted, color: colours[wanted] });
+            }
+
+            for (const stale of managed.filter((l) => l !== wanted && current.includes(l))) {
+              await github.rest.issues.removeLabel({ owner, repo, issue_number: number, name: stale });
+              core.info(`Removed stale label "${stale}"`);
+            }
+            if (!current.includes(wanted)) {
+              await github.rest.issues.addLabels({ owner, repo, issue_number: number, labels: [wanted] });
+            }
+            core.info(`Labelled #${number} as "${wanted}"`);
+
+  analyze:
+    uses: ./.github/workflows/analyze.yml
+
+  test-unit-widget:
+    uses: ./.github/workflows/test-unit-widget.yml
+
+  test-acceptance:
+    uses: ./.github/workflows/test-acceptance.yml
+
+  e2e-android:
+    if: github.event.pull_request.draft == false
+    uses: ./.github/workflows/test-e2e-android.yml
+
+  coverage:
+    needs: [test-unit-widget, test-acceptance, e2e-android]
+    if: >-
+      !cancelled()
+      && needs.test-unit-widget.result == 'success'
+      && needs.test-acceptance.result == 'success'
+      && (needs.e2e-android.result == 'success' || needs.e2e-android.result == 'skipped')
+    permissions:
+      contents: read
+      pull-requests: write
+    uses: ./.github/workflows/coverage-gate.yml
+    with:
+      artifact_pattern: coverage-*
+      merged_artifact_name: coverage-merged
+      retention_days: '7'
+
+  debug-apk:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-toolchain
+
+      - uses: ./.github/actions/setup-android
+
+      - name: Build the debug APK (dev environment)
+        working-directory: app
+        run: flutter build apk --debug --dart-define-from-file=../env/dev.json
+
+      - name: Report in the run summary
+        run: |
+          set -euo pipefail
+          apk=$(ls app/build/app/outputs/flutter-apk/*.apk | head -1)
+          echo "### Debug APK" >> "$GITHUB_STEP_SUMMARY"
+          echo "\`$(basename "$apk")\` — $(du -h "$apk" | cut -f1)" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: app/build/app/outputs/flutter-apk/*.apk
+          retention-days: 7
+          if-no-files-found: error

@@ -1,0 +1,9 @@
+{
+  "APP_ENV": "release",
+  "NA_API_BASE_URL": "https://www.nadanmark.dk",
+  "BMLT_DENMARK_BASE_URL": "https://www.nadanmark.dk/main_server/client_interface/json/",
+  "BMLT_TOMATO_BASE_URL": "https://tomato.bmltenabled.org/main_server/client_interface/json/",
+  "NA_API_BASIC_AUTH": "<user:password from the NA_API_BASIC_AUTH secret>",
+  "GOOGLE_MAPS_API_KEY": "<from the GOOGLE_MAPS_API_KEY secret>",
+  "NA_APPROVED": "true"
+}

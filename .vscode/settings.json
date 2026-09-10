@@ -1,0 +1,87 @@
+{
+  "dart.flutterSdkPath": ".fvm/flutter_sdk",
+  "dart.lineLength": 80,
+  "dart.previewFlutterUiGuides": true,
+  "dart.openDevTools": "flutter",
+  "dart.debugExternalPackageLibraries": false,
+  "dart.debugSdkLibraries": false,
+  "dart.analysisExcludedFolders": [
+    "build",
+    "coverage",
+    "tool/na_lints/test/fixture_project"
+  ],
+  "dart.runPubGetOnPubspecChanges": "prompt",
+  "dart.showTodos": false,
+
+  "coverage-gutters.coverageFileNames": ["coverage/merged.lcov.info"],
+  "coverage-gutters.showLineCoverage": true,
+  "coverage-gutters.showGutterCoverage": false,
+
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "[dart]": {
+    "editor.defaultFormatter": "Dart-Code.dart-code",
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.rulers": [80],
+    "editor.selectionHighlight": false,
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "editor.suggestSelection": "first",
+    "editor.tabCompletion": "onlySnippets",
+    "editor.wordBasedSuggestions": "off"
+  },
+  "[yaml]": {
+    "editor.tabSize": 2
+  },
+  "[json]": {
+    "editor.tabSize": 2
+  },
+  "[jsonc]": {
+    "editor.tabSize": 2
+  },
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yml",
+    "https://json.schemastore.org/github-action.json": ".github/actions/*/action.yml",
+    "https://json.schemastore.org/dependabot-2.0.json": ".github/dependabot.yml"
+  },
+
+  "files.exclude": {
+    "**/.dart_tool": true,
+    "**/build": true,
+    "coverage": true,
+    "dist": true,
+    ".na-release": true
+  },
+  "search.exclude": {
+    "**/.dart_tool": true,
+    "**/build": true,
+    "coverage": true,
+    "dist": true,
+    "**/*.g.dart": true,
+    "**/l10n/generated/**": true,
+    "pubspec.lock": true
+  },
+  "files.watcherExclude": {
+    "**/.dart_tool/**": true,
+    "**/build/**": true,
+    "coverage/**": true
+  },
+  "files.associations": {
+    "*.arb": "json",
+    "toolchain.env": "properties"
+  },
+  "cSpell.words": [
+    "arb",
+    "bmlt",
+    "lefthook",
+    "fvm",
+    "nadanmark",
+    "openspec",
+    "patrol",
+    "riverpod",
+    "testflight",
+    "tomato"
+  ]
+}

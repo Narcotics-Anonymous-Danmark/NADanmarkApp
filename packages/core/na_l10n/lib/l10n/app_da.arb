@@ -1,0 +1,853 @@
+{
+  "@@locale": "da",
+  "menu": "Menu",
+  "@menu": {
+    "description": "Legacy key MENU"
+  },
+  "home": "Hjem",
+  "@home": {
+    "description": "Legacy key HOME"
+  },
+  "locationsearch": "Møder i nærheden",
+  "@locationsearch": {
+    "description": "Legacy key LOCATIONSEARCH"
+  },
+  "loadingmap": "Indlæser kort ...",
+  "@loadingmap": {
+    "description": "Legacy key LOADINGMAP"
+  },
+  "location": "",
+  "@location": {
+    "description": "Legacy key LOCATION"
+  },
+  "noLocation": "Placeringen er ikke indstillet",
+  "@noLocation": {
+    "description": "Legacy key NO_LOCATION"
+  },
+  "locating": "Finder position ...",
+  "@locating": {
+    "description": "Legacy key LOCATING"
+  },
+  "findingMtgs": "Finder møder ...",
+  "@findingMtgs": {
+    "description": "Legacy key FINDING_MTGS"
+  },
+  "listfull": "Mødeliste",
+  "@listfull": {
+    "description": "Legacy key LISTFULL"
+  },
+  "tags": "Tags",
+  "@tags": {
+    "description": "Legacy key TAGS"
+  },
+  "category": "Kategori",
+  "@category": {
+    "description": "Legacy key CATEGORY"
+  },
+  "menus": "Menuer",
+  "@menus": {
+    "description": "Legacy key MENUS"
+  },
+  "mapSearch": "Kort",
+  "@mapSearch": {
+    "description": "Legacy key MAP_SEARCH"
+  },
+  "mapSearchDesc": " møder nærmest den røde markør. Træk den røde markør for at flytte søgningen.",
+  "@mapSearchDesc": {
+    "description": "Legacy key MAP_SEARCH_DESC"
+  },
+  "meetings": " Møder",
+  "@meetings": {
+    "description": "Legacy key MEETINGS"
+  },
+  "km": " km",
+  "@km": {
+    "description": "Legacy key KM"
+  },
+  "map": "Kørselsvejledning",
+  "@map": {
+    "description": "Legacy key MAP"
+  },
+  "settings": "Indstillinger",
+  "@settings": {
+    "description": "Legacy key SETTINGS"
+  },
+  "searchrangesetting": "Standard søgeradius",
+  "@searchrangesetting": {
+    "description": "Legacy key SEARCHRANGESETTING"
+  },
+  "firstdayofweeksetting": "Ugen starter med",
+  "@firstdayofweeksetting": {
+    "description": "Legacy key FIRSTDAYOFWEEKSETTING"
+  },
+  "showownregionontopsetting": "Vis Danmark øverst på fuld mødeliste",
+  "@showownregionontopsetting": {
+    "description": "Legacy key SHOWOWNREGIONONTOPSETTING"
+  },
+  "homeTitle": "Narcotics Anonymous Danmark",
+  "@homeTitle": {
+    "description": "Legacy key HOME_TITLE"
+  },
+  "homeMessage": "Helpline: 70 20 01 85",
+  "@homeMessage": {
+    "description": "Legacy key HOME_MESSAGE"
+  },
+  "contact": "Om denne app / Kontakt",
+  "@contact": {
+    "description": "Legacy key CONTACT"
+  },
+  "language": "Sprog",
+  "@language": {
+    "description": "Legacy key LANGUAGE"
+  },
+  "english": "Engelsk",
+  "@english": {
+    "description": "Legacy key ENGLISH"
+  },
+  "italian": "Italiensk",
+  "@italian": {
+    "description": "Legacy key ITALIAN"
+  },
+  "spanish": "Spansk",
+  "@spanish": {
+    "description": "Legacy key SPANISH"
+  },
+  "danish": "Dansk",
+  "@danish": {
+    "description": "Legacy key DANISH"
+  },
+  "polish": "Polsk",
+  "@polish": {
+    "description": "Legacy key POLISH"
+  },
+  "portuguese": "Portugisisk",
+  "@portuguese": {
+    "description": "Legacy key PORTUGUESE"
+  },
+  "russian": "Russisk",
+  "@russian": {
+    "description": "Legacy key RUSSIAN"
+  },
+  "addresssearch": "Adressesøgning",
+  "@addresssearch": {
+    "description": "Legacy key ADDRESSSEARCH"
+  },
+  "doihavethebmlt": "Har jeg BMLT?",
+  "@doihavethebmlt": {
+    "description": "Legacy key DOIHAVETHEBMLT"
+  },
+  "maprange": "Standard søgeradius",
+  "@maprange": {
+    "description": "Legacy key MAPRANGE"
+  },
+  "timedisplay": "Tidsformat",
+  "@timedisplay": {
+    "description": "Legacy key TIMEDISPLAY"
+  },
+  "twentyFourHour": "24 Timer",
+  "@twentyFourHour": {
+    "description": "Legacy key 24HR"
+  },
+  "twelveHour": "AM/PM",
+  "@twelveHour": {
+    "description": "Legacy key 12HR"
+  },
+  "sunday": "Søndag",
+  "@sunday": {
+    "description": "Legacy key SUNDAY"
+  },
+  "monday": "Mandag",
+  "@monday": {
+    "description": "Legacy key MONDAY"
+  },
+  "tuesday": "Tirsdag",
+  "@tuesday": {
+    "description": "Legacy key TUESDAY"
+  },
+  "wednesday": "Onsdag",
+  "@wednesday": {
+    "description": "Legacy key WEDNESDAY"
+  },
+  "thursday": "Torsdag",
+  "@thursday": {
+    "description": "Legacy key THURSDAY"
+  },
+  "friday": "Fredag",
+  "@friday": {
+    "description": "Legacy key FRIDAY"
+  },
+  "saturday": "Lørdag",
+  "@saturday": {
+    "description": "Legacy key SATURDAY"
+  },
+  "distance": "Afstand",
+  "@distance": {
+    "description": "Legacy key DISTANCE"
+  },
+  "formats": "Struktur",
+  "@formats": {
+    "description": "Legacy key FORMATS"
+  },
+  "directions": "Kørselsvejledning",
+  "@directions": {
+    "description": "Legacy key DIRECTIONS"
+  },
+  "miles": "miles",
+  "@miles": {
+    "description": "Legacy key MILES"
+  },
+  "kms": "km",
+  "@kms": {
+    "description": "Legacy key KMS"
+  },
+  "meetingsNearest": "møder nærmest",
+  "@meetingsNearest": {
+    "description": "Legacy key MEETINGS_NEAREST"
+  },
+  "markerInstr": "Træk markør for at indstille position",
+  "@markerInstr": {
+    "description": "Legacy key MARKER_INSTR"
+  },
+  "nothingFound": "Intet fundet",
+  "@nothingFound": {
+    "description": "Legacy key NOTHING_FOUND"
+  },
+  "bus": "Note",
+  "@bus": {
+    "description": "Legacy key BUS"
+  },
+  "train": "Mødeformat",
+  "@train": {
+    "description": "Legacy key TRAIN"
+  },
+  "srcCode": "Kildekode til app'en",
+  "@srcCode": {
+    "description": "Legacy key SRC_CODE"
+  },
+  "bugReport": "Opret en fejlrapport / unit test",
+  "@bugReport": {
+    "description": "Legacy key BUG_REPORT"
+  },
+  "findOutMore": "Hvordan finder jeg ud af mere om BMLT?",
+  "@findOutMore": {
+    "description": "Legacy key FIND_OUT_MORE"
+  },
+  "joinFbGroup": "Deltag i Facebook-gruppen",
+  "@joinFbGroup": {
+    "description": "Legacy key JOIN_FB_GROUP"
+  },
+  "visitWebsite": "Besøg hjemmesiden",
+  "@visitWebsite": {
+    "description": "Legacy key VISIT_WEBSITE"
+  },
+  "isBmlt": "Er min placering dækket af BMLT?",
+  "@isBmlt": {
+    "description": "Legacy key IS_BMLT"
+  },
+  "yes": "Ja",
+  "@yes": {
+    "description": "Legacy key YES"
+  },
+  "no": "Nej",
+  "@no": {
+    "description": "Legacy key NO"
+  },
+  "away": "væk.",
+  "@away": {
+    "description": "Legacy key AWAY"
+  },
+  "isBmltYes1": "I BMLT's internationale mødedatabase er det møde, der er tættest på din nuværende placering, ",
+  "@isBmltYes1": {
+    "description": "Legacy key IS_BMLT_YES_1"
+  },
+  "isBmltYes2": "Så det ser ud som din lokale service enhed",
+  "@isBmltYes2": {
+    "description": "Legacy key IS_BMLT_YES_2"
+  },
+  "isBmltYes3": "har sat BMLT op for jeres mødeliste.",
+  "@isBmltYes3": {
+    "description": "Legacy key IS_BMLT_YES_3"
+  },
+  "isBmltNo1": "I BMLT's verdensomspændende database ser det ud til, at det møde, der er nærmest din nuværende placering, er ",
+  "@isBmltNo1": {
+    "description": "Legacy key IS_BMLT_NO_1"
+  },
+  "isBmltNo2": "Så det ser ud til, at din lokale service område ikke har implementeret BMLT for jeres mødeliste.",
+  "@isBmltNo2": {
+    "description": "Legacy key IS_BMLT_NO_2"
+  },
+  "close": "Luk",
+  "@close": {
+    "description": "Legacy key CLOSE"
+  },
+  "meetingDetails": "Mødedetaljer",
+  "@meetingDetails": {
+    "description": "Legacy key MEETING_DETAILS"
+  },
+  "meetingFormats": "Mødeformater",
+  "@meetingFormats": {
+    "description": "Legacy key MEETING_FORMATS"
+  },
+  "cancel": "Annuller",
+  "@cancel": {
+    "description": "Legacy key CANCEL"
+  },
+  "virtualLink": "Link til netmøde",
+  "@virtualLink": {
+    "description": "Legacy key VIRTUAL_LINK"
+  },
+  "phoneMeeting": "Telefonmøde – opkaldsnummer",
+  "@phoneMeeting": {
+    "description": "Legacy key PHONE_MEETING"
+  },
+  "tempClosed": "Midlertidigt lukket",
+  "@tempClosed": {
+    "description": "Legacy key TEMP_CLOSED"
+  },
+  "virtualMeetings": "Netmøder: virtual-na.org",
+  "@virtualMeetings": {
+    "description": "Legacy key VIRTUAL_MEETINGS"
+  },
+  "list": "Vis liste",
+  "@list": {
+    "description": "Legacy key LIST"
+  },
+  "search": "Søg",
+  "@search": {
+    "description": "Legacy key SEARCH"
+  },
+  "visit": "Besøg",
+  "@visit": {
+    "description": "Legacy key VISIT"
+  },
+  "weekdays": "Alle dage",
+  "@weekdays": {
+    "description": "Legacy key WEEKDAYS"
+  },
+  "virtualNa": "Virtual NA er en international serviceressource, hvis hovedformål det er at drive en søgemaskine til NA-møder. Den dækker både online- og telefonmøder fra forskellige lande rundt om i verden.",
+  "@virtualNa": {
+    "description": "Legacy key VIRTUAL_NA"
+  },
+  "homeMessage2": "Hvis du har et problem med stoffer,",
+  "@homeMessage2": {
+    "description": "Legacy key HOME_MESSAGE_2"
+  },
+  "homeMessage3": "så kan vi måske hjælpe.",
+  "@homeMessage3": {
+    "description": "Legacy key HOME_MESSAGE_3"
+  },
+  "news": "Nyheder",
+  "@news": {
+    "description": "Legacy key NEWS"
+  },
+  "events": "Arrangementer",
+  "@events": {
+    "description": "Legacy key EVENTS"
+  },
+  "basicText": "Basis Tekst",
+  "@basicText": {
+    "description": "Legacy key BASIC_TEXT"
+  },
+  "howAndWhy": "Det Virker: Hvordan og Hvorfor",
+  "@howAndWhy": {
+    "description": "Legacy key HOW_AND_WHY"
+  },
+  "stepWorkingGuides": "Vejledninger i Trinarbejde",
+  "@stepWorkingGuides": {
+    "description": "Legacy key STEP_WORKING_GUIDES"
+  },
+  "speaks": "Speaks",
+  "@speaks": {
+    "description": "Legacy key SPEAKS"
+  },
+  "jft": "Dagens tekst",
+  "@jft": {
+    "description": "Legacy key JFT"
+  },
+  "audiobooks": "Lydbøger",
+  "@audiobooks": {
+    "description": "Legacy key AUDIOBOOKS"
+  },
+  "nacc": "Cleantimeberegner",
+  "@nacc": {
+    "description": "Legacy key NACC"
+  },
+  "grc": "Gruppeoplæsninger",
+  "@grc": {
+    "description": "Legacy key GRC"
+  },
+  "comingSoon": "Kommer snart.",
+  "@comingSoon": {
+    "description": "Legacy key COMING_SOON"
+  },
+  "comingSoonBody": "Vi arbejder på det ..",
+  "@comingSoonBody": {
+    "description": "Legacy key COMING_SOON_BODY"
+  },
+  "languages": "Sprog",
+  "@languages": {
+    "description": "Legacy key LANGUAGE(S)"
+  },
+  "convention": "Konvent",
+  "@convention": {
+    "description": "Legacy key CONVENTION"
+  },
+  "openingSpeaker": "Åbningsspeak",
+  "@openingSpeaker": {
+    "description": "Legacy key OPENING_SPEAKER"
+  },
+  "mainSpeaker": "Hovedspeak",
+  "@mainSpeaker": {
+    "description": "Legacy key MAIN_SPEAKER"
+  },
+  "closingSpeaker": "Afslutningsspeak",
+  "@closingSpeaker": {
+    "description": "Legacy key CLOSING_SPEAKER"
+  },
+  "steps": "Trin",
+  "@steps": {
+    "description": "Legacy key STEPS"
+  },
+  "traditions": "Traditioner",
+  "@traditions": {
+    "description": "Legacy key TRADITIONS"
+  },
+  "naHistory": "NA's historie",
+  "@naHistory": {
+    "description": "Legacy key NA_HISTORY"
+  },
+  "mapsearchSearch": "Søg",
+  "@mapsearchSearch": {
+    "description": "Legacy key mapsearch.search"
+  },
+  "cleantime": "Cleantime",
+  "@cleantime": {
+    "description": "Legacy key CLEANTIME"
+  },
+  "datetime": "Cleantimeberegner",
+  "@datetime": {
+    "description": "Legacy key DATETIME"
+  },
+  "entercleandate": "Første clean dag",
+  "@entercleandate": {
+    "description": "Legacy key ENTERCLEANDATE"
+  },
+  "cleantimeindays": "Clean dage",
+  "@cleantimeindays": {
+    "description": "Legacy key CLEANTIMEINDAYS"
+  },
+  "day": "dag",
+  "@day": {
+    "description": "Legacy key DAY"
+  },
+  "days": "dage",
+  "@days": {
+    "description": "Legacy key DAYS"
+  },
+  "cleantimeinweeks": "Clean uger",
+  "@cleantimeinweeks": {
+    "description": "Legacy key CLEANTIMEINWEEKS"
+  },
+  "week": "uge",
+  "@week": {
+    "description": "Legacy key WEEK"
+  },
+  "weeks": "uger",
+  "@weeks": {
+    "description": "Legacy key WEEKS"
+  },
+  "cleantimeinyears": "Clean år",
+  "@cleantimeinyears": {
+    "description": "Legacy key CLEANTIMEINYEARS"
+  },
+  "year": "år",
+  "@year": {
+    "description": "Legacy key YEAR"
+  },
+  "years": "år",
+  "@years": {
+    "description": "Legacy key YEARS"
+  },
+  "cleantimeinmonths": "Clean måneder",
+  "@cleantimeinmonths": {
+    "description": "Legacy key CLEANTIMEINMONTHS"
+  },
+  "month": "måned",
+  "@month": {
+    "description": "Legacy key MONTH"
+  },
+  "months": "måneder",
+  "@months": {
+    "description": "Legacy key MONTHS"
+  },
+  "birthday": "Mærkedag",
+  "@birthday": {
+    "description": "Legacy key BIRTHDAY"
+  },
+  "dayclean": "dag",
+  "@dayclean": {
+    "description": "Legacy key DAYCLEAN"
+  },
+  "daysclean": "dage",
+  "@daysclean": {
+    "description": "Legacy key DAYSCLEAN"
+  },
+  "monthclean": "måned",
+  "@monthclean": {
+    "description": "Legacy key MONTHCLEAN"
+  },
+  "monthsclean": "måneder",
+  "@monthsclean": {
+    "description": "Legacy key MONTHSCLEAN"
+  },
+  "yearclean": "år",
+  "@yearclean": {
+    "description": "Legacy key YEARCLEAN"
+  },
+  "yearsclean": "år",
+  "@yearsclean": {
+    "description": "Legacy key YEARSCLEAN"
+  },
+  "cleantimeunitsort": "Cleantime sortering",
+  "@cleantimeunitsort": {
+    "description": "Legacy key CLEANTIMEUNITSORT"
+  },
+  "dmy": "dage - måneder - år",
+  "@dmy": {
+    "description": "Legacy key DMY"
+  },
+  "ymd": "år - måneder - dage",
+  "@ymd": {
+    "description": "Legacy key YMD"
+  },
+  "or": "ELLER",
+  "@or": {
+    "description": "Legacy key OR"
+  },
+  "back": "Tilbage",
+  "@back": {
+    "description": "Legacy key BACK"
+  },
+  "newprofile": "Ny profil",
+  "@newprofile": {
+    "description": "Legacy key NEWPROFILE"
+  },
+  "newprofilenamehere": "Ny profilnavn her",
+  "@newprofilenamehere": {
+    "description": "Legacy key NEWPROFILENAMEHERE"
+  },
+  "cancelbutton": "Afbryd",
+  "@cancelbutton": {
+    "description": "Legacy key CANCELBUTTON"
+  },
+  "addbutton": "Opret",
+  "@addbutton": {
+    "description": "Legacy key ADDBUTTON"
+  },
+  "renameprofile": "Omdøb profil",
+  "@renameprofile": {
+    "description": "Legacy key RENAMEPROFILE"
+  },
+  "rename": "Omdøb",
+  "@rename": {
+    "description": "Legacy key RENAME"
+  },
+  "areyousure": "Er du sikker?",
+  "@areyousure": {
+    "description": "Legacy key AREYOUSURE"
+  },
+  "delete": "Slet",
+  "@delete": {
+    "description": "Legacy key DELETE"
+  },
+  "playerContinue": "Fortsæt afspilning",
+  "@playerContinue": {
+    "description": "Legacy key PLAYER_CONTINUE"
+  },
+  "playerPlay": "Afspil",
+  "@playerPlay": {
+    "description": "Legacy key PLAYER_PLAY"
+  },
+  "playerPause": "Pause",
+  "@playerPause": {
+    "description": "Legacy key PLAYER_PAUSE"
+  },
+  "playerClose": "Luk afspiller",
+  "@playerClose": {
+    "description": "Legacy key PLAYER_CLOSE"
+  },
+  "playerPrevious": "Forrige kapitel",
+  "@playerPrevious": {
+    "description": "Legacy key PLAYER_PREVIOUS"
+  },
+  "playerNext": "Næste kapitel",
+  "@playerNext": {
+    "description": "Legacy key PLAYER_NEXT"
+  },
+  "playerRewind": "Spol 15 sekunder tilbage",
+  "@playerRewind": {
+    "description": "Legacy key PLAYER_REWIND"
+  },
+  "playerForward": "Spol 30 sekunder frem",
+  "@playerForward": {
+    "description": "Legacy key PLAYER_FORWARD"
+  },
+  "speakSearchPlaceholder": "Søg navn, konvent, by, år …",
+  "@speakSearchPlaceholder": {
+    "description": "Legacy key SPEAK_SEARCH_PLACEHOLDER"
+  },
+  "speakFilters": "Filtre",
+  "@speakFilters": {
+    "description": "Legacy key SPEAK_FILTERS"
+  },
+  "speakAll": "Alle",
+  "@speakAll": {
+    "description": "Legacy key SPEAK_ALL"
+  },
+  "speakSort": "Sortering",
+  "@speakSort": {
+    "description": "Legacy key SPEAK_SORT"
+  },
+  "speakSortNewest": "Nyeste",
+  "@speakSortNewest": {
+    "description": "Legacy key SPEAK_SORT_NEWEST"
+  },
+  "speakSortOldest": "Ældste",
+  "@speakSortOldest": {
+    "description": "Legacy key SPEAK_SORT_OLDEST"
+  },
+  "speakSortName": "Navn",
+  "@speakSortName": {
+    "description": "Legacy key SPEAK_SORT_NAME"
+  },
+  "speakYear": "År",
+  "@speakYear": {
+    "description": "Legacy key SPEAK_YEAR"
+  },
+  "speakOnlyStarted": "Kun påbegyndte",
+  "@speakOnlyStarted": {
+    "description": "Legacy key SPEAK_ONLY_STARTED"
+  },
+  "chapters": "Kapitler",
+  "@chapters": {
+    "description": "Legacy key CHAPTERS"
+  },
+  "playerContinueListening": "Fortsæt afspilning",
+  "@playerContinueListening": {
+    "description": "Legacy key PLAYER_CONTINUE_LISTENING"
+  },
+  "playerContinueFrom": "Fortsæt fra {time}",
+  "@playerContinueFrom": {
+    "description": "Legacy key PLAYER_CONTINUE_FROM",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimeLeft": "{time} tilbage",
+  "@playerTimeLeft": {
+    "description": "Legacy key PLAYER_TIME_LEFT",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerNowPlaying": "Afspiller nu",
+  "@playerNowPlaying": {
+    "description": "Legacy key PLAYER_NOW_PLAYING"
+  },
+  "bookChapterOf": "Kapitel {index} af {count}",
+  "@bookChapterOf": {
+    "description": "Legacy key BOOK_CHAPTER_OF",
+    "placeholders": {
+      "index": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "speakCount": "{count} speaks",
+  "@speakCount": {
+    "description": "Legacy key SPEAK_COUNT",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "speakNoneFound": "Ingen speaks fundet",
+  "@speakNoneFound": {
+    "description": "Legacy key SPEAK_NONE_FOUND"
+  },
+  "speakNoneFoundBody": "Prøv et andet søgeord, eller nulstil filtrene.",
+  "@speakNoneFoundBody": {
+    "description": "Legacy key SPEAK_NONE_FOUND_BODY"
+  },
+  "speakResetFilters": "Nulstil",
+  "@speakResetFilters": {
+    "description": "Legacy key SPEAK_RESET_FILTERS"
+  },
+  "speakLoadError": "Kunne ikke hente speaks",
+  "@speakLoadError": {
+    "description": "Legacy key SPEAK_LOAD_ERROR"
+  },
+  "speakLoadErrorBody": "Tjek din internetforbindelse og prøv igen.",
+  "@speakLoadErrorBody": {
+    "description": "Legacy key SPEAK_LOAD_ERROR_BODY"
+  },
+  "speakRetry": "Prøv igen",
+  "@speakRetry": {
+    "description": "Legacy key SPEAK_RETRY"
+  },
+  "speakForget": "Fjern fra listen",
+  "@speakForget": {
+    "description": "Legacy key SPEAK_FORGET"
+  },
+  "playerCast": "Afspil på Chromecast",
+  "@playerCast": {
+    "description": "Legacy key PLAYER_CAST"
+  },
+  "playerCastConnected": "Caster – tryk for valgmuligheder",
+  "@playerCastConnected": {
+    "description": "Legacy key PLAYER_CAST_CONNECTED"
+  },
+  "playerPlayingOn": "Afspiller på {device}",
+  "@playerPlayingOn": {
+    "description": "Legacy key PLAYER_PLAYING_ON",
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "playerConnectingToCast": "Forbinder til Chromecast…",
+  "@playerConnectingToCast": {
+    "description": "Legacy key PLAYER_CONNECTING_TO_CAST"
+  },
+  "playerAirplay": "AirPlay",
+  "@playerAirplay": {
+    "description": "Legacy key PLAYER_AIRPLAY"
+  },
+  "languageDanish": "Dansk",
+  "@languageDanish": {
+    "description": "Settings: Danish option"
+  },
+  "languageEnglish": "Engelsk",
+  "@languageEnglish": {
+    "description": "Settings: English option"
+  },
+  "menuVersion": "Version: {version}",
+  "@menuVersion": {
+    "description": "Last row of the side menu",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "actionOpenMenu": "Åbn menu",
+  "@actionOpenMenu": {
+    "description": "Header menu button label"
+  },
+  "actionCloseMenu": "Luk menu",
+  "@actionCloseMenu": {
+    "description": "Scrim label while the menu is open"
+  },
+  "settingsSearchRangeValue": "Standard søgeradius = {km} km",
+  "@settingsSearchRangeValue": {
+    "description": "Slider caption",
+    "placeholders": {
+      "km": {
+        "type": "int"
+      }
+    }
+  },
+  "kmValue": "{km} km",
+  "@kmValue": {
+    "description": "Slider end labels",
+    "placeholders": {
+      "km": {
+        "type": "int"
+      }
+    }
+  },
+  "contactNotApprovedTitle": "Denne app er [endnu] ikke godkendt!",
+  "@contactNotApprovedTitle": {
+    "description": "About page trial warning title"
+  },
+  "contactNotApprovedBody": "Dette er en prøveversion. Indtil den er blevet godkendt af RSK, bør den ikke tages i brug for alvor.",
+  "@contactNotApprovedBody": {
+    "description": "About page trial warning body"
+  },
+  "contactMeetingListChangesTitle": "Ændringer til mødelisten",
+  "@contactMeetingListChangesTitle": {
+    "description": "About page card title"
+  },
+  "contactMeetingListServant": "Skriv til mødelisteansvarlig",
+  "@contactMeetingListServant": {
+    "description": "About page button"
+  },
+  "contactNaOnlineTitle": "Narcotics Anonymous på nettet",
+  "@contactNaOnlineTitle": {
+    "description": "About page card title"
+  },
+  "contactAboutTitle": "Om denne app",
+  "@contactAboutTitle": {
+    "description": "About page card title"
+  },
+  "contactSourceCode": "Kildekode",
+  "@contactSourceCode": {
+    "description": "About page button"
+  },
+  "contactBugReports": "Fejlrapporter",
+  "@contactBugReports": {
+    "description": "About page button"
+  },
+  "contactBuildType": "Buildtype: {buildType}",
+  "@contactBuildType": {
+    "description": "About page build line",
+    "placeholders": {
+      "buildType": {
+        "type": "String"
+      }
+    }
+  },
+  "contactVersion": "Version: {version}",
+  "@contactVersion": {
+    "description": "About page version line",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "contactFinePrintTitle": "Det med småt",
+  "@contactFinePrintTitle": {
+    "description": "About page card title"
+  },
+  "contactFinePrintBody": "NA-logoet er et registreret varemærke og brugt i overensstemmelse med Fellowship Intellectual Property Trust (FIPT).",
+  "@contactFinePrintBody": {
+    "description": "About page fine print"
+  },
+  "contactImportedSettings": "Indstillinger importeret fra den tidligere version",
+  "@contactImportedSettings": {
+    "description": "About page line after a legacy import"
+  },
+  "jftCopyright": "Copyright (c) 2007-{year}, NA World Services, Inc. All Rights Reserved",
+  "@jftCopyright": {
+    "description": "JFT footer",
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "jftUnavailable": "Dagens tekst kunne ikke indlæses",
+  "@jftUnavailable": {
+    "description": "JFT error state"
+  }
+}

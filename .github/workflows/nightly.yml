@@ -1,0 +1,133 @@
+name: Nightly
+
+# The slow and the flaky: real devices in Firebase Test Lab, the iOS
+# simulator, and a dependency audit. A failure opens (or refreshes) one issue
+# labelled "nightly-failure" instead of paging anybody.
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly
+  cancel-in-progress: true
+
+jobs:
+  device-farm:
+    uses: ./.github/workflows/test-device-farm.yml
+    secrets: inherit
+
+  e2e-ios:
+    uses: ./.github/workflows/test-e2e-ios.yml
+
+  dependency-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-toolchain
+        with:
+          generate: 'false'
+
+      - name: Outdated packages
+        run: |
+          set -euo pipefail
+          flutter pub outdated --no-dev-dependencies 2>&1 | tee "$RUNNER_TEMP/outdated.txt" || true
+          {
+            echo '### Outdated packages'
+            echo
+            echo '```'
+            cat "$RUNNER_TEMP/outdated.txt"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Flutter doctor
+        run: |
+          set -euo pipefail
+          {
+            echo '### flutter doctor'
+            echo
+            echo '```'
+            flutter doctor -v 2>&1 || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  report:
+    needs: [device-farm, e2e-ios, dependency-audit]
+    if: always() && !cancelled()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - name: Open or refresh the nightly-failure issue
+        uses: actions/github-script@v7
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        with:
+          script: |
+            const results = JSON.parse(process.env.RESULTS);
+            const failed = Object.entries(results)
+              .filter(([, r]) => r.result === 'failure' || r.result === 'timed_out')
+              .map(([name]) => name);
+            const { owner, repo } = context.repo;
+            const label = 'nightly-failure';
+            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+            const today = new Date().toISOString().slice(0, 10);
+
+            const open = await github.paginate(github.rest.issues.listForRepo, {
+              owner, repo, state: 'open', labels: label, per_page: 100,
+            });
+            const existing = open.find((i) => !i.pull_request);
+
+            if (failed.length === 0) {
+              if (existing) {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: existing.number,
+                  body: `Nightly of ${today} passed: ${runUrl}\n\nClosing.`,
+                });
+                await github.rest.issues.update({ owner, repo, issue_number: existing.number, state: 'closed' });
+                core.info(`Closed #${existing.number}`);
+              } else {
+                core.info('Nightly passed and no open issue; nothing to do.');
+              }
+              return;
+            }
+
+            const table = Object.entries(results)
+              .map(([name, r]) => `| \`${name}\` | ${r.result} |`)
+              .join('\n');
+            const body = [
+              `Nightly of **${today}** failed in: ${failed.map((f) => `\`${f}\``).join(', ')}.`,
+              '',
+              `Run: ${runUrl}`,
+              '',
+              '| Job | Result |',
+              '| --- | --- |',
+              table,
+              '',
+              '_This issue is maintained by the Nightly workflow; it closes itself when a night passes._',
+            ].join('\n');
+
+            try {
+              await github.rest.issues.getLabel({ owner, repo, name: label });
+            } catch (error) {
+              if (error.status !== 404) throw error;
+              await github.rest.issues.createLabel({ owner, repo, name: label, color: 'b60205' });
+            }
+
+            if (existing) {
+              await github.rest.issues.createComment({ owner, repo, issue_number: existing.number, body });
+              core.info(`Updated #${existing.number}`);
+            } else {
+              const created = await github.rest.issues.create({
+                owner, repo, title: `Nightly failed: ${failed.join(', ')}`, body, labels: [label],
+              });
+              core.info(`Opened #${created.data.number}`);
+            }
+            core.setFailed(`Nightly failed in: ${failed.join(', ')}`);

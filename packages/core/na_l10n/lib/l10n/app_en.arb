@@ -1,0 +1,853 @@
+{
+  "@@locale": "en",
+  "menu": "Menu",
+  "@menu": {
+    "description": "Legacy key MENU"
+  },
+  "home": "Home",
+  "@home": {
+    "description": "Legacy key HOME"
+  },
+  "locationsearch": "Meetings nearby",
+  "@locationsearch": {
+    "description": "Legacy key LOCATIONSEARCH"
+  },
+  "loadingmap": "Loading map...",
+  "@loadingmap": {
+    "description": "Legacy key LOADINGMAP"
+  },
+  "location": "",
+  "@location": {
+    "description": "Legacy key LOCATION"
+  },
+  "noLocation": "Location not set",
+  "@noLocation": {
+    "description": "Legacy key NO_LOCATION"
+  },
+  "locating": "Locating...",
+  "@locating": {
+    "description": "Legacy key LOCATING"
+  },
+  "findingMtgs": "Finding Meetings ...",
+  "@findingMtgs": {
+    "description": "Legacy key FINDING_MTGS"
+  },
+  "listfull": "Meetings",
+  "@listfull": {
+    "description": "Legacy key LISTFULL"
+  },
+  "tags": "Tags",
+  "@tags": {
+    "description": "Legacy key TAGS"
+  },
+  "category": "Category",
+  "@category": {
+    "description": "Legacy key CATEGORY"
+  },
+  "menus": "Menus",
+  "@menus": {
+    "description": "Legacy key MENUS"
+  },
+  "mapSearch": "Map",
+  "@mapSearch": {
+    "description": "Legacy key MAP_SEARCH"
+  },
+  "mapSearchDesc": " meetings nearest the red marker. Drag the red marker to move the search.",
+  "@mapSearchDesc": {
+    "description": "Legacy key MAP_SEARCH_DESC"
+  },
+  "meetings": " meetings",
+  "@meetings": {
+    "description": "Legacy key MEETINGS"
+  },
+  "km": " km",
+  "@km": {
+    "description": "Legacy key KM"
+  },
+  "map": "Directions",
+  "@map": {
+    "description": "Legacy key MAP"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Legacy key SETTINGS"
+  },
+  "searchrangesetting": "Default search range",
+  "@searchrangesetting": {
+    "description": "Legacy key SEARCHRANGESETTING"
+  },
+  "firstdayofweeksetting": "First day of week",
+  "@firstdayofweeksetting": {
+    "description": "Legacy key FIRSTDAYOFWEEKSETTING"
+  },
+  "showownregionontopsetting": "Show Denmark at the top of the full meeting list",
+  "@showownregionontopsetting": {
+    "description": "Legacy key SHOWOWNREGIONONTOPSETTING"
+  },
+  "homeTitle": "Narcotics Anonymous Denmark",
+  "@homeTitle": {
+    "description": "Legacy key HOME_TITLE"
+  },
+  "homeMessage": "Helpline: 70 20 01 85",
+  "@homeMessage": {
+    "description": "Legacy key HOME_MESSAGE"
+  },
+  "contact": "About",
+  "@contact": {
+    "description": "Legacy key CONTACT"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Legacy key LANGUAGE"
+  },
+  "english": "English",
+  "@english": {
+    "description": "Legacy key ENGLISH"
+  },
+  "italian": "Italiano",
+  "@italian": {
+    "description": "Legacy key ITALIAN"
+  },
+  "spanish": "Español",
+  "@spanish": {
+    "description": "Legacy key SPANISH"
+  },
+  "danish": "Dansk",
+  "@danish": {
+    "description": "Legacy key DANISH"
+  },
+  "polish": "Polskie",
+  "@polish": {
+    "description": "Legacy key POLISH"
+  },
+  "portuguese": "Português",
+  "@portuguese": {
+    "description": "Legacy key PORTUGUESE"
+  },
+  "russian": "Русский",
+  "@russian": {
+    "description": "Legacy key RUSSIAN"
+  },
+  "addresssearch": "Address Search",
+  "@addresssearch": {
+    "description": "Legacy key ADDRESSSEARCH"
+  },
+  "doihavethebmlt": "Do I have the BMLT?",
+  "@doihavethebmlt": {
+    "description": "Legacy key DOIHAVETHEBMLT"
+  },
+  "maprange": "Default Search Range",
+  "@maprange": {
+    "description": "Legacy key MAPRANGE"
+  },
+  "timedisplay": "Time format",
+  "@timedisplay": {
+    "description": "Legacy key TIMEDISPLAY"
+  },
+  "twentyFourHour": "24 hr clock",
+  "@twentyFourHour": {
+    "description": "Legacy key 24HR"
+  },
+  "twelveHour": "12 hr clock",
+  "@twelveHour": {
+    "description": "Legacy key 12HR"
+  },
+  "sunday": "Sunday",
+  "@sunday": {
+    "description": "Legacy key SUNDAY"
+  },
+  "monday": "Monday",
+  "@monday": {
+    "description": "Legacy key MONDAY"
+  },
+  "tuesday": "Tuesday",
+  "@tuesday": {
+    "description": "Legacy key TUESDAY"
+  },
+  "wednesday": "Wednesday",
+  "@wednesday": {
+    "description": "Legacy key WEDNESDAY"
+  },
+  "thursday": "Thursday",
+  "@thursday": {
+    "description": "Legacy key THURSDAY"
+  },
+  "friday": "Friday",
+  "@friday": {
+    "description": "Legacy key FRIDAY"
+  },
+  "saturday": "Saturday",
+  "@saturday": {
+    "description": "Legacy key SATURDAY"
+  },
+  "distance": "Distance",
+  "@distance": {
+    "description": "Legacy key DISTANCE"
+  },
+  "formats": "Formats",
+  "@formats": {
+    "description": "Legacy key FORMATS"
+  },
+  "directions": "Directions",
+  "@directions": {
+    "description": "Legacy key DIRECTIONS"
+  },
+  "miles": "miles",
+  "@miles": {
+    "description": "Legacy key MILES"
+  },
+  "kms": "kms",
+  "@kms": {
+    "description": "Legacy key KMS"
+  },
+  "meetingsNearest": "meetings nearest",
+  "@meetingsNearest": {
+    "description": "Legacy key MEETINGS_NEAREST"
+  },
+  "markerInstr": "Drag marker to set position",
+  "@markerInstr": {
+    "description": "Legacy key MARKER_INSTR"
+  },
+  "nothingFound": "Nothing Found",
+  "@nothingFound": {
+    "description": "Legacy key NOTHING_FOUND"
+  },
+  "bus": "Bus",
+  "@bus": {
+    "description": "Legacy key BUS"
+  },
+  "train": "Train",
+  "@train": {
+    "description": "Legacy key TRAIN"
+  },
+  "srcCode": "App Source Code",
+  "@srcCode": {
+    "description": "Legacy key SRC_CODE"
+  },
+  "bugReport": "Open a bug report/enhancement request",
+  "@bugReport": {
+    "description": "Legacy key BUG_REPORT"
+  },
+  "findOutMore": "How do I find out more about the BMLT?",
+  "@findOutMore": {
+    "description": "Legacy key FIND_OUT_MORE"
+  },
+  "joinFbGroup": "Join the Facebook Group",
+  "@joinFbGroup": {
+    "description": "Legacy key JOIN_FB_GROUP"
+  },
+  "visitWebsite": "Visit the website",
+  "@visitWebsite": {
+    "description": "Legacy key VISIT_WEBSITE"
+  },
+  "isBmlt": "Is my location covered by the BMLT?",
+  "@isBmlt": {
+    "description": "Legacy key IS_BMLT"
+  },
+  "yes": "Yes",
+  "@yes": {
+    "description": "Legacy key YES"
+  },
+  "no": "No",
+  "@no": {
+    "description": "Legacy key NO"
+  },
+  "away": "away",
+  "@away": {
+    "description": "Legacy key AWAY"
+  },
+  "isBmltYes1": "On the BMLT worldwide DB, the nearest meeting to your current location is",
+  "@isBmltYes1": {
+    "description": "Legacy key IS_BMLT_YES_1"
+  },
+  "isBmltYes2": "So it looks like your local service body",
+  "@isBmltYes2": {
+    "description": "Legacy key IS_BMLT_YES_2"
+  },
+  "isBmltYes3": "has implemented the BMLT for their meetings list.",
+  "@isBmltYes3": {
+    "description": "Legacy key IS_BMLT_YES_3"
+  },
+  "isBmltNo1": "On the BMLT worldwide DB, it looks like the nearest meeting to your current location is",
+  "@isBmltNo1": {
+    "description": "Legacy key IS_BMLT_NO_1"
+  },
+  "isBmltNo2": "So, it looks like your local service body has not implemented the BMLT for their meetings list.",
+  "@isBmltNo2": {
+    "description": "Legacy key IS_BMLT_NO_2"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Legacy key CLOSE"
+  },
+  "meetingDetails": "Meeting Details",
+  "@meetingDetails": {
+    "description": "Legacy key MEETING_DETAILS"
+  },
+  "meetingFormats": "Meeting Formats",
+  "@meetingFormats": {
+    "description": "Legacy key MEETING_FORMATS"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Legacy key CANCEL"
+  },
+  "virtualLink": "Virtual Link",
+  "@virtualLink": {
+    "description": "Legacy key VIRTUAL_LINK"
+  },
+  "phoneMeeting": "Phone Meeting Dial-in",
+  "@phoneMeeting": {
+    "description": "Legacy key PHONE_MEETING"
+  },
+  "tempClosed": "Temporarily Closed",
+  "@tempClosed": {
+    "description": "Legacy key TEMP_CLOSED"
+  },
+  "virtualMeetings": "virtual-na.org",
+  "@virtualMeetings": {
+    "description": "Legacy key VIRTUAL_MEETINGS"
+  },
+  "list": "List",
+  "@list": {
+    "description": "Legacy key LIST"
+  },
+  "search": "Search",
+  "@search": {
+    "description": "Legacy key SEARCH"
+  },
+  "visit": "Visit",
+  "@visit": {
+    "description": "Legacy key VISIT"
+  },
+  "weekdays": "Weekdays",
+  "@weekdays": {
+    "description": "Legacy key WEEKDAYS"
+  },
+  "virtualNa": "Virtual NA is an international service resource whose main purpose is to run a search engine for NA meetings. It covers both online and phone meetings from different countries around the world.",
+  "@virtualNa": {
+    "description": "Legacy key VIRTUAL_NA"
+  },
+  "homeMessage2": "If you have a problem with substances,",
+  "@homeMessage2": {
+    "description": "Legacy key HOME_MESSAGE_2"
+  },
+  "homeMessage3": "we can perhaps help.",
+  "@homeMessage3": {
+    "description": "Legacy key HOME_MESSAGE_3"
+  },
+  "news": "News",
+  "@news": {
+    "description": "Legacy key NEWS"
+  },
+  "events": "Events",
+  "@events": {
+    "description": "Legacy key EVENTS"
+  },
+  "basicText": "Basic Text",
+  "@basicText": {
+    "description": "Legacy key BASIC_TEXT"
+  },
+  "howAndWhy": "It Works: How and Why",
+  "@howAndWhy": {
+    "description": "Legacy key HOW_AND_WHY"
+  },
+  "stepWorkingGuides": "The NA Step Working Guides",
+  "@stepWorkingGuides": {
+    "description": "Legacy key STEP_WORKING_GUIDES"
+  },
+  "speaks": "Speaks",
+  "@speaks": {
+    "description": "Legacy key SPEAKS"
+  },
+  "jft": "Just for today",
+  "@jft": {
+    "description": "Legacy key JFT"
+  },
+  "audiobooks": "Audiobooks",
+  "@audiobooks": {
+    "description": "Legacy key AUDIOBOOKS"
+  },
+  "nacc": "Cleantime calculator",
+  "@nacc": {
+    "description": "Legacy key NACC"
+  },
+  "grc": "Group readings",
+  "@grc": {
+    "description": "Legacy key GRC"
+  },
+  "comingSoon": "Coming soon.",
+  "@comingSoon": {
+    "description": "Legacy key COMING_SOON"
+  },
+  "comingSoonBody": "We are working on it ..",
+  "@comingSoonBody": {
+    "description": "Legacy key COMING_SOON_BODY"
+  },
+  "languages": "Languages",
+  "@languages": {
+    "description": "Legacy key LANGUAGE(S)"
+  },
+  "convention": "Convention",
+  "@convention": {
+    "description": "Legacy key CONVENTION"
+  },
+  "openingSpeaker": "Opening speak",
+  "@openingSpeaker": {
+    "description": "Legacy key OPENING_SPEAKER"
+  },
+  "mainSpeaker": "Main speak",
+  "@mainSpeaker": {
+    "description": "Legacy key MAIN_SPEAKER"
+  },
+  "closingSpeaker": "Closing speak",
+  "@closingSpeaker": {
+    "description": "Legacy key CLOSING_SPEAKER"
+  },
+  "steps": "Steps",
+  "@steps": {
+    "description": "Legacy key STEPS"
+  },
+  "traditions": "Traditions",
+  "@traditions": {
+    "description": "Legacy key TRADITIONS"
+  },
+  "naHistory": "NA's history",
+  "@naHistory": {
+    "description": "Legacy key NA_HISTORY"
+  },
+  "mapsearchSearch": "Search",
+  "@mapsearchSearch": {
+    "description": "Legacy key mapsearch.search"
+  },
+  "cleantime": "Cleantime",
+  "@cleantime": {
+    "description": "Legacy key CLEANTIME"
+  },
+  "datetime": "Cleantime counter",
+  "@datetime": {
+    "description": "Legacy key DATETIME"
+  },
+  "entercleandate": "First clean day",
+  "@entercleandate": {
+    "description": "Legacy key ENTERCLEANDATE"
+  },
+  "cleantimeindays": "Clean days",
+  "@cleantimeindays": {
+    "description": "Legacy key CLEANTIMEINDAYS"
+  },
+  "day": "day",
+  "@day": {
+    "description": "Legacy key DAY"
+  },
+  "days": "days",
+  "@days": {
+    "description": "Legacy key DAYS"
+  },
+  "cleantimeinweeks": "Clean weeks",
+  "@cleantimeinweeks": {
+    "description": "Legacy key CLEANTIMEINWEEKS"
+  },
+  "week": "week",
+  "@week": {
+    "description": "Legacy key WEEK"
+  },
+  "weeks": "weeks",
+  "@weeks": {
+    "description": "Legacy key WEEKS"
+  },
+  "cleantimeinyears": "Clean years",
+  "@cleantimeinyears": {
+    "description": "Legacy key CLEANTIMEINYEARS"
+  },
+  "year": "year",
+  "@year": {
+    "description": "Legacy key YEAR"
+  },
+  "years": "years",
+  "@years": {
+    "description": "Legacy key YEARS"
+  },
+  "cleantimeinmonths": "Clean months",
+  "@cleantimeinmonths": {
+    "description": "Legacy key CLEANTIMEINMONTHS"
+  },
+  "month": "month",
+  "@month": {
+    "description": "Legacy key MONTH"
+  },
+  "months": "months",
+  "@months": {
+    "description": "Legacy key MONTHS"
+  },
+  "birthday": "Cleanday",
+  "@birthday": {
+    "description": "Legacy key BIRTHDAY"
+  },
+  "dayclean": "day",
+  "@dayclean": {
+    "description": "Legacy key DAYCLEAN"
+  },
+  "daysclean": "days",
+  "@daysclean": {
+    "description": "Legacy key DAYSCLEAN"
+  },
+  "monthclean": "month",
+  "@monthclean": {
+    "description": "Legacy key MONTHCLEAN"
+  },
+  "monthsclean": "months",
+  "@monthsclean": {
+    "description": "Legacy key MONTHSCLEAN"
+  },
+  "yearclean": "year",
+  "@yearclean": {
+    "description": "Legacy key YEARCLEAN"
+  },
+  "yearsclean": "years",
+  "@yearsclean": {
+    "description": "Legacy key YEARSCLEAN"
+  },
+  "cleantimeunitsort": "Cleantime sorting",
+  "@cleantimeunitsort": {
+    "description": "Legacy key CLEANTIMEUNITSORT"
+  },
+  "dmy": "days - months - years",
+  "@dmy": {
+    "description": "Legacy key DMY"
+  },
+  "ymd": "years - months - days",
+  "@ymd": {
+    "description": "Legacy key YMD"
+  },
+  "or": "OR",
+  "@or": {
+    "description": "Legacy key OR"
+  },
+  "back": "Back",
+  "@back": {
+    "description": "Legacy key BACK"
+  },
+  "newprofile": "New profile",
+  "@newprofile": {
+    "description": "Legacy key NEWPROFILE"
+  },
+  "newprofilenamehere": "New profile name here",
+  "@newprofilenamehere": {
+    "description": "Legacy key NEWPROFILENAMEHERE"
+  },
+  "cancelbutton": "Cancel",
+  "@cancelbutton": {
+    "description": "Legacy key CANCELBUTTON"
+  },
+  "addbutton": "Create",
+  "@addbutton": {
+    "description": "Legacy key ADDBUTTON"
+  },
+  "renameprofile": "Rename profile",
+  "@renameprofile": {
+    "description": "Legacy key RENAMEPROFILE"
+  },
+  "rename": "Rename",
+  "@rename": {
+    "description": "Legacy key RENAME"
+  },
+  "areyousure": "Are you sure?",
+  "@areyousure": {
+    "description": "Legacy key AREYOUSURE"
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Legacy key DELETE"
+  },
+  "playerContinue": "Continue playing",
+  "@playerContinue": {
+    "description": "Legacy key PLAYER_CONTINUE"
+  },
+  "playerPlay": "Play",
+  "@playerPlay": {
+    "description": "Legacy key PLAYER_PLAY"
+  },
+  "playerPause": "Pause",
+  "@playerPause": {
+    "description": "Legacy key PLAYER_PAUSE"
+  },
+  "playerClose": "Close player",
+  "@playerClose": {
+    "description": "Legacy key PLAYER_CLOSE"
+  },
+  "playerPrevious": "Previous chapter",
+  "@playerPrevious": {
+    "description": "Legacy key PLAYER_PREVIOUS"
+  },
+  "playerNext": "Next chapter",
+  "@playerNext": {
+    "description": "Legacy key PLAYER_NEXT"
+  },
+  "playerRewind": "Rewind 15 seconds",
+  "@playerRewind": {
+    "description": "Legacy key PLAYER_REWIND"
+  },
+  "playerForward": "Forward 30 seconds",
+  "@playerForward": {
+    "description": "Legacy key PLAYER_FORWARD"
+  },
+  "speakSearchPlaceholder": "Search name, convention, city, year …",
+  "@speakSearchPlaceholder": {
+    "description": "Legacy key SPEAK_SEARCH_PLACEHOLDER"
+  },
+  "speakFilters": "Filters",
+  "@speakFilters": {
+    "description": "Legacy key SPEAK_FILTERS"
+  },
+  "speakAll": "All",
+  "@speakAll": {
+    "description": "Legacy key SPEAK_ALL"
+  },
+  "speakSort": "Sort",
+  "@speakSort": {
+    "description": "Legacy key SPEAK_SORT"
+  },
+  "speakSortNewest": "Newest",
+  "@speakSortNewest": {
+    "description": "Legacy key SPEAK_SORT_NEWEST"
+  },
+  "speakSortOldest": "Oldest",
+  "@speakSortOldest": {
+    "description": "Legacy key SPEAK_SORT_OLDEST"
+  },
+  "speakSortName": "Name",
+  "@speakSortName": {
+    "description": "Legacy key SPEAK_SORT_NAME"
+  },
+  "speakYear": "Year",
+  "@speakYear": {
+    "description": "Legacy key SPEAK_YEAR"
+  },
+  "speakOnlyStarted": "Only started",
+  "@speakOnlyStarted": {
+    "description": "Legacy key SPEAK_ONLY_STARTED"
+  },
+  "chapters": "Chapters",
+  "@chapters": {
+    "description": "Legacy key CHAPTERS"
+  },
+  "playerContinueListening": "Continue listening",
+  "@playerContinueListening": {
+    "description": "Legacy key PLAYER_CONTINUE_LISTENING"
+  },
+  "playerContinueFrom": "Continue from {time}",
+  "@playerContinueFrom": {
+    "description": "Legacy key PLAYER_CONTINUE_FROM",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerTimeLeft": "{time} left",
+  "@playerTimeLeft": {
+    "description": "Legacy key PLAYER_TIME_LEFT",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "playerNowPlaying": "Now playing",
+  "@playerNowPlaying": {
+    "description": "Legacy key PLAYER_NOW_PLAYING"
+  },
+  "bookChapterOf": "Chapter {index} of {count}",
+  "@bookChapterOf": {
+    "description": "Legacy key BOOK_CHAPTER_OF",
+    "placeholders": {
+      "index": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "speakCount": "{count} speaks",
+  "@speakCount": {
+    "description": "Legacy key SPEAK_COUNT",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "speakNoneFound": "No speaks found",
+  "@speakNoneFound": {
+    "description": "Legacy key SPEAK_NONE_FOUND"
+  },
+  "speakNoneFoundBody": "Try another search word, or reset the filters.",
+  "@speakNoneFoundBody": {
+    "description": "Legacy key SPEAK_NONE_FOUND_BODY"
+  },
+  "speakResetFilters": "Reset",
+  "@speakResetFilters": {
+    "description": "Legacy key SPEAK_RESET_FILTERS"
+  },
+  "speakLoadError": "Could not load the speaks",
+  "@speakLoadError": {
+    "description": "Legacy key SPEAK_LOAD_ERROR"
+  },
+  "speakLoadErrorBody": "Check your internet connection and try again.",
+  "@speakLoadErrorBody": {
+    "description": "Legacy key SPEAK_LOAD_ERROR_BODY"
+  },
+  "speakRetry": "Try again",
+  "@speakRetry": {
+    "description": "Legacy key SPEAK_RETRY"
+  },
+  "speakForget": "Remove from list",
+  "@speakForget": {
+    "description": "Legacy key SPEAK_FORGET"
+  },
+  "playerCast": "Play on Chromecast",
+  "@playerCast": {
+    "description": "Legacy key PLAYER_CAST"
+  },
+  "playerCastConnected": "Casting — tap for options",
+  "@playerCastConnected": {
+    "description": "Legacy key PLAYER_CAST_CONNECTED"
+  },
+  "playerPlayingOn": "Playing on {device}",
+  "@playerPlayingOn": {
+    "description": "Legacy key PLAYER_PLAYING_ON",
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
+  "playerConnectingToCast": "Connecting to Chromecast…",
+  "@playerConnectingToCast": {
+    "description": "Legacy key PLAYER_CONNECTING_TO_CAST"
+  },
+  "playerAirplay": "AirPlay",
+  "@playerAirplay": {
+    "description": "Legacy key PLAYER_AIRPLAY"
+  },
+  "languageDanish": "Danish",
+  "@languageDanish": {
+    "description": "Settings: Danish option"
+  },
+  "languageEnglish": "English",
+  "@languageEnglish": {
+    "description": "Settings: English option"
+  },
+  "menuVersion": "Version: {version}",
+  "@menuVersion": {
+    "description": "Last row of the side menu",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "actionOpenMenu": "Open menu",
+  "@actionOpenMenu": {
+    "description": "Header menu button label"
+  },
+  "actionCloseMenu": "Close menu",
+  "@actionCloseMenu": {
+    "description": "Scrim label while the menu is open"
+  },
+  "settingsSearchRangeValue": "Default search range = {km} km",
+  "@settingsSearchRangeValue": {
+    "description": "Slider caption",
+    "placeholders": {
+      "km": {
+        "type": "int"
+      }
+    }
+  },
+  "kmValue": "{km} km",
+  "@kmValue": {
+    "description": "Slider end labels",
+    "placeholders": {
+      "km": {
+        "type": "int"
+      }
+    }
+  },
+  "contactNotApprovedTitle": "This app is not [yet] approved!",
+  "@contactNotApprovedTitle": {
+    "description": "About page trial warning title"
+  },
+  "contactNotApprovedBody": "This is a trial version. Until it has been approved by RSK, it should not be used seriously.",
+  "@contactNotApprovedBody": {
+    "description": "About page trial warning body"
+  },
+  "contactMeetingListChangesTitle": "Changes to the meeting list",
+  "@contactMeetingListChangesTitle": {
+    "description": "About page card title"
+  },
+  "contactMeetingListServant": "Write to the meeting list servant",
+  "@contactMeetingListServant": {
+    "description": "About page button"
+  },
+  "contactNaOnlineTitle": "Narcotics Anonymous online",
+  "@contactNaOnlineTitle": {
+    "description": "About page card title"
+  },
+  "contactAboutTitle": "About this app",
+  "@contactAboutTitle": {
+    "description": "About page card title"
+  },
+  "contactSourceCode": "Source code",
+  "@contactSourceCode": {
+    "description": "About page button"
+  },
+  "contactBugReports": "Bug reports",
+  "@contactBugReports": {
+    "description": "About page button"
+  },
+  "contactBuildType": "Build type: {buildType}",
+  "@contactBuildType": {
+    "description": "About page build line",
+    "placeholders": {
+      "buildType": {
+        "type": "String"
+      }
+    }
+  },
+  "contactVersion": "Version: {version}",
+  "@contactVersion": {
+    "description": "About page version line",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "contactFinePrintTitle": "The fine print",
+  "@contactFinePrintTitle": {
+    "description": "About page card title"
+  },
+  "contactFinePrintBody": "The NA logo is a registered trademark and used in accordance with the Fellowship Intellectual Property Trust (FIPT).",
+  "@contactFinePrintBody": {
+    "description": "About page fine print"
+  },
+  "contactImportedSettings": "Imported settings from the previous version",
+  "@contactImportedSettings": {
+    "description": "About page line after a legacy import"
+  },
+  "jftCopyright": "Copyright (c) 2007-{year}, NA World Services, Inc. All Rights Reserved",
+  "@jftCopyright": {
+    "description": "JFT footer",
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "jftUnavailable": "Today's text could not be loaded",
+  "@jftUnavailable": {
+    "description": "JFT error state"
+  }
+}

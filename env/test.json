@@ -1,0 +1,9 @@
+{
+  "APP_ENV": "test",
+  "NA_API_BASE_URL": "http://127.0.0.1:0",
+  "BMLT_DENMARK_BASE_URL": "http://127.0.0.1:0/denmark/",
+  "BMLT_TOMATO_BASE_URL": "http://127.0.0.1:0/tomato/",
+  "NA_API_BASIC_AUTH": "test:test",
+  "GOOGLE_MAPS_API_KEY": "",
+  "NA_APPROVED": "false"
+}

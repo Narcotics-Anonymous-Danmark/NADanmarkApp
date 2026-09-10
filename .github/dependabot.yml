@@ -1,0 +1,62 @@
+# Dependabot keeps the pub workspace, the Actions pins and the Gradle plugins
+# current. Updates are grouped so one PR per week covers the routine bumps;
+# Riverpod and Patrol get their own PRs because they tend to need code changes.
+version: 2
+updates:
+  - package-ecosystem: pub
+    directories:
+      - /
+      - /app
+      - /tool/*
+      - /packages/*/*
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Europe/Copenhagen
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: 'build(deps)'
+    labels: [dependencies]
+    groups:
+      riverpod:
+        patterns:
+          - 'riverpod*'
+          - '*_riverpod*'
+      patrol:
+        patterns:
+          - 'patrol*'
+      minor-and-patch:
+        update-types: [minor, patch]
+        exclude-patterns:
+          - 'riverpod*'
+          - '*_riverpod*'
+          - 'patrol*'
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Europe/Copenhagen
+    commit-message:
+      prefix: 'ci(deps)'
+    labels: [dependencies]
+    groups:
+      github-actions:
+        patterns: ['*']
+
+  - package-ecosystem: gradle
+    directory: /app/android
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Europe/Copenhagen
+    commit-message:
+      prefix: 'build(deps)'
+    labels: [dependencies]
+    groups:
+      gradle:
+        patterns: ['*']

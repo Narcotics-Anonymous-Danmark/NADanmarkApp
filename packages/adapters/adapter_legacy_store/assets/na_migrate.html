@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>NA Danmark migration</title></head>
+<body>
+<script>
+(function () {
+  function report(type, payload) {
+    if (window.NaMigrate) {
+      if (type === 'done') { NaMigrate.done(payload); }
+      else if (type === 'absent') { NaMigrate.absent(); }
+      else { NaMigrate.fail(payload); }
+      return;
+    }
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.naMigrate) {
+      window.webkit.messageHandlers.naMigrate.postMessage({ type: type, payload: payload });
+    }
+  }
+  try {
+    var created = false;
+    var request = indexedDB.open('_ionicstorage');
+    request.onupgradeneeded = function () {
+      created = true;
+      request.transaction.abort();
+    };
+    request.onerror = function () {
+      if (created) { report('absent', ''); } else { report('fail', String(request.error)); }
+    };
+    request.onsuccess = function () {
+      var db = request.result;
+      if (!db.objectStoreNames.contains('_ionickv')) {
+        db.close();
+        report('absent', '');
+        return;
+      }
+      var out = {};
+      var cursor = db.transaction('_ionickv', 'readonly').objectStore('_ionickv').openCursor();
+      cursor.onsuccess = function () {
+        var current = cursor.result;
+        if (current) {
+          out[String(current.key)] = current.value;
+          current.continue();
+        } else {
+          db.close();
+          report('done', JSON.stringify(out));
+        }
+      };
+      cursor.onerror = function () {
+        db.close();
+        report('fail', String(cursor.error));
+      };
+    };
+  } catch (error) {
+    report('fail', String(error));
+  }
+})();
+</script>
+</body>
+</html>

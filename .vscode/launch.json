@@ -1,0 +1,53 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "NA App (dev)",
+      "type": "dart",
+      "request": "launch",
+      "program": "app/lib/main.dart",
+      "cwd": "${workspaceFolder}/app",
+      "flutterMode": "debug",
+      "toolArgs": ["--dart-define-from-file=../env/dev.json"],
+      "preLaunchTask": "na: emulator ensure"
+    },
+    {
+      "name": "NA App (profile)",
+      "type": "dart",
+      "request": "launch",
+      "program": "app/lib/main.dart",
+      "cwd": "${workspaceFolder}/app",
+      "flutterMode": "profile",
+      "toolArgs": ["--dart-define-from-file=../env/dev.json"],
+      "preLaunchTask": "na: emulator ensure"
+    },
+    {
+      // Needs env/release.local.json (git-ignored); copy env/release.example.json and fill it in.
+      "name": "NA App (release env, local)",
+      "type": "dart",
+      "request": "launch",
+      "program": "app/lib/main.dart",
+      "cwd": "${workspaceFolder}/app",
+      "flutterMode": "debug",
+      "toolArgs": ["--dart-define-from-file=../env/release.local.json"],
+      "preLaunchTask": "na: emulator ensure"
+    },
+    {
+      "name": "Test: current file",
+      "type": "dart",
+      "request": "launch",
+      "program": "${file}",
+      "cwd": "${workspaceFolder}",
+      "toolArgs": ["--dart-define-from-file=${workspaceFolder}/env/test.json"],
+      "templateFor": "test"
+    },
+    {
+      // Attach to an app started by "patrol develop" (task "na: patrol develop current file").
+      "name": "Patrol: attach",
+      "type": "dart",
+      "request": "attach",
+      "cwd": "${workspaceFolder}/app",
+      "vmServiceUri": "${command:dart.promptForVmService}"
+    }
+  ]
+}

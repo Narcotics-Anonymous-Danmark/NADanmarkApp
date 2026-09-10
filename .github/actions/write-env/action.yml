@@ -1,0 +1,64 @@
+name: Write env/release.json
+description: >
+  Materialises env/release.json (never committed) from the shape of
+  env/release.example.json, filling the two secret values from the inputs
+  and copying the public URLs from env/dev.json. Nothing secret is echoed;
+  GOOGLE_MAPS_API_KEY is exported to the job environment for the native
+  build steps that read it there.
+
+inputs:
+  na_api_basic_auth:
+    description: user:password for the nadanmark.dk API (NA_API_BASIC_AUTH secret)
+    required: true
+  google_maps_api_key:
+    description: Google Maps key (GOOGLE_MAPS_API_KEY secret)
+    required: true
+  output:
+    description: Where to write the file
+    required: false
+    default: env/release.json
+
+runs:
+  using: composite
+  steps:
+    - name: Write the release environment
+      shell: bash
+      env:
+        NA_API_BASIC_AUTH: ${{ inputs.na_api_basic_auth }}
+        GOOGLE_MAPS_API_KEY: ${{ inputs.google_maps_api_key }}
+        OUTPUT: ${{ inputs.output }}
+      run: |
+        set -euo pipefail
+        if [ -z "$NA_API_BASIC_AUTH" ]; then
+          echo "::error::NA_API_BASIC_AUTH is empty; add the secret to the repository"
+          exit 1
+        fi
+        if [ -z "$GOOGLE_MAPS_API_KEY" ]; then
+          echo "::error::GOOGLE_MAPS_API_KEY is empty; add the secret to the repository"
+          exit 1
+        fi
+
+        jq -n \
+          --arg na_api_base_url "https://www.nadanmark.dk" \
+          --arg bmlt_denmark "$(jq -r .BMLT_DENMARK_BASE_URL env/dev.json)" \
+          --arg bmlt_tomato "$(jq -r .BMLT_TOMATO_BASE_URL env/dev.json)" \
+          --arg basic_auth "$NA_API_BASIC_AUTH" \
+          --arg maps_key "$GOOGLE_MAPS_API_KEY" \
+          '{
+            APP_ENV: "release",
+            NA_API_BASE_URL: $na_api_base_url,
+            BMLT_DENMARK_BASE_URL: $bmlt_denmark,
+            BMLT_TOMATO_BASE_URL: $bmlt_tomato,
+            NA_API_BASIC_AUTH: $basic_auth,
+            GOOGLE_MAPS_API_KEY: $maps_key
+          }' > "$OUTPUT"
+
+        expected=$(jq -r 'keys | sort | join(",")' env/release.example.json)
+        actual=$(jq -r 'keys | sort | join(",")' "$OUTPUT")
+        if [ "$expected" != "$actual" ]; then
+          echo "::error::$OUTPUT keys ($actual) differ from env/release.example.json ($expected)"
+          exit 1
+        fi
+
+        echo "GOOGLE_MAPS_API_KEY=$GOOGLE_MAPS_API_KEY" >> "$GITHUB_ENV"
+        echo "Wrote $OUTPUT with keys: $actual"

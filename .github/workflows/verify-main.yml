@@ -1,0 +1,66 @@
+name: Verify main
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-main-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  analyze:
+    uses: ./.github/workflows/analyze.yml
+
+  test-unit-widget:
+    uses: ./.github/workflows/test-unit-widget.yml
+
+  test-acceptance:
+    uses: ./.github/workflows/test-acceptance.yml
+
+  e2e-android:
+    uses: ./.github/workflows/test-e2e-android.yml
+
+  e2e-ios:
+    uses: ./.github/workflows/test-e2e-ios.yml
+
+  coverage:
+    needs: [test-unit-widget, test-acceptance, e2e-android, e2e-ios]
+    if: >-
+      !cancelled()
+      && needs.test-unit-widget.result == 'success'
+      && needs.test-acceptance.result == 'success'
+      && needs.e2e-android.result == 'success'
+      && needs.e2e-ios.result == 'success'
+    permissions:
+      contents: read
+      pull-requests: write
+    uses: ./.github/workflows/coverage-gate.yml
+    with:
+      artifact_pattern: coverage-*
+      merged_artifact_name: coverage-main
+      retention_days: '30'
+
+  debug-apk:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-toolchain
+
+      - uses: ./.github/actions/setup-android
+
+      - name: Build the debug APK (dev environment)
+        working-directory: app
+        run: flutter build apk --debug --dart-define-from-file=../env/dev.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: app/build/app/outputs/flutter-apk/*.apk
+          retention-days: 7
+          if-no-files-found: error

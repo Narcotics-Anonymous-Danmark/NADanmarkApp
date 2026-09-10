@@ -1,0 +1,131 @@
+{
+  "version": "2.0.0",
+  "options": {
+    "cwd": "${workspaceFolder}"
+  },
+  "presentation": {
+    "reveal": "always",
+    "panel": "dedicated",
+    "clear": true
+  },
+  "problemMatcher": [],
+  "tasks": [
+    {
+      "label": "na: bootstrap",
+      "type": "shell",
+      "command": "./bin/na bootstrap",
+      "group": "none"
+    },
+    {
+      "label": "na: doctor",
+      "type": "shell",
+      "command": "./bin/na doctor",
+      "group": "none"
+    },
+    {
+      "label": "na: emulator ensure",
+      "type": "shell",
+      "command": "./bin/na emulator start",
+      "group": "none",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared",
+        "close": true
+      }
+    },
+    {
+      "label": "na: check",
+      "type": "shell",
+      "command": "./bin/na check",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": {
+        "owner": "dart",
+        "source": "na check",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "pattern": {
+          "regexp": "^\\s*(error|warning|info)\\s+•\\s+(.+?)\\s+•\\s+(.+?):(\\d+):(\\d+)\\s+•\\s+(\\S+)\\s*$",
+          "severity": 1,
+          "message": 2,
+          "file": 3,
+          "line": 4,
+          "column": 5,
+          "code": 6
+        }
+      }
+    },
+    {
+      "label": "na: gen l10n",
+      "type": "shell",
+      "command": "./bin/na gen l10n",
+      "group": "build"
+    },
+    {
+      "label": "na: gen all",
+      "type": "shell",
+      "command": "./bin/na gen all",
+      "group": "build"
+    },
+    {
+      "label": "na: test unit",
+      "type": "shell",
+      "command": "./bin/na test unit --coverage",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "na: test widget",
+      "type": "shell",
+      "command": "./bin/na test widget --coverage",
+      "group": "test"
+    },
+    {
+      "label": "na: test acceptance",
+      "type": "shell",
+      "command": "./bin/na test acceptance --coverage",
+      "group": "test"
+    },
+    {
+      "label": "na: test e2e android",
+      "type": "shell",
+      "command": "./bin/na test e2e --coverage",
+      "group": "test",
+      "dependsOn": ["na: emulator ensure"]
+    },
+    {
+      "label": "na: test e2e ios",
+      "type": "shell",
+      "command": "./bin/na test e2e ios --coverage",
+      "group": "test"
+    },
+    {
+      "label": "na: test all",
+      "type": "shell",
+      "command": "./bin/na test all --coverage",
+      "group": "test"
+    },
+    {
+      "label": "na: coverage html",
+      "type": "shell",
+      "command": "./bin/na coverage --merge --html --check",
+      "group": "test"
+    },
+    {
+      "label": "na: patrol develop current file",
+      "type": "shell",
+      "command": "./bin/na test e2e --develop --target ${relativeFile}",
+      "group": "test",
+      "isBackground": true,
+      "dependsOn": ["na: emulator ensure"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": false
+      }
+    }
+  ]
+}

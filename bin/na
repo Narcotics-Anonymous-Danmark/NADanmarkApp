@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd "${script_dir}/.." && pwd)"
+cd "${repo_root}"
+
+pinned_flutter="$(sed -n 's/.*"flutter"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' .fvmrc | head -1)"
+if [[ -z "${pinned_flutter}" ]]; then
+  echo "[na] .fvmrc does not pin a flutter version" >&2
+  exit 1
+fi
+
+use_fvm_sdk() {
+  local cache="${FVM_CACHE_PATH:-${FVM_HOME:-${HOME}/fvm}}"
+  local sdk="${cache}/versions/${pinned_flutter}"
+  if [[ ! -x "${sdk}/bin/flutter" ]]; then
+    echo "[na] Flutter ${pinned_flutter} is not installed in fvm, installing it"
+    fvm install "${pinned_flutter}"
+  fi
+  if [[ ! -x "${sdk}/bin/flutter" ]]; then
+    echo "[na] hint: fvm did not install Flutter ${pinned_flutter} into ${sdk}; run 'fvm install ${pinned_flutter}' and retry" >&2
+    exit 1
+  fi
+  mkdir -p .fvm
+  ln -sfn "${sdk}" .fvm/flutter_sdk
+  export PATH="${sdk}/bin:${PATH}"
+}
+
+if command -v fvm >/dev/null 2>&1; then
+  use_fvm_sdk
+elif command -v flutter >/dev/null 2>&1; then
+  echo "[na] fvm not found, using $(command -v flutter); 'na doctor' verifies it is Flutter ${pinned_flutter}" >&2
+else
+  echo "[na] neither fvm nor flutter is on PATH; install fvm (https://fvm.app) or Flutter ${pinned_flutter}, then retry" >&2
+  exit 1
+fi
+
+export PATH="${HOME}/.pub-cache/bin:${PATH}"
+
+if [[ -f tool/toolchain.env ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source tool/toolchain.env
+  set +a
+fi
+
+if [[ ! -f .dart_tool/package_config.json ]]; then
+  echo "[na] first run: flutter pub get"
+  flutter pub get
+fi
+
+remove_crash_logs() {
+  rm -f "${repo_root}"/flutter_*.log "${repo_root}"/custom_lint.log
+}
+trap remove_crash_logs EXIT
+
+dart run na_cli "$@"

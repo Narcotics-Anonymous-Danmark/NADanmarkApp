@@ -1,0 +1,102 @@
+name: Set up the toolchain
+description: >
+  Installs Flutter at the version pinned in .fvmrc (the same file fvm reads on
+  developer machines) and the JDK pinned in tool/toolchain.env, restores the
+  pub cache, runs the code generators and optionally activates the Patrol CLI
+  at the version pinned in tool/toolchain.env. .fvmrc and tool/toolchain.env
+  are the only sources of truth for versions; nothing is duplicated here.
+
+inputs:
+  patrol:
+    description: Also activate patrol_cli (version from tool/toolchain.env)
+    required: false
+    default: 'false'
+  generate:
+    description: Run "./bin/na gen all" after installing
+    required: false
+    default: 'true'
+
+outputs:
+  flutter-version:
+    description: The Flutter version that was installed
+    value: ${{ steps.versions.outputs.flutter }}
+  patrol-version:
+    description: The patrol_cli version that was activated (empty when skipped)
+    value: ${{ steps.versions.outputs.patrol }}
+
+runs:
+  using: composite
+  steps:
+    - name: Read the pinned versions
+      id: versions
+      shell: bash
+      run: |
+        set -euo pipefail
+        flutter=$(jq -r '.flutter // empty' .fvmrc)
+        java=$(sed -n 's/^JAVA_VERSION=//p' tool/toolchain.env | tr -d '"' | head -1)
+        patrol=$(sed -n 's/^PATROL_CLI_VERSION=//p' tool/toolchain.env | tr -d '"' | head -1)
+        if [ -z "$flutter" ]; then
+          echo "::error file=.fvmrc::could not read the flutter version from .fvmrc"
+          exit 1
+        fi
+        if [ -z "$java" ]; then
+          echo "::error file=tool/toolchain.env::JAVA_VERSION is not set"
+          exit 1
+        fi
+        echo "flutter=$flutter" >> "$GITHUB_OUTPUT"
+        echo "java=$java" >> "$GITHUB_OUTPUT"
+        if [ "${{ inputs.patrol }}" = "true" ]; then
+          if [ -z "$patrol" ]; then
+            echo "::error file=tool/toolchain.env::PATROL_CLI_VERSION is not set"
+            exit 1
+          fi
+          echo "patrol=$patrol" >> "$GITHUB_OUTPUT"
+        else
+          echo "patrol=" >> "$GITHUB_OUTPUT"
+        fi
+        echo "Flutter $flutter (.fvmrc); JDK $java, patrol_cli ${patrol:-<not requested>} (tool/toolchain.env)"
+
+    - name: Install the JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: ${{ steps.versions.outputs.java }}
+
+    - name: Install Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: stable
+        flutter-version: ${{ steps.versions.outputs.flutter }}
+        cache: true
+
+    - name: Restore the pub cache
+      uses: actions/cache@v4
+      with:
+        path: ~/.pub-cache
+        key: pub-${{ runner.os }}-${{ hashFiles('**/pubspec.yaml') }}
+        restore-keys: |
+          pub-${{ runner.os }}-
+
+    - name: Show the toolchain
+      shell: bash
+      run: |
+        set -euo pipefail
+        flutter --version --machine | jq -r '"Flutter \(.frameworkVersion) · Dart \(.dartSdkVersion)"'
+        java -version 2>&1 | head -1
+
+    - name: Generate sources
+      if: inputs.generate == 'true'
+      shell: bash
+      run: ./bin/na gen all
+
+    - name: Activate the Patrol CLI
+      if: inputs.patrol == 'true'
+      shell: bash
+      env:
+        PATROL_CLI_VERSION: ${{ steps.versions.outputs.patrol }}
+      run: |
+        set -euo pipefail
+        dart pub global activate patrol_cli "$PATROL_CLI_VERSION"
+        echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
+        export PATH="$HOME/.pub-cache/bin:$PATH"
+        patrol --version

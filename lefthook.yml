@@ -1,0 +1,19 @@
+commit-msg:
+  commands:
+    conventional-commit:
+      run: ./bin/na check commit-msg {1}
+
+pre-commit:
+  parallel: true
+  commands:
+    format:
+      glob: "*.dart"
+      run: ./bin/na format --check {staged_files}
+    analyze:
+      glob: "*.dart"
+      run: ./bin/na analyze
+
+pre-push:
+  commands:
+    check:
+      run: ./bin/na check

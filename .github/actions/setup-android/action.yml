@@ -1,0 +1,102 @@
+name: Set up the Android SDK
+description: >
+  Installs the Android command-line tools, platform, build tools (and, on
+  request, the emulator and system image) at the versions pinned in
+  tool/toolchain.env, accepts the licences and configures the Gradle cache.
+  Run setup-toolchain first so JAVA_HOME points at the pinned JDK (actions/setup-java).
+
+inputs:
+  emulator:
+    description: Also install the emulator and the pinned system image
+    required: false
+    default: 'false'
+
+outputs:
+  platform:
+    description: e.g. android-35
+    value: ${{ steps.pins.outputs.platform }}
+  api-level:
+    description: e.g. 35
+    value: ${{ steps.pins.outputs.api_level }}
+  build-tools:
+    description: e.g. 35.0.0
+    value: ${{ steps.pins.outputs.build_tools }}
+  system-image:
+    description: e.g. system-images;android-35;google_apis;x86_64
+    value: ${{ steps.pins.outputs.system_image }}
+  target:
+    description: The system image target, e.g. google_apis
+    value: ${{ steps.pins.outputs.target }}
+  arch:
+    description: The system image architecture, e.g. x86_64
+    value: ${{ steps.pins.outputs.arch }}
+  avd-name:
+    description: The AVD name used locally and in CI
+    value: ${{ steps.pins.outputs.avd_name }}
+  avd-device:
+    description: The AVD hardware profile, e.g. pixel_6
+    value: ${{ steps.pins.outputs.avd_device }}
+
+runs:
+  using: composite
+  steps:
+    - name: Read tool/toolchain.env
+      id: pins
+      shell: bash
+      run: |
+        set -euo pipefail
+        read_pin() {
+          local value
+          value=$(sed -n "s/^$1=//p" tool/toolchain.env | head -1)
+          if [ -z "$value" ]; then
+            echo "::error file=tool/toolchain.env::$1 is not set"
+            exit 1
+          fi
+          printf '%s' "$value"
+        }
+        cmdline_tools=$(read_pin ANDROID_CMDLINE_TOOLS_VERSION)
+        platform=$(read_pin ANDROID_PLATFORM)
+        build_tools=$(read_pin ANDROID_BUILD_TOOLS)
+        system_image=$(read_pin ANDROID_SYSTEM_IMAGE)
+        avd_name=$(read_pin ANDROID_AVD_NAME)
+        avd_device=$(read_pin ANDROID_AVD_DEVICE)
+
+        api_level=${platform#android-}
+        IFS=';' read -r _ _ target arch <<< "$system_image"
+
+        packages="platform-tools platforms;${platform} build-tools;${build_tools}"
+        if [ "${{ inputs.emulator }}" = "true" ]; then
+          packages="$packages emulator ${system_image}"
+        fi
+
+        {
+          echo "cmdline_tools=$cmdline_tools"
+          echo "platform=$platform"
+          echo "api_level=$api_level"
+          echo "build_tools=$build_tools"
+          echo "system_image=$system_image"
+          echo "target=$target"
+          echo "arch=$arch"
+          echo "avd_name=$avd_name"
+          echo "avd_device=$avd_device"
+          echo "packages=$packages"
+        } >> "$GITHUB_OUTPUT"
+        echo "Android SDK packages: $packages"
+
+    - name: Install the Android SDK
+      uses: android-actions/setup-android@v3
+      with:
+        cmdline-tools-version: ${{ steps.pins.outputs.cmdline_tools }}
+        packages: ${{ steps.pins.outputs.packages }}
+        accept-android-sdk-licenses: true
+        log-accepted-android-sdk-licenses: false
+
+    - name: Accept any remaining licences
+      shell: bash
+      run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
+
+    - name: Set up Gradle
+      uses: gradle/actions/setup-gradle@v4
+      with:
+        cache-read-only: ${{ github.event_name == 'pull_request' }}
+        add-job-summary: on-failure

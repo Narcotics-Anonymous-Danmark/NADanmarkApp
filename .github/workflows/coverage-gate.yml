@@ -1,0 +1,58 @@
+name: Coverage gate
+
+# Merges the lcov files every test job uploaded, renders HTML, enforces the
+# floors in coverage.yaml and (on pull requests) keeps one sticky comment with
+# the table. Callers that want the comment must grant pull-requests: write.
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Git ref the coverage belongs to (defaults to the caller's ref)
+        required: false
+        type: string
+        default: ''
+      artifact_pattern:
+        description: Glob matching the coverage artefacts to merge
+        required: false
+        type: string
+        default: coverage-*
+      merged_artifact_name:
+        description: Name of the artefact holding the merged report
+        required: false
+        type: string
+        default: coverage-merged
+      retention_days:
+        description: Retention of the merged artefact
+        required: false
+        type: string
+        default: '7'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref (defaults to the branch this is run from)
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  coverage:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+
+      - uses: ./.github/actions/setup-toolchain
+
+      - uses: ./.github/actions/coverage-report
+        with:
+          artifact_pattern: ${{ inputs.artifact_pattern || 'coverage-*' }}
+          merged_artifact_name: ${{ inputs.merged_artifact_name || 'coverage-merged' }}
+          retention_days: ${{ inputs.retention_days || '7' }}

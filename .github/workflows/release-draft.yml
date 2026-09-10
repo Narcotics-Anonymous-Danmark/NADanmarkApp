@@ -1,0 +1,299 @@
+name: Draft release candidate
+
+# One release number for both stores. This workflow:
+#   1. sets the version + build number in app/pubspec.yaml, commits it and tags it
+#   2. drafts a GitHub release with notes generated from the PRs and commits since the previous release
+#   3. re-runs the analyzer and the unit/widget suites on that exact tag
+#   4. builds the signed Android .aab and the signed iOS .ipa from that exact tag
+#   5. attaches both to the draft release
+#
+# Nothing is shipped here. Publishing the draft release is what triggers the
+# upload to TestFlight and Google Play ("Publish release to stores").
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: How to derive the next version (ignored when "version" is given)
+        required: true
+        default: patch
+        type: choice
+        options: [patch, minor, major, none]
+      version:
+        description: Explicit version, e.g. 1.3.0 (optional)
+        required: false
+        type: string
+        default: ''
+      build:
+        description: Build number for this version (raise it to re-release the same version)
+        required: false
+        type: string
+        default: '1'
+      previous_tag:
+        description: Tag to generate the changelog from (optional, defaults to the last published release)
+        required: false
+        type: string
+        default: ''
+      prerelease:
+        description: Mark the release as a pre-release
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-draft
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      build: ${{ steps.version.outputs.build }}
+      version_code: ${{ steps.version.outputs.version_code }}
+      tag: ${{ steps.version.outputs.tag }}
+      sha: ${{ steps.commit.outputs.sha }}
+
+    steps:
+      - name: Mint a token for the release bot
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
+      - name: Look up the bot's commit identity
+        id: bot
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          SLUG: ${{ steps.app-token.outputs.app-slug }}
+        run: |
+          set -euo pipefail
+          id=$(gh api "/users/${SLUG}%5Bbot%5D" --jq .id)
+          echo "name=${SLUG}[bot]" >> "$GITHUB_OUTPUT"
+          echo "email=${id}+${SLUG}[bot]@users.noreply.github.com" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      - uses: ./.github/actions/setup-toolchain
+        with:
+          generate: 'false'
+
+      - name: Work out the release numbers
+        id: version
+        env:
+          VERSION_INPUT: ${{ inputs.version }}
+          BUMP: ${{ inputs.bump }}
+          BUILD: ${{ inputs.build }}
+        run: |
+          set -euo pipefail
+          ./bin/na release version ${VERSION_INPUT} \
+            --bump "$BUMP" \
+            --build "$BUILD" \
+            --github-output
+
+      - name: Make sure the tag is free
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "::error::Tag $TAG already exists. Delete that tag and its draft release, or raise the build number."
+            exit 1
+          fi
+          echo "Tag $TAG is free"
+
+      - name: Commit the version bump and tag it
+        id: commit
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
+          BUILD: ${{ steps.version.outputs.build }}
+          BOT_NAME: ${{ steps.bot.outputs.name }}
+          BOT_EMAIL: ${{ steps.bot.outputs.email }}
+          TARGET_BRANCH: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          git config user.name "$BOT_NAME"
+          git config user.email "$BOT_EMAIL"
+
+          if git diff --quiet -- app/pubspec.yaml; then
+            echo "app/pubspec.yaml already says $VERSION build $BUILD — nothing to commit"
+          else
+            git add app/pubspec.yaml
+            git commit -m "chore(release): $VERSION build $BUILD"
+            git push origin "HEAD:${TARGET_BRANCH}"
+          fi
+
+          git tag -a "$TAG" -m "$VERSION build $BUILD"
+          git push origin "refs/tags/$TAG"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Generate release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
+          BUILD: ${{ steps.version.outputs.build }}
+          VERSION_CODE: ${{ steps.version.outputs.version_code }}
+          SHA: ${{ steps.commit.outputs.sha }}
+          PREVIOUS_TAG_INPUT: ${{ inputs.previous_tag }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          previous="$PREVIOUS_TAG_INPUT"
+          if [ -z "$previous" ]; then
+            previous=$(gh release list --limit 100 --json tagName,isDraft \
+              --jq 'map(select(.isDraft == false) | .tagName) | map(select(test("^[0-9]+\\.[0-9]+\\.[0-9]+"))) | .[0] // ""')
+          fi
+          echo "Previous release: ${previous:-<none>}"
+
+          if [ -n "$previous" ]; then
+            gh api "repos/${REPOSITORY}/releases/generate-notes" -X POST \
+              -f tag_name="$TAG" \
+              -f target_commitish="$SHA" \
+              -f previous_tag_name="$previous" \
+              --jq .body > generated.md
+            git log --no-merges --pretty='- %s (%h)' "$previous..$TAG" > commits.md || true
+          else
+            gh api "repos/${REPOSITORY}/releases/generate-notes" -X POST \
+              -f tag_name="$TAG" \
+              -f target_commitish="$SHA" \
+              --jq .body > generated.md
+            git log --no-merges --pretty='- %s (%h)' -n 50 "$TAG" > commits.md || true
+          fi
+
+          {
+            echo '<!-- release-notes:start -->'
+            echo '_Skriv de brugerrettede noter her. Denne sektion sendes som release notes til_'
+            echo '_Google Play. TestFlight-noterne ("What to Test") skrives manuelt i App Store_'
+            echo '_Connect — resten af teksten er kun til os._'
+            echo '<!-- release-notes:end -->'
+            echo
+            echo "## Ændringer siden ${previous:-første automatiske release}"
+            echo
+            cat generated.md
+            echo
+            echo '<details><summary>Commits</summary>'
+            echo
+            cat commits.md
+            echo
+            echo '</details>'
+            echo
+            echo '---'
+            echo
+            echo "**Version** \`$VERSION\` · **build** \`$BUILD\` · **Android versionCode** \`$VERSION_CODE\`"
+            echo
+            echo 'Signerede artefakter (.aab + .ipa) vedhæftes af dette workflow.'
+            echo 'Når denne release udgives (draft → published), sendes præcis de artefakter til'
+            echo 'Google Play (internal testing) og TestFlight (internal testing).'
+            echo
+            echo '- [ ] Release notes skrevet i sektionen ovenfor'
+            echo '- [ ] Artefakter vedhæftet (se nedenfor)'
+            echo '- [ ] Testet på en fysisk enhed'
+          } > body.md
+
+          head -c 100000 body.md > body.trimmed.md && mv body.trimmed.md body.md
+
+      - name: Create the draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
+          BUILD: ${{ steps.version.outputs.build }}
+          SHA: ${{ steps.commit.outputs.sha }}
+          PRERELEASE: ${{ inputs.prerelease }}
+        run: |
+          set -euo pipefail
+          title="$VERSION"
+          if [ "$BUILD" != "1" ]; then title="$VERSION (build $BUILD)"; fi
+          flags=()
+          if [ "$PRERELEASE" = "true" ]; then flags+=(--prerelease); fi
+          gh release create "$TAG" \
+            --draft \
+            --title "$title" \
+            --notes-file body.md \
+            --target "$SHA" \
+            "${flags[@]}"
+          echo "Draft release $TAG created" >> "$GITHUB_STEP_SUMMARY"
+
+  smoke-analyze:
+    needs: prepare
+    uses: ./.github/workflows/analyze.yml
+    with:
+      ref: ${{ needs.prepare.outputs.tag }}
+
+  smoke-test:
+    needs: prepare
+    uses: ./.github/workflows/test-unit-widget.yml
+    with:
+      ref: ${{ needs.prepare.outputs.tag }}
+      artifact_name: coverage-release-smoke
+
+  android:
+    needs: [prepare, smoke-analyze, smoke-test]
+    uses: ./.github/workflows/build-android.yml
+    secrets: inherit
+    with:
+      ref: ${{ needs.prepare.outputs.tag }}
+      expected_version: ${{ needs.prepare.outputs.version }}
+      expected_build: ${{ needs.prepare.outputs.build }}
+      artifact_name: android-release
+
+  ios:
+    needs: [prepare, smoke-analyze, smoke-test]
+    uses: ./.github/workflows/build-ios.yml
+    secrets: inherit
+    with:
+      ref: ${{ needs.prepare.outputs.tag }}
+      expected_version: ${{ needs.prepare.outputs.version }}
+      expected_build: ${{ needs.prepare.outputs.build }}
+      artifact_name: ios-release
+
+  attach:
+    needs: [prepare, android, ios]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Download the signed artefacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artefacts
+          pattern: '*-release'
+          merge-multiple: true
+
+      - name: Attach them to the draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.prepare.outputs.tag }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+          BUILD: ${{ needs.prepare.outputs.build }}
+          VERSION_CODE: ${{ needs.prepare.outputs.version_code }}
+          REPOSITORY: ${{ github.repository }}
+          SERVER_URL: ${{ github.server_url }}
+        run: |
+          set -euo pipefail
+          ls -la artefacts
+          test -n "$(ls artefacts/*.aab 2>/dev/null)" || { echo "::error::no .aab to attach"; exit 1; }
+          test -n "$(ls artefacts/*.ipa 2>/dev/null)" || { echo "::error::no .ipa to attach"; exit 1; }
+          gh release upload "$TAG" artefacts/*.aab artefacts/*.ipa --clobber -R "$REPOSITORY"
+
+          {
+            echo "## Draft release $TAG is ready"
+            echo
+            echo "Version $VERSION build $BUILD (versionCode $VERSION_CODE)"
+            echo
+            for f in artefacts/*; do echo "- \`$(basename "$f")\` ($(du -h "$f" | cut -f1))"; done
+            echo
+            echo "Write the release notes, then **publish** the release to send these exact builds to TestFlight and Google Play."
+            echo
+            echo "${SERVER_URL}/${REPOSITORY}/releases/tag/$TAG"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,155 @@
+name: Publish release to stores
+
+# Fires when a release goes from draft to published. Nothing is rebuilt: the
+# exact artefacts that were attached to the release are downloaded and shipped,
+# so what testers get is bit-for-bit what was reviewed on the release page.
+#
+#   Android -> Google Play, internal testing track only
+#   iOS     -> TestFlight, internal group only
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to publish (e.g. 1.3.0)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-${{ inputs.tag || github.event.release.tag_name }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    outputs:
+      tag: ${{ steps.info.outputs.tag }}
+      version: ${{ steps.info.outputs.version }}
+      build: ${{ steps.info.outputs.build }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.event.release.tag_name }}
+
+      - uses: ./.github/actions/setup-toolchain
+        with:
+          generate: 'false'
+
+      - name: Read the release numbers from the tagged checkout
+        id: info
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag || github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          ./bin/na release version --json > "$RUNNER_TEMP/version.json"
+          version=$(jq -r '.version // empty' "$RUNNER_TEMP/version.json")
+          build=$(jq -r '.build // empty' "$RUNNER_TEMP/version.json")
+          if [ -z "$version" ]; then
+            echo "::error::could not read the version from app/pubspec.yaml at tag $TAG"; exit 1
+          fi
+          if [ -z "$build" ]; then
+            echo "::error::app/pubspec.yaml at tag $TAG has no build number — it was not tagged by the release workflow"; exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "build=$build" >> "$GITHUB_OUTPUT"
+          echo "Publishing $version build $build from tag $TAG"
+
+          assets=$(gh release view "$TAG" --json assets --jq '.assets[].name')
+          echo "Assets on the release:"; echo "$assets"
+          echo "$assets" | grep -q '\.aab$' || { echo "::error::the release has no .aab asset"; exit 1; }
+          echo "$assets" | grep -q '\.ipa$' || { echo "::error::the release has no .ipa asset"; exit 1; }
+
+  play-store:
+    needs: verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.verify.outputs.tag }}
+
+      - uses: ./.github/actions/setup-toolchain
+        with:
+          generate: 'false'
+
+      - name: Download the signed bundle from the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.verify.outputs.tag }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          gh release download "$TAG" --pattern '*.aab' --dir dist
+          gh release view "$TAG" --json body --jq .body > notes.md
+          ls -la dist
+
+      - name: Upload to Google Play (internal testing)
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          PLAY_RELEASE_NOTES_LANGUAGE: ${{ vars.PLAY_RELEASE_NOTES_LANGUAGE }}
+        run: |
+          set -euo pipefail
+          aab=$(ls dist/*.aab | head -1)
+          ./bin/na publish play --aab "$aab" --notes notes.md
+
+      - name: Summary
+        if: success()
+        env:
+          VERSION: ${{ needs.verify.outputs.version }}
+          BUILD: ${{ needs.verify.outputs.build }}
+        run: |
+          echo "### Google Play" >> "$GITHUB_STEP_SUMMARY"
+          echo "$VERSION ($BUILD) released to the internal testing track" >> "$GITHUB_STEP_SUMMARY"
+
+  testflight:
+    needs: verify
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.verify.outputs.tag }}
+
+      - uses: ./.github/actions/setup-toolchain
+        with:
+          generate: 'false'
+
+      - name: Download the signed archive from the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.verify.outputs.tag }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          gh release download "$TAG" --pattern '*.ipa' --dir dist
+          ls -la dist
+
+      - name: Upload to TestFlight (internal testing)
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          ipa=$(ls dist/*.ipa | head -1)
+          ./bin/na publish testflight --ipa "$ipa" --no-wait
+
+      - name: Summary
+        if: success()
+        env:
+          VERSION: ${{ needs.verify.outputs.version }}
+          BUILD: ${{ needs.verify.outputs.build }}
+        run: |
+          echo "### TestFlight" >> "$GITHUB_STEP_SUMMARY"
+          echo "$VERSION ($BUILD) uploaded to App Store Connect" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Processing takes another 10-40 minutes on Apple's side; the internal group picks the build up automatically when it finishes. Watch for a rejection email — this job cannot see the outcome." >> "$GITHUB_STEP_SUMMARY"

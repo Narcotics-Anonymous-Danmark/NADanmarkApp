@@ -1,0 +1,32 @@
+name: nadanmark_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.11.0
+
+workspace:
+  - app
+  - tool/na_cli
+  - tool/na_lints
+  - packages/core/na_kernel
+  - packages/core/na_ports
+  - packages/core/na_design
+  - packages/core/na_l10n
+  - packages/core/na_testing
+  - packages/features/feature_shell
+  - packages/features/feature_settings
+  - packages/features/feature_contact
+  - packages/features/feature_jft
+  - packages/features/feature_legacy_migration
+  - packages/adapters/adapter_clock
+  - packages/adapters/adapter_storage
+  - packages/adapters/adapter_jft
+  - packages/adapters/adapter_links
+  - packages/adapters/adapter_legacy_store
+
+dev_dependencies:
+  coverage: ^1.11.0
+  custom_lint: ^0.8.0
+  na_lints:
+    path: tool/na_lints
+  very_good_analysis: ^10.0.0

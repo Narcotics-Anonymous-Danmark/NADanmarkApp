@@ -1,0 +1,145 @@
+name: E2E tests (Android emulator)
+
+# Patrol tests on a hardware-accelerated emulator. Every version (API level,
+# system image, AVD profile, patrol_cli) comes from tool/toolchain.env so the
+# CI emulator is the same one "./bin/na bootstrap android" creates locally.
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Git ref to test (defaults to the caller's ref)
+        required: false
+        type: string
+        default: ''
+      artifact_name:
+        description: Name of the coverage artefact
+        required: false
+        type: string
+        default: coverage-e2e-android
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref to test (defaults to the branch this is run from)
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+
+    steps:
+      - name: Enable KVM for the emulator
+        run: |
+          set -euo pipefail
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+
+      - uses: ./.github/actions/setup-toolchain
+        with:
+          patrol: 'true'
+
+      - uses: ./.github/actions/setup-android
+        id: android
+        with:
+          emulator: 'true'
+
+      - name: Restore the AVD
+        id: avd-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ runner.os }}-${{ steps.android.outputs.system-image }}-${{ steps.android.outputs.avd-device }}-${{ steps.android.outputs.avd-name }}
+
+      - name: Create the AVD and a boot snapshot
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ steps.android.outputs.api-level }}
+          target: ${{ steps.android.outputs.target }}
+          arch: ${{ steps.android.outputs.arch }}
+          profile: ${{ steps.android.outputs.avd-device }}
+          avd-name: ${{ steps.android.outputs.avd-name }}
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          emulator-boot-timeout: 600
+          script: echo "Generated AVD snapshot for caching."
+
+      - name: Run the Patrol tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ steps.android.outputs.api-level }}
+          target: ${{ steps.android.outputs.target }}
+          arch: ${{ steps.android.outputs.arch }}
+          profile: ${{ steps.android.outputs.avd-device }}
+          avd-name: ${{ steps.android.outputs.avd-name }}
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          emulator-boot-timeout: 600
+          script: |
+            set -uo pipefail
+            adb devices
+            attempt=1
+            until ./bin/na test e2e --device emulator-5554 --coverage; do
+              if [ "$attempt" -ge 2 ]; then
+                echo "::error::Patrol tests failed after $attempt attempts"
+                exit 1
+              fi
+              attempt=$((attempt + 1))
+              echo "::warning::Patrol tests failed, retrying (attempt $attempt of 2)"
+              adb shell am force-stop dk.nadanmark.app || true
+            done
+
+      - name: Report in the run summary
+        if: always()
+        run: |
+          set -euo pipefail
+          {
+            echo '### E2E tests (Android emulator)'
+            echo
+            echo "System image \`${{ steps.android.outputs.system-image }}\`, profile \`${{ steps.android.outputs.avd-device }}\`"
+            echo
+            if ls coverage/*.lcov.info > /dev/null 2>&1; then
+              for f in coverage/*.lcov.info; do
+                echo "- \`$(basename "$f")\` ($(grep -c '^SF:' "$f") files)"
+              done
+            else
+              echo '_No coverage files were produced._'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact_name || 'coverage-e2e-android' }}
+          path: coverage/*.lcov.info
+          retention-days: 7
+          if-no-files-found: warn
+
+      - name: Upload screenshots, videos and test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-android-artifacts
+          path: |
+            app/build/app/outputs/**/patrol*
+            app/build/app/outputs/androidTest-results/**
+            app/build/app/reports/androidTests/**
+          retention-days: 7
+          if-no-files-found: ignore

@@ -1,0 +1,70 @@
+name: Merge and report coverage
+description: >
+  Downloads every coverage artefact the test jobs uploaded, merges them with
+  "./bin/na coverage --merge --html --check" (which enforces the floors in
+  coverage.yaml and appends a table to the step summary), uploads the merged
+  report and, on pull requests, keeps one sticky comment with the table up
+  to date. Expects the repository to be checked out and setup-toolchain to
+  have run.
+
+inputs:
+  artifact_pattern:
+    description: Glob matching the coverage artefacts to merge
+    required: false
+    default: coverage-*
+  merged_artifact_name:
+    description: Name of the artefact holding the merged report
+    required: false
+    default: coverage-merged
+  retention_days:
+    description: Retention of the merged artefact
+    required: false
+    default: '7'
+  comment:
+    description: Post/update the sticky pull request comment
+    required: false
+    default: 'true'
+
+runs:
+  using: composite
+  steps:
+    - name: Download the coverage artefacts
+      uses: actions/download-artifact@v4
+      with:
+        pattern: ${{ inputs.artifact_pattern }}
+        merge-multiple: true
+        path: coverage
+
+    - name: Merge, render and check the floors
+      id: merge
+      shell: bash
+      run: |
+        set -euo pipefail
+        rm -f coverage/merged.lcov.info coverage/summary.md
+        rm -rf coverage/html
+        echo "Coverage inputs:"
+        ls -la coverage/*.lcov.info
+        ./bin/na coverage --merge --html --check
+        if [ ! -f coverage/summary.md ]; then
+          cp "$GITHUB_STEP_SUMMARY" coverage/summary.md
+        fi
+
+    - name: Upload the merged report
+      if: always() && hashFiles('coverage/merged.lcov.info') != ''
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.merged_artifact_name }}
+        path: |
+          coverage/merged.lcov.info
+          coverage/html
+        retention-days: ${{ inputs.retention_days }}
+        if-no-files-found: error
+        overwrite: true
+
+    - name: Comment on the pull request
+      if: always() && inputs.comment == 'true' && github.event_name == 'pull_request' && hashFiles('coverage/summary.md') != ''
+      uses: marocchino/sticky-pull-request-comment@v2
+      continue-on-error: true
+      with:
+        header: coverage
+        path: coverage/summary.md

@@ -1,0 +1,114 @@
+name: Build Android (signed)
+
+# Builds a signed Android App Bundle. Reusable: called by "Draft release
+# candidate", and dispatchable on its own to test the pipeline without touching
+# a release.
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Git ref to build (tag, branch or SHA)
+        required: true
+        type: string
+      expected_version:
+        description: Fail if the checkout is not this version
+        required: false
+        type: string
+        default: ''
+      expected_build:
+        description: Fail if the checkout is not this build number
+        required: false
+        type: string
+        default: ''
+      artifact_name:
+        required: false
+        type: string
+        default: android-release
+    outputs:
+      artifact_name:
+        value: ${{ inputs.artifact_name }}
+      aab:
+        value: ${{ jobs.build.outputs.aab }}
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref to build (defaults to the branch this is run from)
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    outputs:
+      aab: ${{ steps.build.outputs.aab }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+
+      - uses: ./.github/actions/setup-toolchain
+
+      - uses: ./.github/actions/setup-android
+
+      - uses: ./.github/actions/write-env
+        with:
+          na_api_basic_auth: ${{ secrets.NA_API_BASIC_AUTH }}
+          google_maps_api_key: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+
+      - name: Check the version matches what the release expects
+        if: inputs.expected_version != ''
+        env:
+          EXPECTED_VERSION: ${{ inputs.expected_version }}
+          EXPECTED_BUILD: ${{ inputs.expected_build }}
+        run: |
+          set -euo pipefail
+          ./bin/na release version --json > "$RUNNER_TEMP/version.json"
+          version=$(jq -r .version "$RUNNER_TEMP/version.json")
+          build=$(jq -r .build "$RUNNER_TEMP/version.json")
+          if [ "$version" != "$EXPECTED_VERSION" ]; then
+            echo "::error::checkout is version $version but the release expects $EXPECTED_VERSION"
+            exit 1
+          fi
+          if [ -n "$EXPECTED_BUILD" ] && [ "$build" != "$EXPECTED_BUILD" ]; then
+            echo "::error::checkout is build $build but the release expects $EXPECTED_BUILD"
+            exit 1
+          fi
+          echo "Building $version build $build"
+
+      - name: Pre-flight (secrets, versions, clean worktree)
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: ./bin/na release check android
+
+      - name: Build the signed bundle
+        id: build
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          set -euo pipefail
+          ./bin/na release android --output dist
+          aab=$(ls dist/*.aab | head -1)
+          echo "aab=$(basename "$aab")" >> "$GITHUB_OUTPUT"
+          echo "### Android bundle" >> "$GITHUB_STEP_SUMMARY"
+          echo "\`$(basename "$aab")\` — $(du -h "$aab" | cut -f1)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact_name || 'android-release' }}
+          path: dist/*.aab
+          retention-days: 7
+          if-no-files-found: error
