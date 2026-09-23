@@ -37,7 +37,6 @@ final class SideMenu extends ConsumerWidget {
       footer: Text(
         l10n.menuVersion(info.version),
         key: const Key('menu-version'),
-        style: NaTheme.of(context).typography.caption,
       ),
     );
   }
