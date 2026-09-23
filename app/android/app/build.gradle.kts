@@ -36,7 +36,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "dk.nadanmark.app"
+        applicationId = "dk.nadanmark.app.flutter"
         minSdk = 26
         targetSdk = 35
         versionCode = flutter.versionCode

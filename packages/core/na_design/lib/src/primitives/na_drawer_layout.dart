@@ -55,7 +55,14 @@ final class NaDrawerLayout extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: SizedBox(
               width: width,
-              child: ExcludeSemantics(excluding: !open, child: drawer),
+              child: ExcludeSemantics(
+                excluding: !open,
+                child: MediaQuery.removePadding(
+                  context: context,
+                  removeRight: true,
+                  child: drawer,
+                ),
+              ),
             ),
           ),
         ),
