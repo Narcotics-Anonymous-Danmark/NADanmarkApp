@@ -18,7 +18,7 @@ final class SettingsBody extends ConsumerWidget {
         LanguageRow(language: settings.language),
         FirstDayRow(firstDay: settings.firstDayOfWeek),
         UnitOrderRow(order: settings.cleanTimeUnitOrder),
-        SearchRadiusCard(radius: settings.searchRadius),
+        SearchRadiusRow(radius: settings.searchRadius),
       ],
     );
   }
@@ -141,8 +141,8 @@ final class UnitOrderRow extends ConsumerWidget {
   }
 }
 
-final class SearchRadiusCard extends ConsumerWidget {
-  const SearchRadiusCard({required this.radius, super.key});
+final class SearchRadiusRow extends ConsumerWidget {
+  const SearchRadiusRow({required this.radius, super.key});
 
   final Km radius;
 
@@ -154,14 +154,16 @@ final class SearchRadiusCard extends ConsumerWidget {
       Dragging(:final radius) => radius,
       NoDraft() => radius,
     };
-    return NaCard(
+    return NaListBlock(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             l10n.settingsSearchRangeValue(shown.value),
             key: const Key('settings-search-range-caption'),
-            style: theme.typography.body,
+            style: theme.typography.body.copyWith(
+              color: theme.colors.primary,
+            ),
           ),
           NaSlider(
             key: const Key('settings-search-range-slider'),

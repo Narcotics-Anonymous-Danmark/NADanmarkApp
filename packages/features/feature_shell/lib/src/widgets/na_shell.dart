@@ -20,6 +20,7 @@ final class NaShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final menu = ref.watch(menuControllerProvider);
+    final dock = ref.watch(dockedPlayerProvider);
     final behaviour = const BackRule().resolve(location: location, menu: menu);
     return PopScope<Object>(
       canPop: behaviour is LeaveApp,
@@ -40,11 +41,34 @@ final class NaShell extends ConsumerWidget {
         drawer: SideMenu(location: location),
         onDismiss: () => ref.read(menuControllerProvider.notifier).close(),
         dismissLabel: l10n.actionCloseMenu,
-        body: Column(
+        body: Stack(
           children: [
-            const GlobalLoadingBar(),
-            Expanded(child: child),
-            const DockedPlayerHost(),
+            Column(
+              children: [
+                Expanded(
+                  child: switch (dock) {
+                    NoPlayer() => child,
+                    PlayerDocked() => MediaQuery.removePadding(
+                      context: context,
+                      removeBottom: true,
+                      child: child,
+                    ),
+                  },
+                ),
+                const DockedPlayerHost(),
+              ],
+            ),
+            const Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: SafeArea(
+                bottom: false,
+                left: false,
+                right: false,
+                child: IgnorePointer(child: GlobalLoadingBar()),
+              ),
+            ),
           ],
         ),
       ),
@@ -58,7 +82,7 @@ final class GlobalLoadingBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) =>
       switch (ref.watch(globalLoadingProvider)) {
-        LoadingIdle() => const SizedBox(height: NaIndeterminateBar.height),
+        LoadingIdle() => const SizedBox.shrink(),
         LoadingActive(:final text) => NaIndeterminateBar(
           key: const Key('global-loading-bar'),
           statusText: text,
@@ -73,9 +97,12 @@ final class DockedPlayerHost extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) =>
       switch (ref.watch(dockedPlayerProvider)) {
         NoPlayer() => const SizedBox.shrink(),
-        PlayerDocked(:final player, :final height) => SizedBox(
-          height: height,
-          child: player,
+        PlayerDocked(:final player, :final height) => ColoredBox(
+          color: NaTheme.of(context).colors.surface,
+          child: SafeArea(
+            top: false,
+            child: SizedBox(height: height, child: player),
+          ),
         ),
       };
 }

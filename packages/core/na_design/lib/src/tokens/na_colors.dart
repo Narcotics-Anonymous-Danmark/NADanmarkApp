@@ -7,6 +7,8 @@ final class NaColors {
   const NaColors({
     required this.background,
     required this.surface,
+    required this.statusBar,
+    required this.statusBarBrightness,
     required this.primary,
     required this.secondary,
     required this.onPrimary,
@@ -21,6 +23,8 @@ final class NaColors {
   static const light = NaColors(
     background: Color(0xFFDDDDDD),
     surface: Color(0xFFEEEEEE),
+    statusBar: Color(0xFF000000),
+    statusBarBrightness: Brightness.dark,
     primary: Color(0xFF0A61AD),
     secondary: Color(0xFF0B77D3),
     onPrimary: Color(0xFFFFFFFF),
@@ -34,6 +38,8 @@ final class NaColors {
 
   final Color background;
   final Color surface;
+  final Color statusBar;
+  final Brightness statusBarBrightness;
   final Color primary;
   final Color secondary;
   final Color onPrimary;
