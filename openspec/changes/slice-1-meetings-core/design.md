@@ -63,7 +63,7 @@ package.
 All of these are pure types in `na_kernel/lib/src/meetings/`:
 - **Meeting data:** `Meeting`, `MeetingId`, `MunicipalityName`.
 - **Venue:** `MeetingVenue` as `InPerson | Virtual(link) | Hybrid(link)`.
-- **Coordinates:** `MeetingLocation` as `Located(GeoPoint) | Unlocated`.
+- **Coordinates:** `MeetingLocation` as `Mapped(GeoPoint) | Unmapped`.
 - **Contact fields:** `DialIn`, `MeetingComment` and the list of present
   `LocationLine`s.
 
@@ -79,6 +79,17 @@ and 7 reuse them unchanged. Nullable and blank BMLT fields stop in
 `na_kernel/lib/src/boundary/bmlt_meeting_reader.dart`. That reader turns a JSON
 map into a `Meeting` through `JsonReader`, trimming values and mapping a blank
 value to the "absent" case of the matching sealed type.
+
+Decisions taken while implementing:
+- **Malformed rows are skipped.** A row without a readable `id_bigint`,
+  `weekday_tinyint` or `start_time` is left out rather than failing the whole
+  list, so one bad record never blanks the page. A response that is neither a
+  list nor `{}` is still a `DecodeFailure`.
+- **Directions need coordinates.** "Directions" is offered only for a meeting
+  with coordinates. `0,0` or unreadable values count as none, because the
+  legacy URL would otherwise open `query=undefined,undefined`.
+- **Coordinates are named `Mapped` / `Unmapped`.** `Located` stays free for
+  the GPS fix type in slice 2.
 
 ### D3 Formats
 
@@ -111,8 +122,10 @@ adapters.
 - `denmarkMunicipalities()` returns `Outcome<List<MunicipalityName>, Failure>`
 
 `MeetingFormatsPort`:
-- `formatRows()` returns `Outcome<List<FormatRow>, Failure>`; it runs both
-  GetFormats queries concatenated.
+- `formatRows()` returns `Outcome<List<FormatRow>, Failure>`; it runs
+  `GetFormats&lang_enum=da` and `GetFormats&lang_enum=en` and concatenates
+  the rows. The live Danish server returns `da` rows for the default query and
+  `[]` for `lang_enum=dk`, so the legacy pair never yielded English names.
 
 The Tomato methods arrive in slice 2. Keeping the ports this small keeps each
 slice's mimics honest.
@@ -148,9 +161,13 @@ This adds a `BusyActivity` enum (`findingMeetings`, and later `locating` and
 
 `feature_shell` subscribes on the `EventBus`. It maps each event to
 `GlobalLoading.present(text)` / `dismiss()`, taking the text from the ARB.
-Features publish these through a small `BusyTracker.track(activity, future)`
-in `feature_meetings`. `track` always ends in `finally`, so a failed request
-never leaves the bar stuck.
+Features publish these through a small `BusyTracker.track(activity, work)`.
+It lives in `na_kernel` next to the `EventBus`, because the nearby search and
+events need it too and it is pure logic over the port. `track` always ends in
+`finally`, so a failed request never leaves the bar stuck. The shell's
+`LoadingActive` holds a `LoadingStatus` (literal text or a `BusyActivity`),
+and the loading-bar widget turns the activity into ARB text at build time,
+so the notifier needs no localisation.
 
 Alternative: move `GlobalLoading` into `na_ports`. It was rejected because the
 architecture routes cross-feature signals through the `EventBus`, and the text
@@ -208,10 +225,21 @@ These go in `na_design`:
 
 Chip tones map to the legacy colours:
 - alert → danger
-- language → a new `tertiary` token, `#5260ff` (the legacy
-  `--ion-color-tertiary`)
+- language → a new `tertiary` token
 - audience → primary
 - facility and content → a new `dark` token, `#222428`
+
+Accessibility changes found by the `textContrastGuideline` checks (D10):
+- White text on the legacy danger red `#F04141` measures 3.8:1, and less on
+  small anti-aliased chip text. `danger` becomes `#B71C1C` (6.4:1 on white,
+  5.7:1 on the `#eeeeee` surface), which also fixes slice 0's red error text.
+- The legacy tertiary `#5260ff` fails at chip size. `tertiary` becomes
+  `#3F4BD9` (6.5:1 on white).
+- Chip text is 13 px instead of the legacy 11 px, and popover key badges use
+  16 px text: at smaller sizes the anti-aliased strokes fail the measured
+  contrast even where the colours pass.
+- The range slider's track gesture is excluded from semantics; its two thumbs
+  carry the slider semantics and actions.
 
 ### D10 Goldens and accessibility
 
@@ -231,6 +259,22 @@ Slice 0 components and pages (settings, contact, JFT, home, shell) get the
 same treatment in a separate task group, so any regression they reveal stays
 visible on its own.
 
+The slice 0 checks found two accessibility problems, both fixed:
+- The selected side-menu entry showed its 16 px label in the secondary blue
+  (3.9:1 on the surface). The label is now primary blue (6:1); the selection
+  is shown by the secondary-blue icon and a secondary-blue bar on the left
+  edge. The secondary blue stays as it is, because today's section header
+  (18 px, large text, 3:1 required) depends on it.
+- The option dialog's "Cancel" button was 42 px tall; it now has a 48 × 48
+  minimum.
+
+Two helpers exist because of a limit of the text-contrast check:
+`expectAccessible` runs all four guidelines, and `expectTapTargetsAccessible`
+leaves out contrast. The second is used only where a dialog route sits over a
+dimmed page and the check mis-places the text it samples. The same content
+is checked for contrast on its own. `na_design` takes `na_testing` as a dev
+dependency so its own tests share these helpers.
+
 ### D11 Legacy import
 
 `LegacyMeetingFormatsTranslation` in the kernel boundary:
@@ -247,16 +291,22 @@ The existing legacy-mapped ARB keys stay: `listfull`, `findingMtgs`,
 `back`, `nothingFound`, `meetingFormats`, `close`, and the weekday names.
 
 These values change:
-- `bus` in da becomes "Bus"
-- `train` in da becomes "Tog"
-- `weekdays` in en becomes "All days"
+- `bus` in da becomes "Bus", `train` in da becomes "Tog".
+- `findingMtgs` becomes "Finding meetings…" / "Finder møder …".
+- The English values follow the spec's sentence case: `tempClosed`
+  "Temporarily closed", `virtualLink` "Virtual link", `phoneMeeting` "Phone
+  meeting dial-in", `meetingFormats` "Meeting formats", `nothingFound`
+  "Nothing found", `weekdays` "All days". The Danish values are unchanged.
 
 These keys are new:
 - `municipalityOnline` ("Online")
-- `meetingsLoadFailed`
-- `tryAgain`
-- `hourRangeLabel` (accessibility)
-- `meetingFormatsOpen` (the chip-row semantics label)
+- `meetingsLoadFailed`, `tryAgain`
+- `hourRangeLower`, `hourRangeUpper` (the accessibility labels of the two
+  hour-range thumbs, which the acceptance tests also drive)
+- `meetingFormatsOpen` (the chip-row semantics label), `meetingDayFilter` ("Day", the day selector label)
+- `meetingDayCount` ("{day} ({count})"), `meetingBadge` ("{day} {start} -
+  {end}"), `meetingBusLines` ("Bus: {lines}"), `meetingTrainLines`
+  ("Train: {lines}" / "Tog: {lines}")
 
 The postal code is a plain location line and needs no label. The
 `docs/LEGACY_PARITY.md` rows for these keys are corrected to the key
@@ -265,10 +315,13 @@ that were never adopted.
 
 ## Risks / Trade-offs
 
-- **Danish collation.** Dart has no ICU collation. `DanishCollation` orders
-  a–z, æ, ø, å, case-insensitively, and treats "aa" as plain letters, which
-  matches `localeCompare('da')` for BMLT format names. Table-driven tests
-  cover the legacy Jest cases.
+- **Danish collation.** Dart has no ICU collation. `DanishCollation` follows
+  ICU `da` for the letters BMLT format names use: a–z, then æ (and ä), ø (and
+  ö), å (and "aa"), case-insensitive first, case as tie-break, common accents
+  folded to their base letter. Table-driven tests cover the legacy Jest cases.
+- **Imported legacy cache is Danish only.** The legacy app cached only `da`
+  rows, so after the import an English UI shows Danish format names until
+  the cache expires (at most 7 days). Accepted; the Danish UI is the default.
 - **Popover and system back.** `showGeneralDialog` uses the root navigator
   above the `ShellRoute`. If GoRouter handles the back press before the
   dialog, the acceptance scenario "Back closes the formats popover first"

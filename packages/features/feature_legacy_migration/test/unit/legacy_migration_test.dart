@@ -130,4 +130,52 @@ void main() {
     expect(ran.toString(), contains('imported: 1'));
     expect(ran, isNot(const MigrationAlreadyDone()));
   });
+
+  group('meeting formats cache', () {
+    Map<String, Object> dumpWith({required Object formats}) => Map.unmodifiable(
+      {
+        'meeting_formats_v1': {'fetchedAt': 1757500000000, 'formats': formats},
+      },
+    );
+
+    test('a cache with rows is copied and counted as imported', () async {
+      final harness = TestContainer.build(
+        legacyStore: LegacyStoreFound(
+          entries: dumpWith(formats: [aBmltFormatJson()]),
+        ),
+      );
+      addTearDown(harness.dispose);
+      final run = await harness.read(legacyMigrationProvider).runIfNeeded();
+      expect((run as MigrationRan).importedKeys, 1);
+      expect(
+        harness.storage.snapshot['meetingFormatsCache'],
+        startsWith('{"fetchedAt":1757500000000,"formats":[{'),
+      );
+    });
+
+    test('an empty cache is dropped and counted as skipped', () async {
+      final harness = TestContainer.build(
+        legacyStore: LegacyStoreFound(entries: dumpWith(formats: <Object>[])),
+      );
+      addTearDown(harness.dispose);
+      final run = await harness.read(legacyMigrationProvider).runIfNeeded();
+      expect((run as MigrationRan).skippedKeys, 1);
+      expect(
+        harness.storage.snapshot.containsKey('meetingFormatsCache'),
+        isFalse,
+      );
+    });
+
+    test('an existing cache is never overwritten', () async {
+      final harness = TestContainer.build(
+        storedValues: {'meetingFormatsCache': 'already here'},
+        legacyStore: LegacyStoreFound(
+          entries: dumpWith(formats: [aBmltFormatJson()]),
+        ),
+      );
+      addTearDown(harness.dispose);
+      await harness.read(legacyMigrationProvider).runIfNeeded();
+      expect(harness.storage.snapshot['meetingFormatsCache'], 'already here');
+    });
+  });
 }

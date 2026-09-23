@@ -1,0 +1,292 @@
+[
+  {
+    "key_string": "BT",
+    "name_string": "Basis Tekst",
+    "description_string": "Dette møde har fokus på Basis Tekst",
+    "lang": "da",
+    "id": "3",
+    "world_id": "",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "M",
+    "name_string": "Mand",
+    "description_string": "Dette er et mandemøde",
+    "lang": "da",
+    "id": "15",
+    "world_id": "",
+    "format_type_enum": "FC3",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "BR",
+    "name_string": "Bordet Rundt",
+    "description_string": "På dette møde går ordet rundt(som regel i en cirkel)",
+    "lang": "da",
+    "id": "20",
+    "world_id": "",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "ME",
+    "name_string": "Meditation",
+    "description_string": "Dette møde opmuntre deltagerne til at deltage i en meditation",
+    "lang": "da",
+    "id": "41",
+    "world_id": "",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "S",
+    "name_string": "Speakermøde",
+    "description_string": "Dette møde er et speakermøde, de andre deltager deler ikke",
+    "lang": "da",
+    "id": "26",
+    "world_id": "",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "ID",
+    "name_string": "Ingen Dyr",
+    "description_string": "På dette møde er dyr ikke tilladt",
+    "lang": "da",
+    "id": "54",
+    "world_id": "RA",
+    "format_type_enum": "FC2",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "ST",
+    "name_string": "Stempelmøde",
+    "description_string": "På dette møde kan medlemmer på udgang bede en betroet tjener om at få et stempel som bevis på mødedeltagelse",
+    "lang": "da",
+    "id": "55",
+    "world_id": "DISC",
+    "format_type_enum": "ALERT",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "FA",
+    "name_string": "Farsi møde",
+    "description_string": "Dette møde foregår på farsi",
+    "lang": "da",
+    "id": "56",
+    "world_id": "LANG",
+    "format_type_enum": "LANG",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "VM",
+    "name_string": "Virtuelt møde",
+    "description_string": "Onlinemøde",
+    "lang": "da",
+    "id": "57",
+    "world_id": "VM",
+    "format_type_enum": "FC2",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "HM",
+    "name_string": "hattemøde",
+    "description_string": "Et emne vælges ud fra forslag, der er lagt i en kurv.",
+    "lang": "da",
+    "id": "40",
+    "world_id": "",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "NK",
+    "name_string": "Nykommer",
+    "description_string": "Dette møde har fokus på nye medlemmer i NA",
+    "lang": "da",
+    "id": "1",
+    "world_id": "",
+    "format_type_enum": "FC3",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "LI",
+    "name_string": "Litteratur",
+    "description_string": "Dette møde har fokus på godkendt NA Litteratur",
+    "lang": "da",
+    "id": "36",
+    "world_id": "",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "LUK",
+    "name_string": "Lukket",
+    "description_string": "Dette møde er lukket for ikke addicts, du bør kun deltage hvis du mener du har et problem med stoffer",
+    "lang": "da",
+    "id": "4",
+    "world_id": "",
+    "format_type_enum": "FC3",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "BV",
+    "name_string": "Børn velkommen",
+    "description_string": "Børn må gerne medbringes til mødet",
+    "lang": "da",
+    "id": "44",
+    "world_id": "",
+    "format_type_enum": "FC3",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "IP",
+    "name_string": "Pamflet Møde",
+    "description_string": "Dette møde har fokus på at dele om indholdet i vores info pamfletter",
+    "lang": "da",
+    "id": "12",
+    "world_id": "",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "HH",
+    "name_string": "Det Virker - hvordan og hvorfor",
+    "description_string": "Dette møde har fokus på det virker, hvordan og hvorfor",
+    "lang": "da",
+    "id": "13",
+    "world_id": "",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "BFID",
+    "name_string": "Bare For I Dag",
+    "description_string": "Dette møde har fokus på Bare For I Dag",
+    "lang": "da",
+    "id": "14",
+    "world_id": "",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "LGBTQ+",
+    "name_string": "LGBTQ+ Møde",
+    "description_string": "Dette møde henvender sig primært til LGBTQ+ personer",
+    "lang": "da",
+    "id": "10",
+    "world_id": "",
+    "format_type_enum": "FC3",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "ALT",
+    "name_string": "Living Clean (At leve Clean)",
+    "description_string": "her diskuteres NA's bog At leve clean",
+    "lang": "da",
+    "id": "51",
+    "world_id": "",
+    "format_type_enum": "",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "ÅM",
+    "name_string": "Åben Møde",
+    "description_string": "Dette er et åbent møde hvor ikke addict og ligende, alle er velkommen",
+    "lang": "da",
+    "id": "17",
+    "world_id": "",
+    "format_type_enum": "FC3",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "SPS",
+    "name_string": "Spørgsmål og svar",
+    "description_string": "Deltagere kan stille spørgsmål og forvente svar fra gruppemedlemmer.",
+    "lang": "da",
+    "id": "43",
+    "world_id": "",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "T",
+    "name_string": "Trin",
+    "description_string": "Dette møde har fokus på NA's 12 trin",
+    "lang": "da",
+    "id": "27",
+    "world_id": "",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "E",
+    "name_string": "Emne",
+    "description_string": "Dette møde har fokus på et emne valgt af gruppesamvittigheden",
+    "lang": "da",
+    "id": "29",
+    "world_id": "",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "TR",
+    "name_string": "Tradition",
+    "description_string": "Dette møde har fokus på NA's 12 traditioner",
+    "lang": "da",
+    "id": "30",
+    "world_id": "",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "K",
+    "name_string": "Kvinde",
+    "description_string": "Dette er et kvindemøde",
+    "lang": "da",
+    "id": "32",
+    "world_id": "",
+    "format_type_enum": "FC3",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "HV",
+    "name_string": "Handicap venlig",
+    "description_string": "Her kan handicappet, kørestolsbruger m.m få adgang",
+    "lang": "da",
+    "id": "33",
+    "world_id": "",
+    "format_type_enum": "FC2",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "OM",
+    "name_string": "Online Møde",
+    "description_string": "her afholdes online møde af gruppen så længe fysiske møder er lukket pga. CoronaVirus på Zoom.us/skype se nærmere oplysniner på hjemmesiden under https://www.nadanmark.dk/online-moeder/",
+    "lang": "da",
+    "id": "50",
+    "world_id": "OPEN",
+    "format_type_enum": "O",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "ÅP",
+    "name_string": "Åndelige Principper",
+    "description_string": "Her diskuteres de åndelige principper i NA's program",
+    "lang": "da",
+    "id": "53",
+    "world_id": "",
+    "format_type_enum": "",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "ENG",
+    "name_string": "Engelsk Møde",
+    "description_string": "This meeting is in English so it can be attended by all nationalities",
+    "lang": "da",
+    "id": "47",
+    "world_id": "LANG",
+    "format_type_enum": "LANG",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  }
+]

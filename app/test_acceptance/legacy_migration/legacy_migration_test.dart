@@ -9,6 +9,7 @@ import 'package:na_kernel/na_kernel.dart';
 import 'package:na_ports/na_ports.dart';
 import 'package:na_testing/na_testing.dart';
 
+import '../support/meetings.dart';
 import '../support/pump_app.dart';
 
 void main() {
@@ -63,6 +64,63 @@ void main() {
       expect(app.storage.snapshot['cleanTimeUnitSort'], 'dmy');
       expect(pageText('Settings'), findsOneWidget);
       expect(pageText('Default search range = 30 km'), findsOneWidget);
+    });
+
+    testWidgets('Meeting formats cache is copied', (tester) async {
+      final bmlt = bmltServing(
+        meetings: [aBmltMeetingJson(id: 1, weekday: 2, municipality: 'Aarhus')],
+      );
+      final app = await pumpMeetings(
+        tester: tester,
+        bmlt: bmlt,
+        location: municipalityPath('Aarhus'),
+        time: TestTime.copenhagen(
+          startAt: Instant(DateTime.utc(2025, 9, 12, 12)),
+        ),
+        legacyStore: LegacyStoreFound(
+          entries: {
+            'meeting_formats_v1': {
+              'fetchedAt': 1757500000000,
+              'formats': [aBmltFormatJson()],
+            },
+          },
+        ),
+      );
+      addTearDown(app.dispose);
+      final cached = const FormatRowsCodec().decodeSnapshot(
+        text: app.storage.snapshot['meetingFormatsCache'] ?? '',
+      );
+      final snapshot = (cached as Ok<FormatsSnapshot, DecodeFailure>).value;
+      expect(snapshot.fetchedAt.epochMilliseconds, 1757500000000);
+      expect(snapshot.rows.single.key, const FormatKey('ÅM'));
+      await toggleDay(tester, 'monday');
+      expect(bmlt.requestsTo(endpoint: BmltEndpoint.formatsDanish), isEmpty);
+      expect(bmlt.requestsTo(endpoint: BmltEndpoint.formatsEnglish), isEmpty);
+    });
+
+    testWidgets('Empty meeting formats cache is dropped', (tester) async {
+      final app = await pumpApp(
+        tester: tester,
+        container: realJftContainer(
+          legacyStore: const LegacyStoreFound(
+            entries: {
+              'meeting_formats_v1': {
+                'fetchedAt': 1757500000000,
+                'formats': <Object?>[],
+              },
+            },
+          ),
+        ),
+      );
+      addTearDown(app.dispose);
+      expect(app.storage.snapshot.containsKey('meetingFormatsCache'), isFalse);
+      final marker = LegacyMigrationMarker.decode(
+        text: app.storage.snapshot['legacyMigration.completed'] ?? '',
+      );
+      expect(
+        (marker as Ok<LegacyMigrationMarker, DecodeFailure>).value.skippedKeys,
+        1,
+      );
     });
   });
 

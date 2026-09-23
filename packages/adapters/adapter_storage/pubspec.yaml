@@ -1,7 +1,7 @@
 name: adapter_storage
 description: KeyValueStorePort adapter on shared_preferences.
 publish_to: none
-version: 0.1.0
+version: 0.0.0
 
 environment:
   sdk: ^3.11.0
@@ -14,13 +14,13 @@ dependencies:
     path: ../../core/na_kernel
   na_ports:
     path: ../../core/na_ports
-  riverpod: ^3.0.0
-  shared_preferences: ^2.5.0
+  riverpod: 3.3.2
+  shared_preferences: 2.5.5
 
 dev_dependencies:
-  custom_lint: ^0.8.0
+  custom_lint: 0.8.1
   flutter_test:
     sdk: flutter
   na_lints:
     path: ../../../tool/na_lints
-  shared_preferences_platform_interface: any
+  shared_preferences_platform_interface: 2.4.2

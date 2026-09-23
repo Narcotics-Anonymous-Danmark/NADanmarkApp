@@ -1,12 +1,12 @@
 import 'package:meta/meta.dart';
+import 'package:na_kernel/src/boundary/legacy_wire.dart';
 import 'package:na_kernel/src/results/outcome.dart';
 import 'package:na_kernel/src/time/weekday.dart';
 import 'package:na_kernel/src/values/clean_time_unit_order.dart';
 import 'package:na_kernel/src/values/km.dart';
 import 'package:na_kernel/src/values/language.dart';
 import 'package:na_kernel/src/values/settings.dart';
-
-typedef LegacyStoreEntries = Map<String, Object?>;
+import 'package:na_kernel/src/values/storage_key.dart';
 
 @immutable
 final class LegacySettingsTranslation {
@@ -17,8 +17,8 @@ final class LegacySettingsTranslation {
   });
 
   final Settings settings;
-  final List<String> importedKeys;
-  final List<String> skippedKeys;
+  final List<StorageKey> importedKeys;
+  final List<StorageKey> skippedKeys;
 
   @override
   int get hashCode => Object.hash(
@@ -35,8 +35,8 @@ final class LegacySettingsTranslation {
       _sameList(left: other.skippedKeys, right: skippedKeys);
 
   static bool _sameList({
-    required List<String> left,
-    required List<String> right,
+    required List<StorageKey> left,
+    required List<StorageKey> right,
   }) =>
       left.length == right.length &&
       left.indexed.every((entry) => right[entry.$1] == entry.$2);
@@ -45,25 +45,19 @@ final class LegacySettingsTranslation {
 final class LegacySettingsTranslator {
   const LegacySettingsTranslator();
 
-  static const List<String> knownKeys = [
-    'language',
-    'firstday',
-    'searchRange',
-    'cleanTimeUnitSort',
-    'theme',
-  ];
+  static const StorageKey legacyThemeKey = StorageKey('theme');
 
-  LegacySettingsTranslation translate({required LegacyStoreEntries entries}) {
-    final imported = <String>[];
-    final skipped = <String>[];
+  LegacySettingsTranslation translate({required LegacyStoreDumpDto dump}) {
+    final imported = <StorageKey>[];
+    final skipped = <StorageKey>[];
     var settings = Settings.defaults;
 
     void consider<T>({
-      required String key,
-      required Outcome<T, Object> Function(Object value) decode,
+      required StorageKey key,
+      required String? value,
+      required Outcome<T, Object> Function(String value) decode,
       required Settings Function(T value) apply,
     }) {
-      final value = entries[key];
       if (value == null) {
         return;
       }
@@ -77,28 +71,32 @@ final class LegacySettingsTranslator {
     }
 
     consider<Language>(
-      key: 'language',
-      decode: (value) => Language.parse(code: value.toString()),
+      key: SettingKeys.language,
+      value: dump.language,
+      decode: (value) => Language.parse(code: value),
       apply: (value) => settings.withLanguage(language: value),
     );
     consider<FirstDayOfWeek>(
-      key: 'firstday',
-      decode: (value) => FirstDayOfWeek.parse(code: value.toString()),
+      key: SettingKeys.firstDayOfWeek,
+      value: dump.firstday,
+      decode: (value) => FirstDayOfWeek.parse(code: value),
       apply: (value) => settings.withFirstDayOfWeek(firstDayOfWeek: value),
     );
     consider<Km>(
-      key: 'searchRange',
-      decode: (value) => Km.parseSearchRadius(text: _integral(value)),
+      key: SettingKeys.searchRadius,
+      value: dump.searchRange,
+      decode: (value) => Km.parseSearchRadius(text: value),
       apply: (value) => settings.withSearchRadius(searchRadius: value),
     );
     consider<CleanTimeUnitOrder>(
-      key: 'cleanTimeUnitSort',
-      decode: (value) => CleanTimeUnitOrder.parse(code: value.toString()),
+      key: SettingKeys.cleanTimeUnitOrder,
+      value: dump.cleanTimeUnitSort,
+      decode: (value) => CleanTimeUnitOrder.parse(code: value),
       apply: (value) =>
           settings.withCleanTimeUnitOrder(cleanTimeUnitOrder: value),
     );
-    if (entries.containsKey('theme')) {
-      skipped.add('theme');
+    if (dump.theme != null) {
+      skipped.add(legacyThemeKey);
     }
     return LegacySettingsTranslation(
       settings: settings,
@@ -106,11 +104,4 @@ final class LegacySettingsTranslator {
       skippedKeys: List.unmodifiable(skipped),
     );
   }
-
-  String _integral(Object value) => switch (value) {
-    final int number => number.toString(),
-    final double number when number == number.roundToDouble() =>
-      number.toInt().toString(),
-    final Object other => other.toString(),
-  };
 }

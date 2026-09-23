@@ -26,8 +26,8 @@ final class MigrationRan extends MigrationRun {
     required this.source,
   });
 
-  final int importedKeys;
-  final int skippedKeys;
+  final KeyCount importedKeys;
+  final KeyCount skippedKeys;
   final LegacyStoreRead source;
 
   @override
@@ -72,6 +72,8 @@ final class LegacyMigration {
 
   static const LegacySettingsTranslator _translator =
       LegacySettingsTranslator();
+  static const LegacyMeetingFormatsTranslator _formatsTranslator =
+      LegacyMeetingFormatsTranslator();
 
   Future<MigrationRun> runIfNeeded() async {
     switch (await store.read(key: SettingKeys.legacyMigrationCompleted)) {
@@ -82,23 +84,23 @@ final class LegacyMigration {
     }
     final read = await legacyStore.readAll();
     final translation = switch (read) {
-      LegacyStoreFound(:final entries) => _translator.translate(
-        entries: entries,
-      ),
+      LegacyStoreFound(:final dump) => _translator.translate(dump: dump),
       LegacyStoreAbsent() || LegacyStoreUnreadable() => _translator.translate(
-        entries: const {},
+        dump: const LegacyStoreDumpDto(),
       ),
     };
     await _importSettings(translation: translation);
+    final formats = await _importFormatsCache(read: read);
     final marker = LegacyMigrationMarker(
       appVersion: appInfo.version,
       completedAt: clock.now(),
-      importedKeys: translation.importedKeys.length,
-      skippedKeys: translation.skippedKeys.length,
+      importedKeys:
+          KeyCount(translation.importedKeys.length) + formats.imported,
+      skippedKeys: KeyCount(translation.skippedKeys.length) + formats.skipped,
     );
     await store.write(
       key: SettingKeys.legacyMigrationCompleted,
-      value: marker.encoded,
+      value: const MigrationMarkerCodec().encode(marker: marker),
     );
     events.publish(
       event: LegacyMigrationCompleted(
@@ -113,12 +115,38 @@ final class LegacyMigration {
     );
   }
 
+  Future<({KeyCount imported, KeyCount skipped})> _importFormatsCache({
+    required LegacyStoreRead read,
+  }) async {
+    final cache = switch (read) {
+      LegacyStoreFound(:final dump) => dump.meetingFormatsV1,
+      LegacyStoreAbsent() || LegacyStoreUnreadable() => null,
+    };
+    if (cache == null) {
+      return (imported: const KeyCount(0), skipped: const KeyCount(0));
+    }
+    switch (_formatsTranslator.translate(cache: cache)) {
+      case ImportFormatsCache(:final snapshot):
+        switch (await store.read(key: MeetingFormatKeys.cache)) {
+          case StoredString():
+            break;
+          case NothingStored():
+            await store.write(
+              key: MeetingFormatKeys.cache,
+              value: const FormatsCacheCodec().encode(snapshot: snapshot),
+            );
+        }
+        return (imported: const KeyCount(1), skipped: const KeyCount(0));
+      case SkipFormatsCache():
+        return (imported: const KeyCount(0), skipped: const KeyCount(1));
+    }
+  }
+
   Future<void> _importSettings({
     required LegacySettingsTranslation translation,
   }) async {
     final values = translation.settings.stored;
-    for (final name in translation.importedKeys) {
-      final key = StorageKey(name);
+    for (final key in translation.importedKeys) {
       switch (await store.read(key: key)) {
         case StoredString():
           continue;

@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:na_design/na_design.dart';
+import 'package:na_kernel/na_kernel.dart';
 import 'package:na_l10n/na_l10n.dart';
 
 final class NaShell extends ConsumerWidget {
@@ -59,9 +60,13 @@ final class GlobalLoadingBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) =>
       switch (ref.watch(globalLoadingProvider)) {
         LoadingIdle() => const SizedBox(height: NaIndeterminateBar.height),
-        LoadingActive(:final text) => NaIndeterminateBar(
+        LoadingActive(:final status) => NaIndeterminateBar(
           key: const Key('global-loading-bar'),
-          statusText: text,
+          statusText: switch (status) {
+            LoadingText(:final text) => text,
+            BusyStatus(activity: BusyActivity.findingMeetings) =>
+              AppLocalizations.of(context).findingMtgs,
+          },
         ),
       };
 }

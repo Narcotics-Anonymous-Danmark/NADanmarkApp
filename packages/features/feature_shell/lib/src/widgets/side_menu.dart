@@ -24,9 +24,7 @@ final class SideMenu extends ConsumerWidget {
               key: Key('menu-${destination.name}'),
               icon: destination.icon,
               label: destination.label(l10n: l10n),
-              selected: destination.path == location
-                  ? NaSelection.selected
-                  : NaSelection.unselected,
+              selected: destination.selectionAt(location: location),
               onTap: () {
                 ref.read(menuControllerProvider.notifier).close();
                 context.go(destination.path.value);
@@ -35,7 +33,7 @@ final class SideMenu extends ConsumerWidget {
           )
           .toList(growable: false),
       footer: Text(
-        l10n.menuVersion(info.version),
+        l10n.menuVersion(info.version.value),
         key: const Key('menu-version'),
         style: NaTheme.of(context).typography.caption,
       ),

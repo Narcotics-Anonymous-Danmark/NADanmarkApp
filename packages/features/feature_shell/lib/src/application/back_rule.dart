@@ -36,6 +36,11 @@ final class BackRule {
     if (BookRoute.values.any((book) => book.path == location)) {
       return PopToParent(parent: MenuDestination.audiobooks.path);
     }
+    if (MenuDestination.values.any(
+      (destination) => location.value.startsWith('${destination.path.value}/'),
+    )) {
+      return PopToParent(parent: MenuDestination.parentOf(location: location));
+    }
     if (location == MenuDestination.home.path) {
       return const LeaveApp();
     }

@@ -11,8 +11,9 @@ system, as the definition of done requires.
 
 ## What Changes
 
-- **BMLT access** (Denmark root): all meetings, the municipality list and the
-  two GetFormats queries, with `{}` read as "no results". Base URLs come from
+- **BMLT access** (Denmark root): all meetings, the municipality list and
+  GetFormats in Danish and English (`lang_enum=da` / `lang_enum=en`), with
+  `{}` read as "no results". Base URLs come from
   `BMLT_DENMARK_BASE_URL` / `BMLT_TOMATO_BASE_URL`.
 - **Meeting domain**: typed meetings (weekday, start and end time, venue, the
   location lines that are present, contact and transit lines), the
@@ -42,6 +43,8 @@ Legacy bugs not reproduced:
 - The hour filter used the end time.
 - The postal code never showed: the legacy app read a field BMLT does not have.
 - TC/HY matched as substrings.
+- Format names were always Danish: the legacy queries (default and
+  `lang_enum=dk`) never return English rows from the Danish server.
 - "Online" meetings vanished from the list.
 - A failed request left the loader stuck on a blank page.
 - A second tap first showed the previous municipality's meetings.
@@ -71,10 +74,14 @@ None.
   - The card shows the postal code field BMLT actually sends.
   - TC/HY become whole-key matches.
   - The formats cache key becomes `meetingFormatsCache`.
+  - Formats are fetched with `lang_enum=da` and `lang_enum=en`, and the
+    display row is chosen by `da` / `en`.
 - `app-shell`: the route list gains `/listfull/<municipality>`. The back
   button gets scenarios for that sub-page and for the formats popover.
 - `legacy-migration`: scenarios for importing and dropping the meeting formats
   cache.
+- `localisation`: format names follow the UI language through `lang_enum=da`
+  / `lang_enum=en` instead of `dk`.
 
 ## Impact
 

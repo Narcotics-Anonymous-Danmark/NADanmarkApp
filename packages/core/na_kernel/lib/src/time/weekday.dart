@@ -19,6 +19,15 @@ enum Weekday {
   static Weekday fromIsoNumber({required int isoNumber}) =>
       values.singleWhere((day) => day.isoNumber == isoNumber);
 
+  static Outcome<Weekday, DecodeFailure> fromBmltTinyint({
+    required int tinyint,
+  }) {
+    final matches = values.where((day) => day.bmltTinyint == tinyint);
+    return matches.isEmpty
+        ? Err(error: DecodeFailure(detail: 'weekday_tinyint: $tinyint'))
+        : Ok(value: matches.first);
+  }
+
   static List<Weekday> orderedFrom({required FirstDayOfWeek firstDay}) =>
       switch (firstDay) {
         FirstDayOfWeek.sunday => List.unmodifiable(values),

@@ -1,6 +1,18 @@
 import 'package:meta/meta.dart';
 import 'package:na_kernel/src/jft/danish_month.dart';
 
+extension type const DayOfMonth(int value) {}
+
+extension type const JftTitle(String value) {}
+
+extension type const JftQuote(String value) {}
+
+extension type const JftSource(String value) {}
+
+extension type const JftText(String value) {}
+
+extension type const JftClosingBody(String value) {}
+
 @immutable
 final class JftEntry {
   const JftEntry({
@@ -13,15 +25,15 @@ final class JftEntry {
     required this.closing,
   });
 
-  final int day;
+  final DayOfMonth day;
   final DanishMonth month;
-  final String title;
-  final String quote;
-  final String source;
-  final String text;
+  final JftTitle title;
+  final JftQuote quote;
+  final JftSource source;
+  final JftText text;
   final JftClosing closing;
 
-  String get dateLabel => '$day. ${month.name}';
+  String get dateLabel => '${day.value}. ${month.name}';
 
   @override
   int get hashCode => Object.hash(day, month, title, quote, source, text);
@@ -38,7 +50,7 @@ final class JftEntry {
       other.closing == closing;
 
   @override
-  String toString() => 'JftEntry($dateLabel, $title)';
+  String toString() => 'JftEntry($dateLabel, ${title.value})';
 }
 
 @immutable
@@ -50,20 +62,22 @@ sealed class JftClosing {
   static JftClosing parse({required String text}) {
     final trimmed = text.trimLeft();
     return trimmed.startsWith(lead)
-        ? JftClosingWithLead(body: trimmed.substring(lead.length).trimLeft())
-        : JftClosingPlain(body: trimmed);
+        ? JftClosingWithLead(
+            body: JftClosingBody(trimmed.substring(lead.length).trimLeft()),
+          )
+        : JftClosingPlain(body: JftClosingBody(trimmed));
   }
 
   String get fullText => switch (this) {
-    JftClosingWithLead(:final body) => '$lead $body',
-    JftClosingPlain(:final body) => body,
+    JftClosingWithLead(:final body) => '$lead ${body.value}',
+    JftClosingPlain(:final body) => body.value,
   };
 }
 
 final class JftClosingWithLead extends JftClosing {
   const JftClosingWithLead({required this.body});
 
-  final String body;
+  final JftClosingBody body;
 
   @override
   int get hashCode => Object.hash(JftClosingWithLead, body);
@@ -76,7 +90,7 @@ final class JftClosingWithLead extends JftClosing {
 final class JftClosingPlain extends JftClosing {
   const JftClosingPlain({required this.body});
 
-  final String body;
+  final JftClosingBody body;
 
   @override
   int get hashCode => Object.hash(JftClosingPlain, body);

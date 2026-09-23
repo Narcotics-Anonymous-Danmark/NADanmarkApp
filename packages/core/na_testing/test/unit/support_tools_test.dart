@@ -72,7 +72,10 @@ void main() {
       addTearDown(bus.dispose);
       final forwarded = bus.all.first;
       bus.publish(
-        event: const LegacyMigrationCompleted(importedKeys: 2, skippedKeys: 0),
+        event: const LegacyMigrationCompleted(
+          importedKeys: KeyCount(2),
+          skippedKeys: KeyCount(0),
+        ),
       );
       expect(bus.recordedOf<LegacyMigrationCompleted>(), hasLength(1));
       expect(bus.recordedOf<LanguageChanged>(), isEmpty);
@@ -84,7 +87,10 @@ void main() {
     test('reports local time and zone from the test time', () {
       final time = TestTime.copenhagen(startAt: anInstant(hour: 8, minute: 30));
       final clock = FakeClock(time: time);
-      expect(clock.localTimeNow(), aLocalTime(hour: 10, minute: 30));
+      expect(
+        clock.localTimeNow(),
+        aLocalTime(hour: HourOfDay(10), minute: MinuteOfHour(30)),
+      );
       expect(clock.zone(), TimeZoneId.copenhagen);
     });
   });

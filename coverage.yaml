@@ -8,6 +8,7 @@ package_minimum_percent:
   na_testing: 70
   na_cli: 75
   na_lints: 80
+  adapter_bmlt: 90
   adapter_clock: 90
   adapter_storage: 90
   adapter_jft: 90

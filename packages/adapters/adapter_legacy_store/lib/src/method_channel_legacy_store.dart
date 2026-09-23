@@ -1,7 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:na_kernel/boundary.dart';
+import 'package:na_kernel/na_kernel.dart';
 import 'package:na_ports/na_ports.dart';
 
 final class MethodChannelLegacyStore implements LegacyStorePort {
@@ -37,21 +38,18 @@ final class MethodChannelLegacyStore implements LegacyStorePort {
     }
   }
 
-  static LegacyStoreRead decode({required String json}) {
-    final Object? decoded;
-    try {
-      decoded = jsonDecode(json);
-    } on FormatException catch (error) {
-      return LegacyStoreUnreadable(detail: 'dump: ${error.message}');
-    }
-    return switch (decoded) {
-      final Map<String, Object?> map => LegacyStoreFound(
-        entries: Map.unmodifiable({
-          for (final entry in map.entries)
-            if (entry.value case final Object value) entry.key: value,
-        }),
-      ),
-      _ => const LegacyStoreUnreadable(detail: 'dump: not a JSON object'),
-    };
-  }
+  static const WireJson _wire = WireJson();
+
+  static LegacyStoreRead decode({required String json}) => switch (_wire
+      .parse(text: json, context: 'dump')
+      .flatMap(
+        transform: (decoded) => _wire.object(
+          json: decoded,
+          fromJson: LegacyStoreDumpDto.fromJson,
+          context: 'dump',
+        ),
+      )) {
+    Ok(:final value) => LegacyStoreFound(dump: value),
+    Err(:final error) => LegacyStoreUnreadable(detail: error.detail),
+  };
 }

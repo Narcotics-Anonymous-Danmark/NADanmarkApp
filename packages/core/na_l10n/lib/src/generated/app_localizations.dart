@@ -143,7 +143,7 @@ abstract class AppLocalizations {
   /// Legacy key FINDING_MTGS
   ///
   /// In en, this message translates to:
-  /// **'Finding Meetings ...'**
+  /// **'Finding meetings…'**
   String get findingMtgs;
 
   /// Legacy key LISTFULL
@@ -413,7 +413,7 @@ abstract class AppLocalizations {
   /// Legacy key NOTHING_FOUND
   ///
   /// In en, this message translates to:
-  /// **'Nothing Found'**
+  /// **'Nothing found'**
   String get nothingFound;
 
   /// Legacy key BUS
@@ -527,7 +527,7 @@ abstract class AppLocalizations {
   /// Legacy key MEETING_FORMATS
   ///
   /// In en, this message translates to:
-  /// **'Meeting Formats'**
+  /// **'Meeting formats'**
   String get meetingFormats;
 
   /// Legacy key CANCEL
@@ -539,19 +539,19 @@ abstract class AppLocalizations {
   /// Legacy key VIRTUAL_LINK
   ///
   /// In en, this message translates to:
-  /// **'Virtual Link'**
+  /// **'Virtual link'**
   String get virtualLink;
 
   /// Legacy key PHONE_MEETING
   ///
   /// In en, this message translates to:
-  /// **'Phone Meeting Dial-in'**
+  /// **'Phone meeting dial-in'**
   String get phoneMeeting;
 
   /// Legacy key TEMP_CLOSED
   ///
   /// In en, this message translates to:
-  /// **'Temporarily Closed'**
+  /// **'Temporarily closed'**
   String get tempClosed;
 
   /// Legacy key VIRTUAL_MEETINGS
@@ -581,7 +581,7 @@ abstract class AppLocalizations {
   /// Legacy key WEEKDAYS
   ///
   /// In en, this message translates to:
-  /// **'Weekdays'**
+  /// **'All days'**
   String get weekdays;
 
   /// Legacy key VIRTUAL_NA
@@ -1285,6 +1285,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Today\'s text could not be loaded'**
   String get jftUnavailable;
+
+  /// Municipality list entry for meetings without a physical municipality
+  ///
+  /// In en, this message translates to:
+  /// **'Online'**
+  String get municipalityOnline;
+
+  /// Meetings error state
+  ///
+  /// In en, this message translates to:
+  /// **'The meetings could not be loaded'**
+  String get meetingsLoadFailed;
+
+  /// Retry button
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get tryAgain;
+
+  /// Accessibility label of the lower hour-range thumb
+  ///
+  /// In en, this message translates to:
+  /// **'Earliest start hour'**
+  String get hourRangeLower;
+
+  /// Accessibility label of the upper hour-range thumb
+  ///
+  /// In en, this message translates to:
+  /// **'Latest start hour'**
+  String get hourRangeUpper;
+
+  /// Accessibility label of the format chips of a meeting
+  ///
+  /// In en, this message translates to:
+  /// **'Show meeting formats'**
+  String get meetingFormatsOpen;
+
+  /// Weekday section header with the number of meetings
+  ///
+  /// In en, this message translates to:
+  /// **'{day} ({count})'**
+  String meetingDayCount(String day, int count);
+
+  /// Meeting card badge with weekday, start and end time
+  ///
+  /// In en, this message translates to:
+  /// **'{day} {start} - {end}'**
+  String meetingBadge(String day, String start, String end);
+
+  /// Bus lines of a meeting
+  ///
+  /// In en, this message translates to:
+  /// **'Bus: {lines}'**
+  String meetingBusLines(String lines);
+
+  /// Train lines of a meeting
+  ///
+  /// In en, this message translates to:
+  /// **'Train: {lines}'**
+  String meetingTrainLines(String lines);
+
+  /// Label of the day selector above the meeting list
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get meetingDayFilter;
 }
 
 class _AppLocalizationsDelegate

@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:na_design/na_design.dart';
 import 'package:na_testing/na_testing.dart';
 
+import '../support/meetings.dart';
 import '../support/pump_app.dart';
 
 void main() {
@@ -64,7 +65,9 @@ void main() {
     testWidgets('Version row shows the build version', (tester) async {
       final app = await pumpApp(
         tester: tester,
-        container: realJftContainer(appInfo: anAppInfo(version: '2.0.0')),
+        container: realJftContainer(
+          appInfo: anAppInfo(version: '2.0.0'),
+        ),
       );
       addTearDown(app.dispose);
       await openMenu(tester);
@@ -83,6 +86,27 @@ void main() {
       final app = await pumpApp(tester: tester, initialLocation: '/nowhere');
       addTearDown(app.dispose);
       expect(find.byKey(const Key('welcome-title')), findsOneWidget);
+    });
+
+    testWidgets('Municipality sub-page keeps the menu entry', (tester) async {
+      final app = await pumpMeetings(
+        tester: tester,
+        location: '/listfull/K%C3%B8benhavn',
+        bmlt: bmltServing(
+          meetings: [
+            aBmltMeetingJson(id: 1, weekday: 2, municipality: 'København'),
+          ],
+        ),
+      );
+      addTearDown(app.dispose);
+      expect(pageText('København'), findsWidgets);
+      await openMenu(tester);
+      expect(
+        tester
+            .widget<NaMenuTile>(find.byKey(const Key('menu-meetings')))
+            .selected,
+        NaSelection.selected,
+      );
     });
   });
 
@@ -119,6 +143,46 @@ void main() {
       addTearDown(app.dispose);
       await pressBack(tester);
       expect(app.systemPops, ['SystemNavigator.pop']);
+    });
+
+    testWidgets('Back from municipality meetings returns to the list', (
+      tester,
+    ) async {
+      final app = await pumpMeetings(
+        tester: tester,
+        location: municipalityPath('Aarhus'),
+        bmlt: bmltServing(
+          municipalities: ['Aarhus'],
+          meetings: [
+            aBmltMeetingJson(id: 1, weekday: 2, municipality: 'Aarhus'),
+          ],
+        ),
+      );
+      addTearDown(app.dispose);
+      await pressBack(tester);
+      expect(pageText('Meetings'), findsOneWidget);
+      expect(find.byKey(const Key('municipality-row-Aarhus')), findsOneWidget);
+      expect(app.systemPops, isEmpty);
+    });
+
+    testWidgets('Back closes the formats popover first', (tester) async {
+      final app = await pumpMeetings(
+        tester: tester,
+        location: municipalityPath('Aarhus'),
+        bmlt: bmltServing(
+          meetings: [
+            aBmltMeetingJson(id: 1, weekday: 2, municipality: 'Aarhus'),
+          ],
+        ),
+      );
+      addTearDown(app.dispose);
+      await toggleDay(tester, 'monday');
+      await openFormats(tester, 1);
+      expect(find.byKey(const Key('formats-popover')), findsOneWidget);
+      await pressBack(tester);
+      expect(find.byKey(const Key('formats-popover')), findsNothing);
+      expect(card(1), findsOneWidget);
+      expect(pageText('Aarhus'), findsWidgets);
     });
   });
 

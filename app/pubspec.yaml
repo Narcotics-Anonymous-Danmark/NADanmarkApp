@@ -8,6 +8,8 @@ environment:
 resolution: workspace
 
 dependencies:
+  adapter_bmlt:
+    path: ../packages/adapters/adapter_bmlt
   adapter_clock:
     path: ../packages/adapters/adapter_clock
   adapter_jft:
@@ -18,12 +20,17 @@ dependencies:
     path: ../packages/adapters/adapter_links
   adapter_storage:
     path: ../packages/adapters/adapter_storage
+  dio: 5.11.1
   feature_contact:
     path: ../packages/features/feature_contact
   feature_jft:
     path: ../packages/features/feature_jft
   feature_legacy_migration:
     path: ../packages/features/feature_legacy_migration
+  feature_meetings:
+    path: ../packages/features/feature_meetings
+  feature_meetings_search:
+    path: ../packages/features/feature_meetings_search
   feature_settings:
     path: ../packages/features/feature_settings
   feature_shell:
@@ -32,8 +39,8 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  flutter_riverpod: ^3.0.0
-  go_router: ^16.0.0
+  flutter_riverpod: 3.3.2
+  go_router: 16.3.0
   na_design:
     path: ../packages/core/na_design
   na_kernel:
@@ -42,11 +49,11 @@ dependencies:
     path: ../packages/core/na_l10n
   na_ports:
     path: ../packages/core/na_ports
-  package_info_plus: ^8.3.0
-  shared_preferences: ^2.5.0
+  package_info_plus: 8.3.1
+  shared_preferences: 2.5.5
 
 dev_dependencies:
-  custom_lint: ^0.8.0
+  custom_lint: 0.8.1
   flutter_test:
     sdk: flutter
   integration_test:
@@ -55,10 +62,10 @@ dev_dependencies:
     path: ../tool/na_lints
   na_testing:
     path: ../packages/core/na_testing
-  patrol: ^3.15.0
-  patrol_finders: ^2.9.0
-  shared_preferences_platform_interface: any
-  very_good_analysis: ^10.0.0
+  patrol: 3.20.0
+  patrol_finders: 2.9.0
+  shared_preferences_platform_interface: 2.4.2
+  very_good_analysis: 10.2.0
 
 flutter:
   uses-material-design: false

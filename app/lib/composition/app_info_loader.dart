@@ -17,7 +17,7 @@ BuildApproval approvalFromDefines() =>
 Future<AppInfo> loadAppInfo() async {
   final package = await PackageInfo.fromPlatform();
   return AppInfo(
-    version: package.version,
+    version: VersionName(package.version),
     buildType: const BuildType(appEnvDefine),
     approval: approvalFromDefines(),
   );

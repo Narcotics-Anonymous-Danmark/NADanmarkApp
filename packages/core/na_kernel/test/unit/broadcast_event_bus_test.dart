@@ -13,8 +13,8 @@ void main() {
       bus
         ..publish(
           event: const LegacyMigrationCompleted(
-            importedKeys: 3,
-            skippedKeys: 0,
+            importedKeys: KeyCount(3),
+            skippedKeys: KeyCount(0),
           ),
         )
         ..publish(event: const LanguageChanged(language: Language.english));

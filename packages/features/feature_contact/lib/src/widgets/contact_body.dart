@@ -140,7 +140,7 @@ final class AboutAppCard extends ConsumerWidget {
             style: typography.body,
           ),
           Text(
-            l10n.contactVersion(info.version),
+            l10n.contactVersion(info.version.value),
             key: const Key('contact-version'),
             style: typography.body,
           ),

@@ -2,6 +2,68 @@
 
 ## MODIFIED Requirements
 
+### Requirement: BMLT endpoints
+
+The app SHALL read meetings from two BMLT root servers configured through
+`BMLT_DENMARK_BASE_URL` (default
+`https://www.nadanmark.dk/main_server/client_interface/json/`) and
+`BMLT_TOMATO_BASE_URL` (default
+`https://tomato.bmltenabled.org/main_server/client_interface/json/`), using
+exactly these queries:
+
+| Use | Base | Query |
+|---|---|---|
+| All meetings | Denmark | `?switcher=GetSearchResults&sort_keys=weekday_tinyint,start_time` |
+| Municipalities | Denmark | `?switcher=GetSearchResults&data_field_key=location_municipality&sort_keys=location_municipality` |
+| Formats | Denmark | `?switcher=GetFormats&lang_enum=da` and `?switcher=GetFormats&lang_enum=en` |
+| Nearby (radius) | Tomato | `?switcher=GetSearchResults&geo_width_km=<km>&long_val=<lng>&lat_val=<lat>&sort_keys=longitude,latitude&callingApp=bmlt_search_3_ionic` |
+| Map pins | Tomato | `?switcher=GetSearchResults&data_field_key=longitude,latitude,id_bigint&geo_width_km=<km>&long_val=<lng>&lat_val=<lat>&sort_keys=longitude,latitude&callingApp=bmlt_search_3_ionic` |
+| Meetings by id | Tomato | `?switcher=GetSearchResults&meeting_ids[]=<id>[&meeting_ids[]=<id>…]` |
+
+A response that is an empty JSON object `{}` (BMLT's "no results") SHALL be
+treated as an empty list. `callingApp` SHALL be `bmlt_search_3_ionic` until the
+BMLT admins are told otherwise.
+
+#### Scenario: Empty object means no meetings
+
+- **WHEN** the radius query returns `{}`
+- **THEN** the result is an empty meeting list and no error is shown
+
+#### Scenario: Radius query carries the exact parameters
+
+- **WHEN** a nearby search runs for lat 55.476224, lng 8.4606976, 15 km
+- **THEN** the request is `<tomato>?switcher=GetSearchResults&geo_width_km=15&long_val=8.4606976&lat_val=55.476224&sort_keys=longitude,latitude&callingApp=bmlt_search_3_ionic`
+
+#### Scenario: Formats are fetched in both languages
+
+- **WHEN** the format definitions are fetched
+- **THEN** the requests are `<denmark>?switcher=GetFormats&lang_enum=da` and `<denmark>?switcher=GetFormats&lang_enum=en`
+
+### Requirement: Format category and display language
+
+Each format id SHALL become one definition using the row in the display
+language (`da` when the app language is `da`, else `en`), falling back to the
+`en` row, then to the first row. `format_type_enum` maps to a category:
+`ALERT` → alert, `LANG` → language, prefixes `FC3`, `O`, `C` → audience, prefix
+`FC2` → facility, anything else → content. Chip colours by category: alert
+danger, language tertiary, audience primary, facility dark, content dark. The
+index is rebuilt when the language changes.
+
+#### Scenario: Danish names in Danish
+
+- **WHEN** the app language is `da` and format id 17 has rows in `da` and `en`
+- **THEN** the chip shows the `da` `name_string`
+
+#### Scenario: English names in English
+
+- **WHEN** the app language is `en` and format id 17 has rows in `da` ("Åben Møde") and `en` ("Open")
+- **THEN** the chip shows "Open"
+
+#### Scenario: Category mapping
+
+- **WHEN** `format_type_enum` is `FC2`
+- **THEN** the category is facility and the chip colour dark
+
 ### Requirement: Full meeting list by municipality
 
 The Meetings page (`/listfull`, title "Meetings" (Mødeliste)) SHALL load the
@@ -109,8 +171,8 @@ trimming) and it has no `virtual_meeting_link`. A hybrid meeting is one whose
 
 ### Requirement: Format definitions and cache
 
-Format definitions SHALL be fetched from both GetFormats queries (default
-language and `lang_enum=dk`), concatenated, and cached under the key
+Format definitions SHALL be fetched from both GetFormats queries
+(`lang_enum=da` and `lang_enum=en`), concatenated, and cached under the key
 `meetingFormatsCache` as `{fetchedAt: <epoch ms>, formats: [...]}` for 7 days
 (`7 * 24 * 60 * 60 * 1000` ms). `formats` holds the rows as the server sent
 them. On fetch failure the stale cache is used if present, else an empty

@@ -30,7 +30,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get locating => 'Locating...';
 
   @override
-  String get findingMtgs => 'Finding Meetings ...';
+  String get findingMtgs => 'Finding meetings…';
 
   @override
   String get listfull => 'Meetings';
@@ -167,7 +167,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get markerInstr => 'Drag marker to set position';
 
   @override
-  String get nothingFound => 'Nothing Found';
+  String get nothingFound => 'Nothing found';
 
   @override
   String get bus => 'Bus';
@@ -227,19 +227,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meetingDetails => 'Meeting Details';
 
   @override
-  String get meetingFormats => 'Meeting Formats';
+  String get meetingFormats => 'Meeting formats';
 
   @override
   String get cancel => 'Cancel';
 
   @override
-  String get virtualLink => 'Virtual Link';
+  String get virtualLink => 'Virtual link';
 
   @override
-  String get phoneMeeting => 'Phone Meeting Dial-in';
+  String get phoneMeeting => 'Phone meeting dial-in';
 
   @override
-  String get tempClosed => 'Temporarily Closed';
+  String get tempClosed => 'Temporarily closed';
 
   @override
   String get virtualMeetings => 'virtual-na.org';
@@ -254,7 +254,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get visit => 'Visit';
 
   @override
-  String get weekdays => 'Weekdays';
+  String get weekdays => 'All days';
 
   @override
   String get virtualNa =>
@@ -634,4 +634,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get jftUnavailable => 'Today\'s text could not be loaded';
+
+  @override
+  String get municipalityOnline => 'Online';
+
+  @override
+  String get meetingsLoadFailed => 'The meetings could not be loaded';
+
+  @override
+  String get tryAgain => 'Try again';
+
+  @override
+  String get hourRangeLower => 'Earliest start hour';
+
+  @override
+  String get hourRangeUpper => 'Latest start hour';
+
+  @override
+  String get meetingFormatsOpen => 'Show meeting formats';
+
+  @override
+  String meetingDayCount(String day, int count) {
+    return '$day ($count)';
+  }
+
+  @override
+  String meetingBadge(String day, String start, String end) {
+    return '$day $start - $end';
+  }
+
+  @override
+  String meetingBusLines(String lines) {
+    return 'Bus: $lines';
+  }
+
+  @override
+  String meetingTrainLines(String lines) {
+    return 'Train: $lines';
+  }
+
+  @override
+  String get meetingDayFilter => 'Day';
 }

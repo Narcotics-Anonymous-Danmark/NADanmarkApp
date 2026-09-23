@@ -7,7 +7,7 @@ import 'package:riverpod/riverpod.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('every chapter 0 port throws with its name until bound', () {
+  test('every feature port throws with its name until bound', () {
     final container = ProviderContainer();
     addTearDown(container.dispose);
     final expectations = <ProviderListenable<Object>, String>{
@@ -16,6 +16,8 @@ void main() {
       jftPortProvider: 'JftPort',
       externalLinksPortProvider: 'ExternalLinksPort',
       appInfoProvider: 'AppInfo',
+      meetingSearchPortProvider: 'MeetingSearchPort',
+      meetingFormatsPortProvider: 'MeetingFormatsPort',
     };
     for (final entry in expectations.entries) {
       expect(

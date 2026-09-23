@@ -1,5 +1,4 @@
-import 'dart:convert';
-
+import 'package:adapter_jft/src/jft_wire.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:na_kernel/boundary.dart';
@@ -24,86 +23,74 @@ final class AssetJftSource implements JftPort {
         test: (error) => error is FlutterError,
       );
 
-  static Outcome<JftCalendar, Failure> decode({required String text}) {
-    final Object? json;
-    try {
-      json = jsonDecode(text);
-    } on FormatException catch (error) {
-      return Err(error: DecodeFailure(detail: 'jft.json: ${error.message}'));
-    }
-    return switch (json) {
-      final List<Object?> items => _entries(items: items).map(
-        transform: (entries) => JftCalendar(entries: entries),
-      ),
-      _ => const Err(error: DecodeFailure(detail: 'jft.json: not a list')),
-    };
-  }
+  static const WireJson _wire = WireJson();
 
-  static Outcome<List<JftEntry>, Failure> _entries({
-    required List<Object?> items,
+  static Outcome<JftCalendar, Failure> decode({required String text}) =>
+      switch (_wire
+          .parse(text: text, context: 'jft.json')
+          .flatMap(
+            transform: (json) => _wire.rows(
+              json: json,
+              fromJson: JftEntryDto.fromJson,
+              context: 'jft',
+            ),
+          )) {
+        Ok(:final value) => _entries(dtos: value),
+        Err(:final error) => Err(error: error),
+      };
+
+  static Outcome<JftCalendar, Failure> _entries({
+    required List<JftEntryDto> dtos,
   }) {
-    final decoded = items.indexed.map(
-      (entry) => switch (entry.$2) {
-        final JsonMap item => _entry(
-          reader: JsonReader(json: item, context: 'jft[${entry.$1}]'),
-        ),
-        _ => Err<JftEntry, Failure>(
-          error: DecodeFailure(detail: 'jft[${entry.$1}] is not an object'),
-        ),
-      },
+    final decoded = dtos.indexed.map(
+      (entry) => _entry(dto: entry.$2, context: 'jft[${entry.$1}]'),
     );
     final errors = decoded.whereType<Err<JftEntry, Failure>>();
     return errors.isEmpty
         ? Ok(
-            value: List.unmodifiable(
-              decoded.whereType<Ok<JftEntry, Failure>>().map((ok) => ok.value),
+            value: JftCalendar(
+              entries: List.unmodifiable(
+                decoded.whereType<Ok<JftEntry, Failure>>().map(
+                  (ok) => ok.value,
+                ),
+              ),
             ),
           )
         : Err(error: errors.first.error);
   }
 
   static Outcome<JftEntry, Failure> _entry({
-    required JsonReader reader,
-  }) => reader
-      .integer(key: 'day')
-      .flatMap(
-        transform: (day) => reader
-            .string(key: 'month')
-            .flatMap(
-              transform: (monthName) =>
-                  DanishMonth.parse(name: monthName).flatMap(
-                    transform: (month) => reader
-                        .string(key: 'title')
-                        .flatMap(
-                          transform: (title) => reader
-                              .string(key: 'quote')
-                              .flatMap(
-                                transform: (quote) => reader
-                                    .string(key: 'source')
-                                    .flatMap(
-                                      transform: (source) => reader
-                                          .string(key: 'text')
-                                          .flatMap(
-                                            transform: (text) => reader
-                                                .string(key: 'jft')
-                                                .map(
-                                                  transform: (jft) => JftEntry(
-                                                    day: day,
-                                                    month: month,
-                                                    title: title,
-                                                    quote: quote,
-                                                    source: source,
-                                                    text: text,
-                                                    closing: JftClosing.parse(
-                                                      text: jft,
-                                                    ),
-                                                  ),
-                                                ),
-                                          ),
-                                    ),
-                              ),
-                        ),
-                  ),
-            ),
-      );
+    required JftEntryDto dto,
+    required String context,
+  }) => switch ((
+    dto.day,
+    dto.month,
+    dto.title,
+    dto.quote,
+    dto.source,
+    dto.text,
+    dto.jft,
+  )) {
+    (
+      final int day,
+      final String month,
+      final String title,
+      final String quote,
+      final String source,
+      final String text,
+      final String jft,
+    ) =>
+      DanishMonth.parse(name: month).map(
+        transform: (month) => JftEntry(
+          day: DayOfMonth(day),
+          month: month,
+          title: JftTitle(title),
+          quote: JftQuote(quote),
+          source: JftSource(source),
+          text: JftText(text),
+          closing: JftClosing.parse(text: jft),
+        ),
+      ),
+    _ => Err(error: DecodeFailure(detail: '$context: incomplete entry')),
+  };
 }

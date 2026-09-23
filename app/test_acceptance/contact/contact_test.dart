@@ -66,7 +66,10 @@ void main() {
         tester: tester,
         initialLocation: '/contact',
         container: realJftContainer(
-          appInfo: anAppInfo(version: '2.0.0', buildType: 'release'),
+          appInfo: anAppInfo(
+            version: VersionName('2.0.0'),
+            buildType: 'release',
+          ),
         ),
       );
       addTearDown(app.dispose);

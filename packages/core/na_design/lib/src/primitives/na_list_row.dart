@@ -84,9 +84,13 @@ final class NaMenuTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = NaTheme.of(context);
-    final color = switch (selected) {
+    final iconColour = switch (selected) {
       NaSelection.selected => theme.colors.secondary,
       NaSelection.unselected => theme.colors.primary,
+    };
+    final marker = switch (selected) {
+      NaSelection.selected => theme.colors.secondary,
+      NaSelection.unselected => const Color(0x00000000),
     };
     return Semantics(
       button: true,
@@ -97,7 +101,10 @@ final class NaMenuTile extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(color: theme.colors.background)),
+            border: Border(
+              bottom: BorderSide(color: theme.colors.background),
+              left: BorderSide(color: marker, width: Space.xs),
+            ),
           ),
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 52),
@@ -108,13 +115,15 @@ final class NaMenuTile extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Icon(icon, size: 24, color: color),
+                  Icon(icon, size: 24, color: iconColour),
                   const SizedBox(width: Space.lg),
                   Expanded(
                     child: ExcludeSemantics(
                       child: Text(
                         label,
-                        style: theme.typography.body.copyWith(color: color),
+                        style: theme.typography.body.copyWith(
+                          color: theme.colors.primary,
+                        ),
                       ),
                     ),
                   ),

@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:na_kernel/boundary.dart';
 import 'package:na_ports/src/unbound_port.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -8,21 +9,19 @@ sealed class LegacyStoreRead {
 }
 
 final class LegacyStoreFound extends LegacyStoreRead {
-  const LegacyStoreFound({required this.entries});
+  const LegacyStoreFound({required this.dump});
 
-  final Map<String, Object> entries;
+  final LegacyStoreDumpDto dump;
 
   @override
-  int get hashCode => Object.hash(LegacyStoreFound, entries.length);
+  int get hashCode => Object.hash(LegacyStoreFound, dump);
 
   @override
   bool operator ==(Object other) =>
-      other is LegacyStoreFound &&
-      other.entries.length == entries.length &&
-      entries.entries.every((entry) => other.entries[entry.key] == entry.value);
+      other is LegacyStoreFound && other.dump == dump;
 
   @override
-  String toString() => 'LegacyStoreFound(${entries.keys.join(', ')})';
+  String toString() => 'LegacyStoreFound($dump)';
 }
 
 final class LegacyStoreAbsent extends LegacyStoreRead {

@@ -24,6 +24,19 @@ enum MenuDestination {
   final RoutePath path;
   final IconData icon;
 
+  NaSelection selectionAt({required RoutePath location}) =>
+      location == path || location.value.startsWith('${path.value}/')
+      ? NaSelection.selected
+      : NaSelection.unselected;
+
+  static RoutePath parentOf({required RoutePath location}) => values
+      .firstWhere(
+        (destination) =>
+            location.value.startsWith('${destination.path.value}/'),
+        orElse: () => MenuDestination.home,
+      )
+      .path;
+
   String label({required AppLocalizations l10n}) => switch (this) {
     MenuDestination.home => l10n.home,
     MenuDestination.map => l10n.mapSearch,

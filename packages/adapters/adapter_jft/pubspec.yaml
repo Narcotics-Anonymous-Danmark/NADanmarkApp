@@ -1,7 +1,7 @@
 name: adapter_jft
 description: JftPort adapter serving the bundled Danish "Just for Today" entries.
 publish_to: none
-version: 0.1.0
+version: 0.0.0
 
 environment:
   sdk: ^3.11.0
@@ -10,16 +10,19 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
+  json_annotation: 4.9.0
   na_kernel:
     path: ../../core/na_kernel
   na_ports:
     path: ../../core/na_ports
-  riverpod: ^3.0.0
+  riverpod: 3.3.2
 
 dev_dependencies:
-  custom_lint: ^0.8.0
+  build_runner: 2.15.1
+  custom_lint: 0.8.1
   flutter_test:
     sdk: flutter
+  json_serializable: 6.11.2
   na_lints:
     path: ../../../tool/na_lints
   na_testing:
