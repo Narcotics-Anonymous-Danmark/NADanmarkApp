@@ -14,9 +14,16 @@ extension MeetingTexts on AppLocalizations {
     Weekday.saturday => saturday,
   };
 
-  String dayFilterName({required DayFilter day}) => switch (day) {
+  String dayFilterName({
+    required DayFilter day,
+    required FirstDayOfWeek firstDay,
+  }) => switch (day) {
     AllDays() => weekdays,
-    OnlyDay(:final weekday) => weekdayName(weekday: weekday),
+    SelectedDays() =>
+      day
+          .orderedFrom(firstDay: firstDay)
+          .map((weekday) => weekdayName(weekday: weekday))
+          .join(', '),
   };
 
   String municipalityName({required Municipality municipality}) =>

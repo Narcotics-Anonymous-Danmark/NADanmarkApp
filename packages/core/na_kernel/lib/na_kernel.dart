@@ -5,6 +5,7 @@ export 'src/events/event_bus.dart';
 export 'src/jft/danish_month.dart';
 export 'src/jft/jft_calendar.dart';
 export 'src/jft/jft_entry.dart';
+export 'src/location/location.dart';
 export 'src/meetings/format_codes.dart';
 export 'src/meetings/formats_snapshot.dart';
 export 'src/meetings/meeting.dart';

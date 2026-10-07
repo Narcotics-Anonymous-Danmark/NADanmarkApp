@@ -125,11 +125,13 @@ asking again. That way, one refusal ends the current locate.
 - **Tests:** the adapter tests use a `GeolocatorPlatformMimic` that
   implements `GeolocatorPlatform`. It scripts the permission answers,
   services on/off, a position, or an exception.
-- **Pins:** `geolocator` 14.0.3. The adapter imports
+- **Pins:** `geolocator` 14.0.2. 14.0.3 needs `geolocator_linux` ^0.2.6,
+  which needs `package_info_plus` ^10, and the app pins 8.3.1. 14.0.2
+  resolves `geolocator_linux` 0.2.3, which accepts 8. The adapter imports
   `geolocator_platform_interface` directly, pinned to 4.3.0, and pins
   `geolocator_android` 5.0.3. That keeps the lockfile off the releases
-  published in the last two weeks; a later commit can upgrade them on
-  purpose.
+  published in the last two weeks; a later commit can upgrade them together
+  with `package_info_plus` on purpose.
 
 Alternative: `permission_handler` for the permission part. Rejected because
 geolocator already covers both checking and requesting, and one plugin means
@@ -219,8 +221,11 @@ Rejected because `Stream.timeout` uses real timers, not `Scheduler`, and the
   `sealed class PageFooter { NoFooter() | FooterContent(child) }`, following
   the existing `PageBack` pattern. Every current call site passes
   `NoFooter()`.
-- **Footer content.** `NearbyFooter` holds an `NaButton` ("Meetings nearby",
-  new `NaIcons.locate`) and the slider.
+- **Footer content.** `NearbyFooter` holds an `NaButton` ("Meetings nearby")
+  and the slider. `NaButton` has no icon slot, so the legacy locate icon is
+  not ported; adding an icon variant would touch every button call site for
+  a cosmetic detail. `NaFooterBar` in `na_design` draws the footer surface
+  and clears the home indicator.
 - **Shared slider row.** Settings' slider-with-end-labels row moves into
   `na_design` as `NaSliderWithEnds`, so both pages share it. Settings goldens
   must stay byte-identical, which proves the move changed nothing.
@@ -279,12 +284,33 @@ twice.
 
 - New key `nearbyRadiusLabel`: "Search radius" (Søgeradius), the slider's
   accessible label.
-- `locating` (en) becomes "Locating…". The Danish "Finder position …" is
-  unchanged.
+- `locating` becomes "Locating…" (en) and "Finder position …" (da); both
+  used "..." before.
 - Reused keys: `locationsearch`, `noLocation`, `kmValue`, `nothingFound`,
   `meetingsLoadFailed`, `tryAgain`.
 - `docs/LEGACY_PARITY.md` rows `LOCATIONSEARCH`, `NO_LOCATION`, `LOCATING`
   and `KM` are corrected to the ARB names actually used.
+
+### D12 Review fixes (filters, radius value, location error)
+
+- **Several days.** `DayFilter` becomes `AllDays | SelectedDays(weekdays)`,
+  built through `DayFilter.of(weekdays:)`, which folds an empty or complete
+  set into `AllDays` so there is one way to say "every day". The filter
+  predicate becomes set membership. The shared `MeetingFilterBar` (Meetings
+  and Meetings nearby) opens `showNaMultiOptionDialog`, a new `na_design`
+  checkbox sheet with "Cancel" / "OK". Its pending checks are widget-local, so
+  the sheet lives in `flutter_bridge` as a `StatefulWidget`; the confirmed set
+  goes to `MeetingListController.selectDay`. The row text joins the weekday
+  names in `firstday` order.
+- **Hours shown.** `HourRange` gains `from` (`lower:00`) and `until`
+  (`upper:59`) as `LocalTime`, formatted with `LocalTime.hhmm`; the hour row
+  shows `meetingHourRange` ("18:00 – 20:59") above the slider and follows the
+  draft range while dragging.
+- **Radius shown.** `NearbyFooter` shows `nearbyRadiusValue` ("Search radius:
+  15 km") above the slider, driven by `NearbyState.radius`, which already
+  changes on every drag step.
+- **Location error.** `LocationNotSetNote` uses `NaErrorState` instead of
+  `NaNote`, the component every other error message uses.
 
 ## Risks / Trade-offs
 

@@ -33,8 +33,9 @@ the map (slice 7) will reuse.
 - **Native permission configuration**: Android `ACCESS_COARSE_LOCATION` and
   `ACCESS_FINE_LOCATION`. iOS `NSLocationWhenInUseUsageDescription` with the
   legacy purpose text.
-- **Loading bar** gains the "Locating…" activity. The English text changes
-  from "Locating..." to "Locating…", matching "Finding meetings…".
+- **Loading bar** gains the "Locating…" activity. Both languages change
+  "..." to "…" ("Locating…", "Finder position …"), matching "Finding
+  meetings…".
 
 Legacy behaviour not reproduced:
 - The "Location not set" text existed but was never reached. The page showed
@@ -77,7 +78,7 @@ None.
 ## Impact
 
 - **New package:** `packages/adapters/adapter_geolocation` (`geolocator`
-  14.0.3, pinned).
+  14.0.2, pinned).
 - **Extended packages:**
   - `na_kernel`: location permission, position fix, search origin, default
     coordinates, `BusyActivity.locating`

@@ -18,12 +18,7 @@ Meeting aMeeting({
   MeetingOrigin origin = MeetingOrigin.denmark,
   VirtualLink virtualLink = const NoVirtualLink(),
   DialIn dialIn = const NoDialIn(),
-  MeetingLocation location = const Mapped(
-    point: GeoPoint(
-      latitude: Latitude(55.476224),
-      longitude: Longitude(8.4606976),
-    ),
-  ),
+  MeetingLocation location = const Mapped(point: GeoPoint.searchFallback),
   Municipality municipality = const NamedMunicipality(
     name: MunicipalityName('Aarhus'),
   ),

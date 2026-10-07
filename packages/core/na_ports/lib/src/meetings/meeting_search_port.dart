@@ -6,6 +6,11 @@ abstract interface class MeetingSearchPort {
   Future<Outcome<List<Meeting>, Failure>> denmarkMeetings();
 
   Future<Outcome<List<MunicipalityName>, Failure>> denmarkMunicipalities();
+
+  Future<Outcome<List<Meeting>, Failure>> nearbyMeetings({
+    required GeoPoint centre,
+    required Km radius,
+  });
 }
 
 final Provider<MeetingSearchPort> meetingSearchPortProvider = unboundPort(

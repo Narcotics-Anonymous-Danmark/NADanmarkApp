@@ -21,17 +21,33 @@ final class BackTo extends PageBack {
   final RoutePath parent;
 }
 
+sealed class PageFooter {
+  const PageFooter();
+}
+
+final class NoFooter extends PageFooter {
+  const NoFooter();
+}
+
+final class FooterContent extends PageFooter {
+  const FooterContent({required this.child});
+
+  final Widget child;
+}
+
 final class ShellPage extends ConsumerWidget {
   const ShellPage({
     required this.title,
     required this.body,
     required this.back,
+    required this.footer,
     super.key,
   });
 
   final String title;
   final Widget body;
   final PageBack back;
+  final PageFooter footer;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -57,6 +73,10 @@ final class ShellPage extends ConsumerWidget {
         },
       ),
       body: body,
+      footer: switch (footer) {
+        NoFooter() => const SizedBox.shrink(),
+        FooterContent(:final child) => child,
+      },
       bottomInset: dock.height,
     );
   }

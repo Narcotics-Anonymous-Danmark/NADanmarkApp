@@ -27,7 +27,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noLocation => 'Location not set';
 
   @override
-  String get locating => 'Locating...';
+  String get locating => 'Locating…';
 
   @override
   String get findingMtgs => 'Finding meetings…';
@@ -675,4 +675,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get meetingDayFilter => 'Day';
+
+  @override
+  String get nearbyRadiusLabel => 'Search radius';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String meetingHourRange(String from, String until) {
+    return '$from – $until';
+  }
+
+  @override
+  String nearbyRadiusValue(int km) {
+    return 'Search radius: $km km';
+  }
 }

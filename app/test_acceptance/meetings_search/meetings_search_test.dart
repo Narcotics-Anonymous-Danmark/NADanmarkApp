@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:na_design/na_design.dart';
 import 'package:na_kernel/boundary.dart';
+import 'package:na_kernel/na_kernel.dart';
 import 'package:na_testing/na_testing.dart';
 
 import '../support/meetings.dart';
@@ -311,19 +312,104 @@ void main() {
         bmlt: bmltServing(meetings: fridayAndMonday()),
       );
       addTearDown(app.dispose);
-      expect(
-        tester
-            .widget<NaListRow>(find.byKey(const Key('meeting-day-filter')))
-            .value,
-        'All days',
-      );
-      await chooseOption(
+      expect(dayFilterValue(tester), 'All days');
+      await pickDays(
         tester: tester,
-        row: const Key('meeting-day-filter'),
-        option: 'Friday',
+        toggle: const [Weekday.friday],
+        answer: SheetAnswer.confirm,
       );
       expect(sectionLabel(tester, 'friday'), 'Friday (3)');
       expect(sectionHeader('monday'), findsNothing);
+    });
+
+    testWidgets('Several days can be selected', (tester) async {
+      final app = await pumpMeetings(
+        tester: tester,
+        location: municipalityPath('Aarhus'),
+        bmlt: bmltServing(
+          meetings: [
+            ...fridayAndMonday(),
+            aBmltMeetingDto(id: 9, weekday: 4, municipality: 'Aarhus'),
+          ],
+        ),
+      );
+      addTearDown(app.dispose);
+      await pickDays(
+        tester: tester,
+        toggle: const [Weekday.monday, Weekday.friday],
+        answer: SheetAnswer.confirm,
+      );
+      expect(sectionLabel(tester, 'monday'), 'Monday (1)');
+      expect(sectionLabel(tester, 'friday'), 'Friday (3)');
+      expect(sectionHeader('wednesday'), findsNothing);
+      expect(dayFilterValue(tester), 'Monday, Friday');
+    });
+
+    testWidgets('Unchecking every day shows all days', (tester) async {
+      final app = await pumpMeetings(
+        tester: tester,
+        location: municipalityPath('Aarhus'),
+        bmlt: bmltServing(meetings: fridayAndMonday()),
+      );
+      addTearDown(app.dispose);
+      await pickDays(
+        tester: tester,
+        toggle: const [Weekday.friday],
+        answer: SheetAnswer.confirm,
+      );
+      await pickDays(
+        tester: tester,
+        toggle: const [Weekday.friday],
+        answer: SheetAnswer.confirm,
+      );
+      expect(sectionHeader('monday'), findsOneWidget);
+      expect(sectionHeader('friday'), findsOneWidget);
+      expect(dayFilterValue(tester), 'All days');
+    });
+
+    testWidgets('Cancel keeps the selected days', (tester) async {
+      final app = await pumpMeetings(
+        tester: tester,
+        location: municipalityPath('Aarhus'),
+        bmlt: bmltServing(meetings: fridayAndMonday()),
+      );
+      addTearDown(app.dispose);
+      await pickDays(
+        tester: tester,
+        toggle: const [Weekday.friday],
+        answer: SheetAnswer.confirm,
+      );
+      await pickDays(
+        tester: tester,
+        toggle: const [Weekday.monday],
+        answer: SheetAnswer.cancel,
+      );
+      expect(sectionHeader('monday'), findsNothing);
+      expect(sectionLabel(tester, 'friday'), 'Friday (3)');
+      expect(dayFilterValue(tester), 'Friday');
+    });
+
+    testWidgets('Hour range shows its hours', (tester) async {
+      final app = await pumpMeetings(
+        tester: tester,
+        location: municipalityPath('Aarhus'),
+        bmlt: bmltServing(meetings: fridayAndMonday()),
+      );
+      addTearDown(app.dispose);
+      expect(hourRangeLabel(tester), '00:00 – 23:59');
+      await nudgeThumb(
+        tester: tester,
+        label: 'Earliest start hour',
+        direction: NudgeDirection.up,
+        times: 18,
+      );
+      await nudgeThumb(
+        tester: tester,
+        label: 'Latest start hour',
+        direction: NudgeDirection.down,
+        times: 3,
+      );
+      expect(hourRangeLabel(tester), '18:00 – 20:59');
     });
 
     testWidgets('Hour range filters by start hour', (tester) async {

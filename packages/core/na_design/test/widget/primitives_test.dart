@@ -178,6 +178,7 @@ void main() {
             body: NaScrollBody(
               children: [NaCard(child: NaCardTitle(text: 'Card'))],
             ),
+            footer: SizedBox.shrink(),
             bottomInset: 0,
           ),
           onDismiss: () => dismissed += 1,

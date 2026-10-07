@@ -47,6 +47,15 @@ Finder section(String weekday) => find.byKey(Key('meeting-section-$weekday'));
 
 Finder card(int id) => find.byKey(Key('meeting-card-$id'));
 
+String dayFilterValue(WidgetTester tester) =>
+    tester.widget<NaListRow>(find.byKey(const Key('meeting-day-filter'))).value;
+
+String hourRangeLabel(WidgetTester tester) =>
+    tester
+        .widget<Text>(find.byKey(const Key('meeting-hour-range-label')))
+        .data ??
+    '';
+
 void main() {
   setUpAll(loadNaFonts);
 
@@ -97,26 +106,40 @@ void main() {
     await pumpList(tester);
     await tester.tap(find.byKey(const Key('meeting-day-filter')));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Fredag').last);
+    await tester.tap(find.byKey(const Key('na-multi-option-Fredag')));
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('na-multi-option-confirm')));
     await tester.pumpAndSettle();
-    expect(
-      tester
-          .widget<NaListRow>(find.byKey(const Key('meeting-day-filter')))
-          .value,
-      'Fredag',
-    );
+    expect(dayFilterValue(tester), 'Fredag');
     expect(section('monday'), findsNothing);
     expect(find.text('Fredag (1)'), findsOneWidget);
     await expectGolden(finder: goldenTarget, name: 'list_filtered');
+  });
+
+  testWidgets('several days can be selected', (tester) async {
+    await pumpList(tester);
+    await tester.tap(find.byKey(const Key('meeting-day-filter')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('na-multi-option-Fredag')));
+    await tester.tap(find.byKey(const Key('na-multi-option-Mandag')));
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('na-multi-option-confirm')));
+    await tester.pumpAndSettle();
+    expect(dayFilterValue(tester), 'Mandag, Fredag');
+    expect(section('monday'), findsOneWidget);
+    expect(section('friday'), findsOneWidget);
+    expect(section('sunday'), findsNothing);
   });
 
   testWidgets('cancelling the day selector keeps the filter', (tester) async {
     await pumpList(tester);
     await tester.tap(find.byKey(const Key('meeting-day-filter')));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Annuller'));
+    await tester.tap(find.byKey(const Key('na-multi-option-Fredag')));
+    await tester.tap(find.byKey(const Key('na-multi-option-cancel')));
     await tester.pumpAndSettle();
     expect(section('monday'), findsOneWidget);
+    expect(dayFilterValue(tester), 'Alle dage');
   });
 
   testWidgets('the hour range filters after the debounce', (tester) async {
@@ -127,6 +150,7 @@ void main() {
       await tester.pump();
     }
     expect(find.text('Søndag (1)'), findsOneWidget);
+    expect(hourRangeLabel(tester), '18:00 – 23:59');
     harness.time.advance(by: const Duration(milliseconds: 350));
     await tester.pumpAndSettle();
     expect(section('sunday'), findsNothing);

@@ -115,12 +115,65 @@ void main() {
         ids(
           schedule.filter(
             meetings: meetings,
-            day: const OnlyDay(weekday: Weekday.friday),
+            day: DayFilter.of(weekdays: const {Weekday.friday}),
             hours: HourRange.wholeDay,
           ),
         ),
         [1, 2, 3, 4],
       );
+    });
+
+    test('several days keep every selected day', () {
+      expect(
+        ids(
+          schedule.filter(
+            meetings: [
+              ...meetings,
+              aMeeting(id: 6, weekday: Weekday.wednesday, hour: 19),
+            ],
+            day: DayFilter.of(weekdays: const {Weekday.monday, Weekday.friday}),
+            hours: HourRange.wholeDay,
+          ),
+        ),
+        [1, 2, 3, 4, 5],
+      );
+    });
+
+    test('no day or every day selected means all days', () {
+      expect(DayFilter.of(weekdays: const {}), const AllDays());
+      expect(DayFilter.of(weekdays: Weekday.values.toSet()), const AllDays());
+      expect(
+        DayFilter.of(weekdays: const {Weekday.friday}),
+        isA<SelectedDays>(),
+      );
+    });
+
+    test('selected days are listed in first-day order', () {
+      final day = DayFilter.of(
+        weekdays: const {Weekday.sunday, Weekday.friday, Weekday.monday},
+      );
+      expect(day.orderedFrom(firstDay: FirstDayOfWeek.monday), [
+        Weekday.monday,
+        Weekday.friday,
+        Weekday.sunday,
+      ]);
+      expect(day.orderedFrom(firstDay: FirstDayOfWeek.sunday), [
+        Weekday.sunday,
+        Weekday.monday,
+        Weekday.friday,
+      ]);
+      expect(
+        const AllDays().orderedFrom(firstDay: FirstDayOfWeek.monday),
+        isEmpty,
+      );
+    });
+
+    test('an hour range reads from the full hour to minute 59', () {
+      const range = HourRange(lower: HourOfDay(18), upper: HourOfDay(20));
+      expect(range.from.hhmm, '18:00');
+      expect(range.until.hhmm, '20:59');
+      expect(HourRange.wholeDay.from.hhmm, '00:00');
+      expect(HourRange.wholeDay.until.hhmm, '23:59');
     });
 
     test('the hour range filters by start hour inclusively', () {
@@ -154,8 +207,8 @@ void main() {
     test('filters and ranges compare by value', () {
       expect(const AllDays(), const AllDays());
       expect(
-        const OnlyDay(weekday: Weekday.friday),
-        const OnlyDay(weekday: Weekday.friday),
+        DayFilter.of(weekdays: const {Weekday.friday}),
+        DayFilter.of(weekdays: const {Weekday.friday}),
       );
       expect(
         const HourRange(lower: HourOfDay(1), upper: HourOfDay(2)),

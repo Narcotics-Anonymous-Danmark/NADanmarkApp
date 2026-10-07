@@ -6,6 +6,7 @@ import 'package:na_testing/src/events/recording_event_bus.dart';
 import 'package:na_testing/src/jft/jft_mimic.dart';
 import 'package:na_testing/src/legacy/legacy_store_mimic.dart';
 import 'package:na_testing/src/links/external_links_mimic.dart';
+import 'package:na_testing/src/location/geolocation_mimic.dart';
 import 'package:na_testing/src/meetings/meeting_port_mimics.dart';
 import 'package:na_testing/src/settings/settings_store_mimic.dart';
 import 'package:na_testing/src/storage/key_value_store_mimic.dart';
@@ -30,6 +31,7 @@ final class TestContainer {
     required this.appInfo,
     required this.meetingSearch,
     required this.meetingFormats,
+    required this.geolocation,
   });
 
   factory TestContainer.build({
@@ -64,6 +66,12 @@ final class TestContainer {
     final info = appInfo;
     final meetingSearch = MeetingSearchMimic.recorded();
     final meetingFormats = MeetingFormatsMimic.recorded();
+    final geolocation = GeolocationMimic(
+      time: testTime,
+      currentAccess: LocationAccess.granted,
+      promptAnswer: PromptAnswer.grant,
+      delivery: FixAtOnce(fix: Located(point: aGeoPoint())),
+    );
     final container = ProviderContainer(
       overrides: [
         clockProvider.overrideWithValue(FakeClock(time: testTime)),
@@ -78,6 +86,7 @@ final class TestContainer {
         jftPortProvider.overrideWithValue(jft),
         externalLinksPortProvider.overrideWithValue(links),
         appInfoProvider.overrideWithValue(info),
+        geolocationPortProvider.overrideWithValue(geolocation),
         ...switch (meetingPorts) {
           MeetingPortBinding.portMimics => [
             meetingSearchPortProvider.overrideWithValue(meetingSearch),
@@ -99,6 +108,7 @@ final class TestContainer {
       appInfo: info,
       meetingSearch: meetingSearch,
       meetingFormats: meetingFormats,
+      geolocation: geolocation,
     );
   }
 
@@ -112,6 +122,7 @@ final class TestContainer {
   final AppInfo appInfo;
   final MeetingSearchMimic meetingSearch;
   final MeetingFormatsMimic meetingFormats;
+  final GeolocationMimic geolocation;
 
   T read<T>(ProviderListenable<T> provider) => container.read(provider);
 

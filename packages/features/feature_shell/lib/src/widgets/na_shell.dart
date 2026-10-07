@@ -88,6 +88,9 @@ final class GlobalLoadingBar extends ConsumerWidget {
           key: const Key('global-loading-bar'),
           statusText: switch (status) {
             LoadingText(:final text) => text,
+            BusyStatus(activity: BusyActivity.locating) => AppLocalizations.of(
+              context,
+            ).locating,
             BusyStatus(activity: BusyActivity.findingMeetings) =>
               AppLocalizations.of(context).findingMtgs,
           },

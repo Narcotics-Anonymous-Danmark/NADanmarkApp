@@ -25,6 +25,7 @@ GoRouter routerAt({required String location}) => GoRouter(
             builder: (context, state) => ShellPage(
               title: d.label(l10n: AppLocalizations.of(context)),
               back: const NoBack(),
+              footer: const NoFooter(),
               body: Text('page ${d.name}'),
             ),
           ),
@@ -35,6 +36,7 @@ GoRouter routerAt({required String location}) => GoRouter(
             builder: (context, state) => ShellPage(
               title: b.label(l10n: AppLocalizations.of(context)),
               back: BackTo(parent: MenuDestination.audiobooks.path),
+              footer: const NoFooter(),
               body: Text('page ${b.name}'),
             ),
           ),

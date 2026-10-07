@@ -8,8 +8,10 @@ The "Meetings nearby" page (`/location-search`) SHALL search the Tomato radius
 endpoint around the device position with the radius from the `searchRange`
 setting (default 15). A footer holds a "Meetings nearby" button that re-locates
 the device and a radius slider 5–50 km (labels "5 km", "50 km") that re-runs the
-search 500 ms after the last change without re-locating. The slider changes
-only this page's search; it never writes `searchRange`. Results are shown in
+search 500 ms after the last change without re-locating. Above the slider the
+current value reads "Search radius: <n> km" (Søgeradius: <n> km) and follows
+the knob while dragging. The slider changes only this page's search; it never
+writes `searchRange`. Results are shown in
 the shared meeting list. When no position could be determined the default
 coordinates lat `55.476224`, lng `8.4606976` are used. Only the newest search
 counts: a result that arrives after a newer search started SHALL be discarded.
@@ -30,6 +32,11 @@ While a new search runs, the previous results stay visible.
 
 - **WHEN** location fails or times out
 - **THEN** the search runs for lat 55.476224, lng 8.4606976
+
+#### Scenario: Slider shows the current radius
+
+- **WHEN** `searchRange` is 20 and the user drags the slider to 35
+- **THEN** the label reads "Search radius: 20 km" before the drag and "Search radius: 35 km" after it
 
 #### Scenario: Slider does not change the setting
 
@@ -89,6 +96,50 @@ new position arrives the last real position stays the best coordinates.
 - **WHEN** a search ran at lat 56.15, lng 10.2 and the user taps "Meetings nearby" and no position arrives for 10 s
 - **THEN** the search runs again at lat 56.15, lng 10.2
 
+### Requirement: Day and hour filters
+
+Above the sections the list SHALL offer a day selector and a dual-knob hour
+range 0–23 (step 1). The day row reads "Day" (Dag) and shows "All days" (Alle
+dage) or the selected weekdays in `firstday` order, comma separated. Tapping it
+opens a sheet with one checkbox per weekday in `firstday` order, "Cancel"
+(Annuller) and "OK"; any number of days can be checked, and confirming with
+none or all seven checked means "All days". The hour row shows the range as
+"<lower>:00 – <upper>:59". A meeting passes when its weekday is selected (or
+"All days") and its start hour is between the knobs inclusive. Filtering
+re-computes the per-day counts. The hour filter applies 350 ms after the last
+change.
+
+#### Scenario: Day filter keeps one section
+
+- **WHEN** the user checks only "Friday" and confirms
+- **THEN** only the Friday section is shown with its count
+
+#### Scenario: Several days can be selected
+
+- **WHEN** the user checks "Monday" and "Friday" and confirms
+- **THEN** only the Monday and Friday sections are shown
+- **AND** the day row reads "Monday, Friday"
+
+#### Scenario: Unchecking every day shows all days
+
+- **WHEN** "Friday" is selected and the user unchecks it and confirms
+- **THEN** every day section is shown and the day row reads "All days"
+
+#### Scenario: Cancel keeps the selected days
+
+- **WHEN** "Friday" is selected and the user checks "Monday" and taps "Cancel"
+- **THEN** only the Friday section is shown
+
+#### Scenario: Hour range filters by start hour
+
+- **WHEN** the range is 18–20
+- **THEN** meetings starting 18:00–20:59 are listed and a 17:30 meeting is not
+
+#### Scenario: Hour range shows its hours
+
+- **WHEN** the list opens and the user drags the knobs to 18 and 20
+- **THEN** the hour row reads "00:00 – 23:59" before the drag and "18:00 – 20:59" after it
+
 ## ADDED Requirements
 
 ### Requirement: Nearby results states
@@ -97,9 +148,7 @@ The page SHALL show "Nothing found" (Intet fundet) when the radius query
 returns no meetings. When the query fails it SHALL show "The meetings could not
 be loaded" (Møderne kunne ikke hentes) with a "Try again" (Prøv igen) button
 that repeats the search with the same coordinates and radius, and the loading
-bar SHALL be hidden. When the search used the default coordinates, a note
-"Location not set" (Placeringen er ikke indstillet) SHALL be shown above the
-results.
+bar SHALL be hidden.
 
 #### Scenario: No meetings in range
 
@@ -111,12 +160,18 @@ results.
 - **WHEN** the radius query fails and the user taps "Try again" after the server recovers
 - **THEN** the same coordinates and radius are queried and the meetings replace the error
 
+### Requirement: Unknown position is disclosed
+
+When the search used the default coordinates, the error "Location not set"
+(Placeringen er ikke indstillet) SHALL be shown above the results, in the same
+error style as every other error message.
+
 #### Scenario: Default coordinates are disclosed
 
 - **WHEN** no position could be determined and the search ran on the default coordinates
-- **THEN** "Location not set" is shown above the results
+- **THEN** "Location not set" is shown above the results in the error style used by "The meetings could not be loaded"
 
-#### Scenario: Real position shows no note
+#### Scenario: Real position shows no location error
 
 - **WHEN** the search ran on the device position
 - **THEN** "Location not set" is not shown
@@ -133,7 +188,7 @@ stored or sent anywhere other than the radius query.
 #### Scenario: Approximate location is accepted
 
 - **WHEN** the user grants only approximate location on Android
-- **THEN** the search runs on the approximate position and no note is shown
+- **THEN** the search runs on the approximate position and "Location not set" is not shown
 
 #### Scenario: Permission is not requested elsewhere
 

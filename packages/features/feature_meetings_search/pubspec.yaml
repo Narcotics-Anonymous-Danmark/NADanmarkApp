@@ -8,6 +8,7 @@ environment:
 resolution: workspace
 
 dependencies:
+  collection: 1.19.1
   feature_meetings:
     path: ../feature_meetings
   flutter:

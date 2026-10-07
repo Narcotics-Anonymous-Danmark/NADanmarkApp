@@ -1,0 +1,27 @@
+name: adapter_geolocation
+description: GeolocationPort adapter on geolocator.
+publish_to: none
+version: 0.0.0
+
+environment:
+  sdk: ^3.11.0
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  geolocator: 14.0.2
+  geolocator_android: 5.0.3
+  geolocator_platform_interface: 4.3.0
+  na_kernel:
+    path: ../../core/na_kernel
+  na_ports:
+    path: ../../core/na_ports
+  riverpod: 3.3.2
+
+dev_dependencies:
+  custom_lint: 0.8.1
+  flutter_test:
+    sdk: flutter
+  na_lints:
+    path: ../../../tool/na_lints

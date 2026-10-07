@@ -165,34 +165,23 @@ final class SearchRadiusRow extends ConsumerWidget {
               color: theme.colors.primary,
             ),
           ),
-          NaSlider(
-            key: const Key('settings-search-range-slider'),
-            value: radius.value,
-            min: Km.searchRadiusMinimum.value,
-            max: Km.searchRadiusMaximum.value,
-            label: l10n.searchrangesetting,
+          NaSliderWithEnds(
+            sliderKey: const Key('settings-search-range-slider'),
+            value: SliderValue(radius.value),
+            min: SliderValue(Km.searchRadiusMinimum.value),
+            max: SliderValue(Km.searchRadiusMaximum.value),
+            label: NaLabel(l10n.searchrangesetting),
+            minLabel: NaLabel(l10n.kmValue(Km.searchRadiusMinimum.value)),
+            maxLabel: NaLabel(l10n.kmValue(Km.searchRadiusMaximum.value)),
             onChanged: (value) => ref
                 .read(searchRadiusDraftProvider.notifier)
-                .drag(radius: Km(value)),
+                .drag(radius: Km(value.value)),
             onChangeEnd: (value) async {
               ref.read(searchRadiusDraftProvider.notifier).release();
               await ref
                   .read(settingsControllerProvider.notifier)
-                  .changeSearchRadius(radius: Km(value));
+                  .changeSearchRadius(radius: Km(value.value));
             },
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                l10n.kmValue(Km.searchRadiusMinimum.value),
-                style: theme.typography.caption,
-              ),
-              Text(
-                l10n.kmValue(Km.searchRadiusMaximum.value),
-                style: theme.typography.caption,
-              ),
-            ],
           ),
         ],
       ),

@@ -33,10 +33,12 @@ void main() {
 
   test('selecting a day filters to that day', () {
     final subject = listUnderTest();
-    subject.controller.selectDay(day: const OnlyDay(weekday: Weekday.friday));
+    subject.controller.selectDay(
+      day: DayFilter.of(weekdays: const {Weekday.friday}),
+    );
     expect(
       subject.harness.read(meetingListProvider(key)).day,
-      const OnlyDay(weekday: Weekday.friday),
+      DayFilter.of(weekdays: const {Weekday.friday}),
     );
   });
 

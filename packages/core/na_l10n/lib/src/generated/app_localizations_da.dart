@@ -27,7 +27,7 @@ class AppLocalizationsDa extends AppLocalizations {
   String get noLocation => 'Placeringen er ikke indstillet';
 
   @override
-  String get locating => 'Finder position ...';
+  String get locating => 'Finder position …';
 
   @override
   String get findingMtgs => 'Finder møder …';
@@ -674,4 +674,20 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get meetingDayFilter => 'Dag';
+
+  @override
+  String get nearbyRadiusLabel => 'Søgeradius';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String meetingHourRange(String from, String until) {
+    return '$from – $until';
+  }
+
+  @override
+  String nearbyRadiusValue(int km) {
+    return 'Søgeradius: $km km';
+  }
 }

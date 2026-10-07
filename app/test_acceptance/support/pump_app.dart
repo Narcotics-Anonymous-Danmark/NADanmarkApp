@@ -25,6 +25,10 @@ final class AppHarness {
 
   ExternalLinksMimic get links => container.links;
 
+  GeolocationMimic get geolocation => container.geolocation;
+
+  TestTime get time => container.time;
+
   Future<void> dispose() => container.dispose();
 }
 
@@ -53,11 +57,14 @@ TestContainer realJftContainer({
   ),
 );
 
+enum AppSettle { idle, frames }
+
 Future<AppHarness> pumpApp({
   required WidgetTester tester,
   TestContainer? container,
   BmltServerMimic? bmlt,
   String initialLocation = '/home',
+  AppSettle settleWith = AppSettle.idle,
 }) async {
   tester.view.physicalSize = const Size(600, 2400);
   tester.view.devicePixelRatio = 1;
@@ -90,8 +97,19 @@ Future<AppHarness> pumpApp({
       ),
     ),
   );
-  await settle(tester);
+  switch (settleWith) {
+    case AppSettle.idle:
+      await settle(tester);
+    case AppSettle.frames:
+      await pumpFrames(tester);
+  }
   return AppHarness(container: harness, systemPops: systemPops);
+}
+
+Future<void> pumpFrames(WidgetTester tester) async {
+  for (var frame = 0; frame < 6; frame += 1) {
+    await tester.pump(const Duration(milliseconds: 50));
+  }
 }
 
 Future<void> settle(WidgetTester tester) async {

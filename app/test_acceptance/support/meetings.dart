@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:na_design/na_design.dart';
 import 'package:na_kernel/boundary.dart';
 import 'package:na_kernel/na_kernel.dart';
 import 'package:na_ports/na_ports.dart';
@@ -100,3 +101,41 @@ Future<void> openFormats(WidgetTester tester, int id) async {
   await tester.tap(find.byKey(Key('meeting-formats-$id')));
   await tester.pumpAndSettle();
 }
+
+enum SheetAnswer { confirm, cancel }
+
+Future<void> pickDays({
+  required WidgetTester tester,
+  required List<Weekday> toggle,
+  required SheetAnswer answer,
+}) async {
+  await tester.tap(find.byKey(const Key('meeting-day-filter')));
+  await tester.pumpAndSettle();
+  for (final weekday in toggle) {
+    final name = weekday.name;
+    await tester.tap(
+      find.byKey(
+        Key('na-multi-option-${name[0].toUpperCase()}${name.substring(1)}'),
+      ),
+    );
+    await tester.pump();
+  }
+  await tester.tap(
+    find.byKey(
+      Key(switch (answer) {
+        SheetAnswer.confirm => 'na-multi-option-confirm',
+        SheetAnswer.cancel => 'na-multi-option-cancel',
+      }),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+String dayFilterValue(WidgetTester tester) =>
+    tester.widget<NaListRow>(find.byKey(const Key('meeting-day-filter'))).value;
+
+String hourRangeLabel(WidgetTester tester) =>
+    tester
+        .widget<Text>(find.byKey(const Key('meeting-hour-range-label')))
+        .data ??
+    '';

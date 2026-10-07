@@ -37,6 +37,7 @@ void main() {
           body: NaScrollBody(
             children: [SizedBox(key: Key('content'), height: 10)],
           ),
+          footer: SizedBox.shrink(),
           bottomInset: 0,
         ),
       ),

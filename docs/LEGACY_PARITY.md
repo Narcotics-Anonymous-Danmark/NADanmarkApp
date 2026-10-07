@@ -75,11 +75,11 @@ collapse into one ICU plural key. Values shown are the legacy strings.
 |---|---|---|---|---|
 | `MENU` | Menu | Menu | `menuTitle` | ported |
 | `HOME` | Hjem | Home | `pageHome` | ported |
-| `LOCATIONSEARCH` | Møder i nærheden | Meetings nearby | `pageMeetingsNearby` | ported |
+| `LOCATIONSEARCH` | Møder i nærheden | Meetings nearby | `locationsearch` | ported (menu entry, page title and the relocate button) |
 | `LOADINGMAP` | Indlæser kort ... | Loading map... | — | dropped (unused BMLT template key) |
 | `LOCATION` | *(empty)* | *(empty)* | — | dropped (unused BMLT template key) |
-| `NO_LOCATION` | Placeringen er ikke indstillet | Location not set | `locationNotSet` | ported |
-| `LOCATING` | Finder position ... | Locating... | `loadingLocating` | ported |
+| `NO_LOCATION` | Placeringen er ikke indstillet | Location not set | `noLocation` | ported (note when the nearby search used the default coordinates; unreachable in the legacy app) |
+| `LOCATING` | Finder position ... | Locating... | `locating` | ported ("…" instead of "..." in both languages) |
 | `FINDING_MTGS` | Finder møder ... | Finding Meetings ... | `findingMtgs` | ported |
 | `LISTFULL` | Mødeliste | Meetings | `listfull` | ported |
 | `TAGS` | Tags | Tags | — | dropped (unused BMLT template key) |
@@ -88,7 +88,7 @@ collapse into one ICU plural key. Values shown are the legacy strings.
 | `MAP_SEARCH` | Kort | Map | `pageMap` | ported |
 | `MAP_SEARCH_DESC` |  møder nærmest den røde markør. Træk den røde markør for at flytte søgningen. |  meetings nearest the red marker. Drag the red marker to move the search. | — | dropped (unused BMLT template key) |
 | `MEETINGS` |  Møder |  meetings | — | dropped (unused BMLT template key) |
-| `KM` |  km |  km | `unitKm` | ported |
+| `KM` |  km |  km | `km`, `kmValue` | ported (`kmValue` for the slider end labels) |
 | `MAP` | Kørselsvejledning | Directions | `map` | ported |
 | `SETTINGS` | Indstillinger | Settings | `pageSettings` | ported |
 | `SEARCHRANGESETTING` | Standard søgeradius | Default search range | `settingsDefaultSearchRange` | ported |

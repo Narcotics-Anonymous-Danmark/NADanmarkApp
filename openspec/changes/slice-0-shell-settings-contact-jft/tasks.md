@@ -9,6 +9,11 @@
 - [x] ARB keys (da + en) and regeneration
 - [x] Acceptance tests for the spec scenarios of the six capabilities
 - [x] Widget tests per feature and for the design primitives
-- [ ] Compile and exercise the iOS plugin on macOS
+- [ ] Compile and exercise the iOS plugin on macOS. While on macOS also:
+  capture the iOS da/en screenshots for `docs/screenshots/meetings-search/`
+  (municipalities, meeting list, formats popover from slice 1; nearby results,
+  "Location not set" and error from slice 2), and check that "Meetings nearby"
+  shows the `NSLocationWhenInUseUsageDescription` prompt with the legacy text
+  and searches after "Allow While Using App" and after "Don't Allow"
 - [ ] Patrol run on the Android emulator through `./bin/na test e2e`
 - [ ] Archive: fold into `openspec/specs/` once merged

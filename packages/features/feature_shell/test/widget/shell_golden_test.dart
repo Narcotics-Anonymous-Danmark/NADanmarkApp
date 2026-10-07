@@ -22,6 +22,7 @@ void main() {
           child: ShellPage(
             title: 'Hjem',
             back: NoBack(),
+            footer: NoFooter(),
             body: HomeBody(
               cards: [NaCard(child: NaCardTitle(text: 'Dagens tekst'))],
             ),
@@ -50,6 +51,7 @@ void main() {
             child: const ShellPage(
               title: 'Indstillinger',
               back: NoBack(),
+              footer: NoFooter(),
               body: SizedBox.shrink(),
             ),
           ),
