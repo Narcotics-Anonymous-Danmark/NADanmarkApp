@@ -1,12 +1,16 @@
 export 'src/assets/repo_asset_bundle.dart';
+export 'src/builders/bmlt_builders.dart';
 export 'src/builders/domain_builders.dart';
 export 'src/builders/gen.dart';
 export 'src/builders/time_builders.dart';
 export 'src/container/test_container.dart';
 export 'src/events/recording_event_bus.dart';
+export 'src/goldens/goldens.dart';
 export 'src/jft/jft_mimic.dart';
 export 'src/legacy/legacy_store_mimic.dart';
 export 'src/links/external_links_mimic.dart';
+export 'src/meetings/bmlt_server_mimic.dart';
+export 'src/meetings/meeting_port_mimics.dart';
 export 'src/settings/settings_store_mimic.dart';
 export 'src/storage/key_value_store_mimic.dart';
 export 'src/time/fake_clock.dart';

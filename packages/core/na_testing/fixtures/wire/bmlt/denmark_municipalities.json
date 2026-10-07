@@ -1,0 +1,506 @@
+[
+  {
+    "location_municipality": "2300 københavn s"
+  },
+  {
+    "location_municipality": "Aabenraa"
+  },
+  {
+    "location_municipality": "Aabybro"
+  },
+  {
+    "location_municipality": "Aalborg"
+  },
+  {
+    "location_municipality": "Aalborg"
+  },
+  {
+    "location_municipality": "Aalborg"
+  },
+  {
+    "location_municipality": "Aalborg"
+  },
+  {
+    "location_municipality": "Aalborg"
+  },
+  {
+    "location_municipality": "Aalborg"
+  },
+  {
+    "location_municipality": "Aalborg"
+  },
+  {
+    "location_municipality": "Aalborg"
+  },
+  {
+    "location_municipality": "Aalborg"
+  },
+  {
+    "location_municipality": "Aalborg"
+  },
+  {
+    "location_municipality": "Aalborg"
+  },
+  {
+    "location_municipality": "Aalborg"
+  },
+  {
+    "location_municipality": "Aalborg"
+  },
+  {
+    "location_municipality": "Aarhus"
+  },
+  {
+    "location_municipality": "Aarhus"
+  },
+  {
+    "location_municipality": "Aarhus"
+  },
+  {
+    "location_municipality": "Aarhus"
+  },
+  {
+    "location_municipality": "Aarhus"
+  },
+  {
+    "location_municipality": "Aarhus"
+  },
+  {
+    "location_municipality": "Aars"
+  },
+  {
+    "location_municipality": "Aars"
+  },
+  {
+    "location_municipality": "Aars"
+  },
+  {
+    "location_municipality": "Aars"
+  },
+  {
+    "location_municipality": "Albertslund"
+  },
+  {
+    "location_municipality": "Assens"
+  },
+  {
+    "location_municipality": "Birkerød"
+  },
+  {
+    "location_municipality": "Brøndby"
+  },
+  {
+    "location_municipality": "Brøndby"
+  },
+  {
+    "location_municipality": "Brønderslev"
+  },
+  {
+    "location_municipality": "Esbjerg"
+  },
+  {
+    "location_municipality": "Esbjerg"
+  },
+  {
+    "location_municipality": "Esbjerg"
+  },
+  {
+    "location_municipality": "Esbjerg"
+  },
+  {
+    "location_municipality": "Esbjerg"
+  },
+  {
+    "location_municipality": "Esbjerg"
+  },
+  {
+    "location_municipality": "Esbjerg"
+  },
+  {
+    "location_municipality": "Esbjerg"
+  },
+  {
+    "location_municipality": "Esbjerg"
+  },
+  {
+    "location_municipality": "Esbjerg"
+  },
+  {
+    "location_municipality": "Fredericia"
+  },
+  {
+    "location_municipality": "Fredericia"
+  },
+  {
+    "location_municipality": "Fredericia"
+  },
+  {
+    "location_municipality": "Fredericia"
+  },
+  {
+    "location_municipality": "Fredericia"
+  },
+  {
+    "location_municipality": "Fredericia"
+  },
+  {
+    "location_municipality": "Fredericia"
+  },
+  {
+    "location_municipality": "Frederikshavn"
+  },
+  {
+    "location_municipality": "Frederikssund"
+  },
+  {
+    "location_municipality": "Frederiksværk"
+  },
+  {
+    "location_municipality": "Grenå"
+  },
+  {
+    "location_municipality": "Greve"
+  },
+  {
+    "location_municipality": "Haderslev"
+  },
+  {
+    "location_municipality": "Hasle"
+  },
+  {
+    "location_municipality": "Helsingør"
+  },
+  {
+    "location_municipality": "Helsingør"
+  },
+  {
+    "location_municipality": "Helsingør"
+  },
+  {
+    "location_municipality": "Herlev"
+  },
+  {
+    "location_municipality": "Herlev"
+  },
+  {
+    "location_municipality": "Herning"
+  },
+  {
+    "location_municipality": "Herning"
+  },
+  {
+    "location_municipality": "Herning"
+  },
+  {
+    "location_municipality": "Hillerød"
+  },
+  {
+    "location_municipality": "Hjørring"
+  },
+  {
+    "location_municipality": "Hjørring"
+  },
+  {
+    "location_municipality": "Holbæk"
+  },
+  {
+    "location_municipality": "Holbæk"
+  },
+  {
+    "location_municipality": "Holbæk"
+  },
+  {
+    "location_municipality": "Holstebro"
+  },
+  {
+    "location_municipality": "Holstebro"
+  },
+  {
+    "location_municipality": "Horsens"
+  },
+  {
+    "location_municipality": "Horsens"
+  },
+  {
+    "location_municipality": "Horsens"
+  },
+  {
+    "location_municipality": "Hørsholm"
+  },
+  {
+    "location_municipality": "Kolding"
+  },
+  {
+    "location_municipality": "Kolding"
+  },
+  {
+    "location_municipality": "Kolding"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København"
+  },
+  {
+    "location_municipality": "København N"
+  },
+  {
+    "location_municipality": "København/ Lyngby"
+  },
+  {
+    "location_municipality": "København/ Valby"
+  },
+  {
+    "location_municipality": "Køge"
+  },
+  {
+    "location_municipality": "Lemvig"
+  },
+  {
+    "location_municipality": "Middelfart"
+  },
+  {
+    "location_municipality": "Nykøbing Falster"
+  },
+  {
+    "location_municipality": "Nykøbing Falster"
+  },
+  {
+    "location_municipality": "Næstved"
+  },
+  {
+    "location_municipality": "Odense"
+  },
+  {
+    "location_municipality": "Odense"
+  },
+  {
+    "location_municipality": "Odense"
+  },
+  {
+    "location_municipality": "Odense"
+  },
+  {
+    "location_municipality": "Randers"
+  },
+  {
+    "location_municipality": "Randers"
+  },
+  {
+    "location_municipality": "Randers"
+  },
+  {
+    "location_municipality": "Randers"
+  },
+  {
+    "location_municipality": "Ringsted"
+  },
+  {
+    "location_municipality": "Roskilde"
+  },
+  {
+    "location_municipality": "Rønne"
+  },
+  {
+    "location_municipality": "Silkeborg"
+  },
+  {
+    "location_municipality": "Silkeborg"
+  },
+  {
+    "location_municipality": "Skanderborg"
+  },
+  {
+    "location_municipality": "Skanderborg"
+  },
+  {
+    "location_municipality": "Skive"
+  },
+  {
+    "location_municipality": "Skive"
+  },
+  {
+    "location_municipality": "Slagelse"
+  },
+  {
+    "location_municipality": "Slagelse"
+  },
+  {
+    "location_municipality": "Svendborg"
+  },
+  {
+    "location_municipality": "Svendborg"
+  },
+  {
+    "location_municipality": "Svendborg"
+  },
+  {
+    "location_municipality": "Sønderborg"
+  },
+  {
+    "location_municipality": "Thisted"
+  },
+  {
+    "location_municipality": "Thisted"
+  },
+  {
+    "location_municipality": "Tåstrup"
+  },
+  {
+    "location_municipality": "Tønder"
+  },
+  {
+    "location_municipality": "Varde"
+  },
+  {
+    "location_municipality": "Vejle"
+  },
+  {
+    "location_municipality": "Vejle"
+  },
+  {
+    "location_municipality": "Vejle"
+  },
+  {
+    "location_municipality": "Viborg"
+  },
+  {
+    "location_municipality": "Viborg"
+  },
+  {
+    "location_municipality": "Viborg"
+  },
+  {
+    "location_municipality": "Viborg"
+  },
+  {
+    "location_municipality": "Viborg"
+  },
+  {
+    "location_municipality": "Vordingborg"
+  },
+  {
+    "location_municipality": "Vordingborg"
+  },
+  {
+    "location_municipality": ""
+  },
+  {
+    "location_municipality": ""
+  },
+  {
+    "location_municipality": ""
+  },
+  {
+    "location_municipality": ""
+  },
+  {
+    "location_municipality": ""
+  },
+  {
+    "location_municipality": ""
+  },
+  {
+    "location_municipality": ""
+  },
+  {
+    "location_municipality": ""
+  },
+  {
+    "location_municipality": ""
+  },
+  {
+    "location_municipality": ""
+  },
+  {
+    "location_municipality": ""
+  },
+  {
+    "location_municipality": ""
+  },
+  {
+    "location_municipality": ""
+  },
+  {
+    "location_municipality": ""
+  },
+  {
+    "location_municipality": ""
+  }
+]

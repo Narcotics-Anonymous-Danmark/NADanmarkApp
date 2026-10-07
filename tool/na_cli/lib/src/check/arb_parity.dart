@@ -1,5 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:na_cli/src/boundary/json_object.dart';
+import 'package:na_cli/src/boundary/wire_json.dart';
 
 final class ArbDocument {
   const ArbDocument({required this.messages});
@@ -9,17 +9,16 @@ final class ArbDocument {
   static final RegExp _placeholder = RegExp(r'\{([a-zA-Z0-9_]+)\}');
 
   static ArbParse parse({required final String text}) =>
-      switch (JsonObject.parse(text: text)) {
-        JsonObjectParsed(:final object) => ArbParsed(
+      switch (const WireJson().textEntries(text: text)) {
+        WireDecoded(:final value) => ArbParsed(
           document: ArbDocument(
             messages: Map.unmodifiable({
-              for (final entry in object.stringEntries.entries)
+              for (final entry in value.entries)
                 if (!entry.key.startsWith('@')) entry.key: entry.value,
             }),
           ),
         ),
-        JsonListParsed() => const ArbRejected(reason: 'ARB must be an object'),
-        JsonMalformed(:final reason) => ArbRejected(reason: reason),
+        WireRejected(:final reason) => ArbRejected(reason: reason),
       };
 
   Set<String> get keys => messages.keys.toSet();

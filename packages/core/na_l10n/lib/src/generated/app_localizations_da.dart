@@ -30,7 +30,7 @@ class AppLocalizationsDa extends AppLocalizations {
   String get locating => 'Finder position ...';
 
   @override
-  String get findingMtgs => 'Finder møder ...';
+  String get findingMtgs => 'Finder møder …';
 
   @override
   String get listfull => 'Mødeliste';
@@ -170,10 +170,10 @@ class AppLocalizationsDa extends AppLocalizations {
   String get nothingFound => 'Intet fundet';
 
   @override
-  String get bus => 'Note';
+  String get bus => 'Bus';
 
   @override
-  String get train => 'Mødeformat';
+  String get train => 'Tog';
 
   @override
   String get srcCode => 'Kildekode til app\'en';
@@ -633,4 +633,45 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get jftUnavailable => 'Dagens tekst kunne ikke indlæses';
+
+  @override
+  String get municipalityOnline => 'Online';
+
+  @override
+  String get meetingsLoadFailed => 'Møderne kunne ikke hentes';
+
+  @override
+  String get tryAgain => 'Prøv igen';
+
+  @override
+  String get hourRangeLower => 'Tidligste starttid';
+
+  @override
+  String get hourRangeUpper => 'Seneste starttid';
+
+  @override
+  String get meetingFormatsOpen => 'Vis mødeformater';
+
+  @override
+  String meetingDayCount(String day, int count) {
+    return '$day ($count)';
+  }
+
+  @override
+  String meetingBadge(String day, String start, String end) {
+    return '$day $start - $end';
+  }
+
+  @override
+  String meetingBusLines(String lines) {
+    return 'Bus: $lines';
+  }
+
+  @override
+  String meetingTrainLines(String lines) {
+    return 'Tog: $lines';
+  }
+
+  @override
+  String get meetingDayFilter => 'Dag';
 }

@@ -6,6 +6,7 @@ import 'package:na_testing/src/events/recording_event_bus.dart';
 import 'package:na_testing/src/jft/jft_mimic.dart';
 import 'package:na_testing/src/legacy/legacy_store_mimic.dart';
 import 'package:na_testing/src/links/external_links_mimic.dart';
+import 'package:na_testing/src/meetings/meeting_port_mimics.dart';
 import 'package:na_testing/src/settings/settings_store_mimic.dart';
 import 'package:na_testing/src/storage/key_value_store_mimic.dart';
 import 'package:na_testing/src/time/fake_clock.dart';
@@ -14,6 +15,8 @@ import 'package:na_testing/src/time/fake_ticker.dart';
 import 'package:na_testing/src/time/test_time.dart';
 import 'package:riverpod/misc.dart';
 import 'package:riverpod/riverpod.dart';
+
+enum MeetingPortBinding { portMimics, supplied }
 
 final class TestContainer {
   TestContainer._({
@@ -25,16 +28,20 @@ final class TestContainer {
     required this.jft,
     required this.links,
     required this.appInfo,
+    required this.meetingSearch,
+    required this.meetingFormats,
   });
 
   factory TestContainer.build({
     List<Override> extra = const [],
+    MeetingPortBinding meetingPorts = MeetingPortBinding.portMimics,
     Map<String, String> storedValues = const {},
     LegacyStoreRead legacyStore = const LegacyStoreAbsent(),
     AppInfo appInfo = testAppInfo,
   }) => TestContainer.buildAt(
     time: TestTime.copenhagen(startAt: anInstant()),
     extra: extra,
+    meetingPorts: meetingPorts,
     storedValues: storedValues,
     legacyStore: legacyStore,
     appInfo: appInfo,
@@ -43,6 +50,7 @@ final class TestContainer {
   factory TestContainer.buildAt({
     required TestTime time,
     List<Override> extra = const [],
+    MeetingPortBinding meetingPorts = MeetingPortBinding.portMimics,
     Map<String, String> storedValues = const {},
     LegacyStoreRead legacyStore = const LegacyStoreAbsent(),
     AppInfo appInfo = testAppInfo,
@@ -54,6 +62,8 @@ final class TestContainer {
     final jft = JftMimic.calendar(calendar: aJftCalendar());
     final links = ExternalLinksMimic.opening();
     final info = appInfo;
+    final meetingSearch = MeetingSearchMimic.recorded();
+    final meetingFormats = MeetingFormatsMimic.recorded();
     final container = ProviderContainer(
       overrides: [
         clockProvider.overrideWithValue(FakeClock(time: testTime)),
@@ -68,6 +78,13 @@ final class TestContainer {
         jftPortProvider.overrideWithValue(jft),
         externalLinksPortProvider.overrideWithValue(links),
         appInfoProvider.overrideWithValue(info),
+        ...switch (meetingPorts) {
+          MeetingPortBinding.portMimics => [
+            meetingSearchPortProvider.overrideWithValue(meetingSearch),
+            meetingFormatsPortProvider.overrideWithValue(meetingFormats),
+          ],
+          MeetingPortBinding.supplied => const <Override>[],
+        },
         ...extra,
       ],
     );
@@ -80,6 +97,8 @@ final class TestContainer {
       jft: jft,
       links: links,
       appInfo: info,
+      meetingSearch: meetingSearch,
+      meetingFormats: meetingFormats,
     );
   }
 
@@ -91,6 +110,8 @@ final class TestContainer {
   final JftMimic jft;
   final ExternalLinksMimic links;
   final AppInfo appInfo;
+  final MeetingSearchMimic meetingSearch;
+  final MeetingFormatsMimic meetingFormats;
 
   T read<T>(ProviderListenable<T> provider) => container.read(provider);
 

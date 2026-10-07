@@ -2,6 +2,7 @@ import 'package:na_cli/src/boundary/option_value.dart';
 import 'package:na_cli/src/cli_context.dart';
 import 'package:na_cli/src/cli_failure.dart';
 import 'package:na_cli/src/devices/flutter_device.dart';
+import 'package:na_cli/src/fs/file_path.dart';
 import 'package:na_cli/src/fs/path_status.dart';
 import 'package:na_cli/src/process/command_line.dart';
 import 'package:na_cli/src/process/executable.dart';
@@ -30,6 +31,9 @@ final class AppLevelTests {
   const AppLevelTests({required this.context});
 
   final CliContext context;
+
+  FilePath get patrolTestBundle =>
+      context.appDir.joinAll(['integration_test', 'test_bundle.dart']);
 
   Future<TestResult> acceptance({required final TestOptions options}) async {
     final lcov = context.coverageDir.join('na_app.acceptance.lcov.info');
@@ -87,6 +91,7 @@ final class AppLevelTests {
       ),
     );
     _collectPatrolCoverage(platform: platform, coverage: coverage);
+    context.files.deleteTree(path: patrolTestBundle);
     return _result(label: 'na_app:e2e-${platform.name}', outcome: outcome);
   }
 

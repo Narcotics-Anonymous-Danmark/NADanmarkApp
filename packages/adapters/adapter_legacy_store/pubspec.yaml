@@ -1,7 +1,7 @@
 name: adapter_legacy_store
 description: LegacyStorePort adapter reading the Ionic Storage IndexedDB of the previous app through a small native plugin.
 publish_to: none
-version: 0.1.0
+version: 0.0.0
 
 environment:
   sdk: ^3.11.0
@@ -10,12 +10,14 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
+  na_kernel:
+    path: ../../core/na_kernel
   na_ports:
     path: ../../core/na_ports
-  riverpod: ^3.0.0
+  riverpod: 3.3.2
 
 dev_dependencies:
-  custom_lint: ^0.8.0
+  custom_lint: 0.8.1
   flutter_test:
     sdk: flutter
   na_lints:

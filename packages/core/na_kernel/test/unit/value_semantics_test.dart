@@ -129,15 +129,21 @@ void main() {
 
   group('LocalTime', () {
     test('formats, adds and wraps around midnight', () {
-      const time = LocalTime(hour: 23, minute: 45);
+      const time = LocalTime(hour: HourOfDay(23), minute: MinuteOfHour(45));
       expect(time.hhmm, '23:45');
       expect(
         time.plus(duration: const Duration(minutes: 30)),
-        const LocalTime(hour: 0, minute: 15),
+        const LocalTime(hour: HourOfDay(0), minute: MinuteOfHour(15)),
       );
       expect(time.minutesSinceMidnight, 23 * 60 + 45);
-      expect(time, const LocalTime(hour: 23, minute: 45));
-      expect(time.hashCode, const LocalTime(hour: 23, minute: 45).hashCode);
+      expect(
+        time,
+        const LocalTime(hour: HourOfDay(23), minute: MinuteOfHour(45)),
+      );
+      expect(
+        time.hashCode,
+        const LocalTime(hour: HourOfDay(23), minute: MinuteOfHour(45)).hashCode,
+      );
       expect(time.toString(), '23:45');
     });
   });

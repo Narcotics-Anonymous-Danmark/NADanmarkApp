@@ -1,6 +1,7 @@
 @Tags(['unit'])
 library;
 
+import 'package:na_kernel/boundary.dart';
 import 'package:na_kernel/na_kernel.dart';
 import 'package:test/test.dart';
 
@@ -93,15 +94,17 @@ void main() {
   });
 
   group('LegacyMigrationMarker', () {
-    test('round-trips through its JSON encoding', () {
+    const codec = MigrationMarkerCodec();
+
+    test('round-trips through the marker codec', () {
       final marker = LegacyMigrationMarker(
-        appVersion: '2.0.0',
+        appVersion: const VersionName('2.0.0'),
         completedAt: Instant(DateTime.utc(2026, 9, 10, 12)),
-        importedKeys: 3,
-        skippedKeys: 1,
+        importedKeys: const KeyCount(3),
+        skippedKeys: const KeyCount(1),
       );
       expect(
-        LegacyMigrationMarker.decode(text: marker.encoded),
+        codec.decode(text: codec.encode(marker: marker)),
         Ok<LegacyMigrationMarker, DecodeFailure>(value: marker),
       );
       expect(marker.toString(), contains('imported: 3'));
@@ -109,15 +112,15 @@ void main() {
 
     test('rejects malformed text', () {
       expect(
-        LegacyMigrationMarker.decode(text: 'nope'),
+        codec.decode(text: 'nope'),
         isA<Err<LegacyMigrationMarker, DecodeFailure>>(),
       );
       expect(
-        LegacyMigrationMarker.decode(text: '[]'),
+        codec.decode(text: '[]'),
         isA<Err<LegacyMigrationMarker, DecodeFailure>>(),
       );
       expect(
-        LegacyMigrationMarker.decode(
+        codec.decode(
           text:
               '{"version":"2.0.0","completedAt":"x","imported":1,"skipped":0}',
         ),

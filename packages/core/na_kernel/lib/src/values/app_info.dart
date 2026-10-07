@@ -4,6 +4,8 @@ enum BuildApproval { approved, trial }
 
 extension type const BuildType(String value) {}
 
+extension type const VersionName(String value) {}
+
 @immutable
 final class AppInfo {
   const AppInfo({
@@ -12,7 +14,7 @@ final class AppInfo {
     required this.approval,
   });
 
-  final String version;
+  final VersionName version;
   final BuildType buildType;
   final BuildApproval approval;
 
@@ -27,5 +29,6 @@ final class AppInfo {
       other.approval == approval;
 
   @override
-  String toString() => 'AppInfo($version, ${buildType.value}, $approval)';
+  String toString() =>
+      'AppInfo(${version.value}, ${buildType.value}, $approval)';
 }

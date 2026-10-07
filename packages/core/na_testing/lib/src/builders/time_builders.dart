@@ -4,7 +4,7 @@ LocalDate aLocalDate({int year = 2026, int month = 9, int day = 10}) =>
     LocalDate(year: year, month: month, day: day);
 
 LocalTime aLocalTime({int hour = 19, int minute = 0}) =>
-    LocalTime(hour: hour, minute: minute);
+    LocalTime(hour: HourOfDay(hour), minute: MinuteOfHour(minute));
 
 Instant anInstant({
   int year = 2026,

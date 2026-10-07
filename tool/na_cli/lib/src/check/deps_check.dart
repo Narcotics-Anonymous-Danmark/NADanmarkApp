@@ -1,5 +1,6 @@
 import 'package:na_cli/src/check/layer_rules.dart';
 import 'package:na_cli/src/check/package_manifest.dart';
+import 'package:na_cli/src/check/pin_rules.dart';
 import 'package:na_cli/src/cli_context.dart';
 import 'package:na_cli/src/fs/file_text.dart';
 import 'package:na_cli/src/fs/path_status.dart';
@@ -16,10 +17,15 @@ final class DepsCheck {
   ExitCode run() {
     final members = WorkspaceLoader(context: context).members();
     final manifests = members.expand(_manifest).toList(growable: false);
-    final violations = const LayerRules().violations(manifests: manifests);
+    final violations = [
+      ...const LayerRules().violations(manifests: manifests),
+      ...const PinRules().violations(manifests: manifests),
+    ];
     if (violations.isEmpty) {
       context.console.out(
-        line: 'deps: ${manifests.length} packages respect the layers',
+        line:
+            'deps: ${manifests.length} packages respect the layers, pin '
+            'every dependency and are versioned 0.0.0',
       );
       return ExitCode.success;
     }

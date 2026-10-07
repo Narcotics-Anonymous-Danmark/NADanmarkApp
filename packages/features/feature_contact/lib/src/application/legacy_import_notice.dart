@@ -1,3 +1,4 @@
+import 'package:na_kernel/boundary.dart';
 import 'package:na_kernel/na_kernel.dart';
 import 'package:na_ports/na_ports.dart';
 import 'package:riverpod/riverpod.dart';
@@ -10,10 +11,11 @@ final FutureProvider<ImportNotice> legacyImportNoticeProvider = FutureProvider(
         .read(keyValueStorePortProvider)
         .read(key: SettingKeys.legacyMigrationCompleted);
     return switch (stored) {
-      StoredString(:final value) => switch (LegacyMigrationMarker.decode(
+      StoredString(:final value) => switch (const MigrationMarkerCodec().decode(
         text: value,
       )) {
-        Ok(:final value) when value.importedKeys > 0 => ImportNotice.shown,
+        Ok(:final value) when value.importedKeys.value > 0 =>
+          ImportNotice.shown,
         Ok() || Err() => ImportNotice.hidden,
       },
       NothingStored() => ImportNotice.hidden,

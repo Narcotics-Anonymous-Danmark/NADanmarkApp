@@ -1,0 +1,36 @@
+name: feature_meetings_search
+description: "Meetings search capability: the full meeting list by municipality (/listfull) and its sub-page."
+publish_to: none
+version: 0.0.0
+
+environment:
+  sdk: ^3.11.0
+resolution: workspace
+
+dependencies:
+  feature_meetings:
+    path: ../feature_meetings
+  flutter:
+    sdk: flutter
+  flutter_riverpod: 3.3.2
+  meta: 1.17.0
+  na_design:
+    path: ../../core/na_design
+  na_kernel:
+    path: ../../core/na_kernel
+  na_l10n:
+    path: ../../core/na_l10n
+  na_ports:
+    path: ../../core/na_ports
+  riverpod: 3.3.2
+
+dev_dependencies:
+  custom_lint: 0.8.1
+  flutter_localizations:
+    sdk: flutter
+  flutter_test:
+    sdk: flutter
+  na_lints:
+    path: ../../../tool/na_lints
+  na_testing:
+    path: ../../core/na_testing

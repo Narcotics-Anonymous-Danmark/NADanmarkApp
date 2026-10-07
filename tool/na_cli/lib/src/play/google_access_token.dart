@@ -1,6 +1,8 @@
 import 'dart:convert';
 
-import 'package:na_cli/src/boundary/json_object.dart';
+import 'package:na_cli/src/boundary/google_wire.dart';
+import 'package:na_cli/src/boundary/jwt_wire.dart';
+import 'package:na_cli/src/boundary/wire_json.dart';
 import 'package:na_cli/src/cli_failure.dart';
 import 'package:na_cli/src/crypto/epoch_seconds.dart';
 import 'package:na_cli/src/crypto/jwt.dart';
@@ -21,18 +23,18 @@ final class GoogleAccessToken {
       'https://www.googleapis.com/auth/androidpublisher';
   static final Uri tokenUrl = Uri.parse('https://oauth2.googleapis.com/token');
 
-  Map<String, Object> claims({
+  JwtClaimsDto claims({
     required final String clientEmail,
     required final DateTime now,
   }) {
     final issued = EpochSeconds.of(time: now);
-    return {
-      'iss': clientEmail,
-      'scope': scope,
-      'aud': tokenUrl.toString(),
-      'iat': issued.value,
-      'exp': issued.plus(duration: const Duration(hours: 1)).value,
-    };
+    return JwtClaimsDto(
+      iss: clientEmail,
+      scope: scope,
+      aud: tokenUrl.toString(),
+      iat: issued.value,
+      exp: issued.plus(duration: const Duration(hours: 1)).value,
+    );
   }
 
   Future<AccessToken> fetch({
@@ -42,7 +44,7 @@ final class GoogleAccessToken {
   }) async {
     final assertion = jwt.sign(
       key: key,
-      header: const {},
+      hint: const NoKeyId(),
       claims: claims(clientEmail: clientEmail, now: now),
     );
     final reply = await http.send(
@@ -63,12 +65,18 @@ final class GoogleAccessToken {
             '${reply.body}',
       );
     }
-    return switch (JsonObject.parse(text: reply.body)) {
-      JsonObjectParsed(:final object) => AccessToken(
-        object.text(key: 'access_token').orElse(fallback: ''),
+    return switch (const WireJson().object(
+      text: reply.body,
+      fromJson: GoogleTokenDto.fromJson,
+    )) {
+      WireDecoded(value: GoogleTokenDto(accessToken: final String token))
+          when token.isNotEmpty =>
+        AccessToken(token),
+      WireDecoded() => throw const CliFailure.general(
+        message: 'google token response has no access_token',
       ),
-      JsonListParsed() || JsonMalformed() => throw const CliFailure.general(
-        message: 'google token response is not a JSON object',
+      WireRejected(:final reason) => throw CliFailure.general(
+        message: 'google token response: $reason',
       ),
     };
   }

@@ -4,6 +4,7 @@ library;
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:na_cli/src/boundary/jwt_wire.dart';
 import 'package:na_cli/src/boundary/pkcs8_key_reader.dart';
 import 'package:na_cli/src/boundary/pointycastle_signer.dart';
 import 'package:na_cli/src/crypto/jwt.dart';
@@ -55,8 +56,8 @@ void main() {
     final key = keyOf(rsaPkcs8Pem) as RsaSigningKey;
     final token = jwt.sign(
       key: key,
-      header: const {},
-      claims: const {'iss': 'ci', 'aud': 'x'},
+      hint: const NoKeyId(),
+      claims: const JwtClaimsDto(iss: 'ci', aud: 'x'),
     );
     expect(segment(token.value, 0), {'alg': 'RS256', 'typ': 'JWT'});
     expect(segment(token.value, 1)['iss'], 'ci');
@@ -80,8 +81,8 @@ void main() {
     final key = keyOf(ecPkcs8Pem) as EcP256SigningKey;
     final token = jwt.sign(
       key: key,
-      header: const {'kid': 'KEY1'},
-      claims: const {'aud': 'appstoreconnect-v1'},
+      hint: const KeyId(value: 'KEY1'),
+      claims: const JwtClaimsDto(aud: 'appstoreconnect-v1'),
     );
     expect(segment(token.value, 0), {
       'alg': 'ES256',

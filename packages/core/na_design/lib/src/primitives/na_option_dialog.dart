@@ -125,12 +125,18 @@ final class NaOptionSheet<T> extends StatelessWidget {
                     child: GestureDetector(
                       onTap: onCancelled,
                       behavior: HitTestBehavior.opaque,
-                      child: Padding(
-                        padding: const EdgeInsets.all(Space.md),
-                        child: ExcludeSemantics(
-                          child: Text(
-                            cancelLabel,
-                            style: theme.typography.label,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          minWidth: 48,
+                          minHeight: 48,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(Space.md),
+                          child: ExcludeSemantics(
+                            child: Text(
+                              cancelLabel,
+                              style: theme.typography.label,
+                            ),
                           ),
                         ),
                       ),

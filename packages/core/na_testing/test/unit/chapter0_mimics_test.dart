@@ -33,7 +33,7 @@ void main() {
 
   test('legacy, jft and link mimics serve what they are told', () async {
     final harness = TestContainer.build(
-      legacyStore: LegacyStoreFound(entries: aLegacyStoreDump()),
+      legacyStore: LegacyStoreFound(dump: aLegacyStoreDump()),
     );
     addTearDown(harness.dispose);
     expect(
@@ -71,8 +71,8 @@ void main() {
   test('builders carry realistic defaults', () {
     expect(aJftCalendar().missingDays, isEmpty);
     expect(aJftEntry().closing, isA<JftClosingWithLead>());
-    expect(aLegacyStoreDump()['theme'], 'light');
-    expect(aMigrationMarker().importedKeys, 4);
+    expect(aLegacyStoreDump().theme, 'light');
+    expect(aMigrationMarker().importedKeys, const KeyCount(4));
     expect(anAppInfo(buildType: 'dev').buildType, const BuildType('dev'));
   });
 }

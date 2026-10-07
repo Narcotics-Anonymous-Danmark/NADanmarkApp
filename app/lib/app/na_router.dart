@@ -1,8 +1,11 @@
 import 'package:feature_contact/feature_contact.dart';
 import 'package:feature_jft/feature_jft.dart';
+import 'package:feature_meetings/feature_meetings.dart';
+import 'package:feature_meetings_search/feature_meetings_search.dart';
 import 'package:feature_settings/feature_settings.dart';
 import 'package:feature_shell/feature_shell.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:na_app/app/na_page.dart';
 import 'package:na_l10n/na_l10n.dart';
@@ -14,10 +17,19 @@ final Set<String> knownPaths = Set.unmodifiable({
   ...BookRoute.values.map((b) => b.path.value),
 });
 
+final String municipalityPrefix = '${MenuDestination.meetings.path.value}/';
+
+String municipalityLocation({required MunicipalitySegment segment}) =>
+    '$municipalityPrefix${Uri.encodeComponent(segment.value)}';
+
 GoRouter createRouter({required String initialLocation}) => GoRouter(
   initialLocation: initialLocation,
   redirect: (context, state) =>
-      knownPaths.contains(state.uri.path) ? null : homePath,
+      knownPaths.contains(state.uri.path) ||
+          (state.uri.path.startsWith(municipalityPrefix) &&
+              state.uri.path.length > municipalityPrefix.length)
+      ? null
+      : homePath,
   routes: [
     ShellRoute(
       builder: (context, state, child) => NaShell(
@@ -31,6 +43,17 @@ GoRouter createRouter({required String initialLocation}) => GoRouter(
             pageBuilder: (context, state) => NaPage(
               key: state.pageKey,
               child: DestinationPage(destination: destination),
+            ),
+          ),
+        ),
+        GoRoute(
+          path: '${MenuDestination.meetings.path.value}/:municipality',
+          pageBuilder: (context, state) => NaPage(
+            key: state.pageKey,
+            child: MunicipalityMeetingsPage(
+              segment: MunicipalitySegment(
+                state.pathParameters['municipality'] ?? '',
+              ),
             ),
           ),
         ),
@@ -69,10 +92,13 @@ final class DestinationPage extends StatelessWidget {
         ),
         MenuDestination.justForToday => const JftBody(),
         MenuDestination.settings => const SettingsBody(),
+        MenuDestination.meetings => MunicipalityListBody(
+          onOpen: (segment) =>
+              context.go(municipalityLocation(segment: segment)),
+        ),
         MenuDestination.about => const ContactBody(),
         MenuDestination.map ||
         MenuDestination.nearby ||
-        MenuDestination.meetings ||
         MenuDestination.cleantime ||
         MenuDestination.events ||
         MenuDestination.audiobooks ||
@@ -94,4 +120,27 @@ final class BookPage extends StatelessWidget {
     back: BackTo(parent: MenuDestination.audiobooks.path),
     body: const SizedBox.shrink(),
   );
+}
+
+final class MunicipalityMeetingsPage extends ConsumerWidget {
+  const MunicipalityMeetingsPage({required this.segment, super.key});
+
+  final MunicipalitySegment segment;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final municipality = segment.municipality;
+    return ShellPage(
+      title: AppLocalizations.of(
+        context,
+      ).municipalityName(municipality: municipality),
+      back: BackTo(parent: MenuDestination.meetings.path),
+      body: MunicipalityMeetingsBody(
+        municipality: municipality,
+        firstDay: ref.watch(
+          currentSettingsProvider.select((settings) => settings.firstDayOfWeek),
+        ),
+      ),
+    );
+  }
 }

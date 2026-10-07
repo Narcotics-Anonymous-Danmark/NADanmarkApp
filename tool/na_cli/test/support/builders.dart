@@ -21,14 +21,15 @@ String aPubspec({
   final List<String> devDependencies = const [],
   final String resolution = 'workspace',
   final String version = '',
+  final String constraint = '1.0.0',
 }) => [
   'name: $name',
   if (version.isNotEmpty) 'version: $version',
   if (resolution.isNotEmpty) 'resolution: $resolution',
   'dependencies:',
-  ...dependencies.map((final d) => '  $d: any'),
+  ...dependencies.map((final d) => '  $d: $constraint'),
   'dev_dependencies:',
-  ...devDependencies.map((final d) => '  $d: any'),
+  ...devDependencies.map((final d) => '  $d: $constraint'),
   '',
 ].join('\n');
 

@@ -49,7 +49,7 @@ void main() {
     tester,
   ) async {
     final harness = TestContainer.build(
-      storedValues: {'legacyMigration.completed': aMigrationMarker().encoded},
+      storedValues: {'legacyMigration.completed': aStoredMigrationMarker()},
     );
     addTearDown(harness.dispose);
     tester.view.physicalSize = const Size(600, 2000);

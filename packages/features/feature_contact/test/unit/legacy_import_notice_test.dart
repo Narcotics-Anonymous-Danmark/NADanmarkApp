@@ -9,7 +9,7 @@ void main() {
   test('the notice is shown only after a marker with imported keys', () async {
     final harness = TestContainer.build(
       storedValues: {
-        'legacyMigration.completed': aMigrationMarker(importedKeys: 2).encoded,
+        'legacyMigration.completed': aStoredMigrationMarker(importedKeys: 2),
       },
     );
     addTearDown(harness.dispose);
@@ -25,9 +25,7 @@ void main() {
       for (final stored in [
         <String, String>{},
         {
-          'legacyMigration.completed': aMigrationMarker(
-            importedKeys: 0,
-          ).encoded,
+          'legacyMigration.completed': aStoredMigrationMarker(importedKeys: 0),
         },
         {'legacyMigration.completed': 'garbage'},
       ]) {

@@ -1,3 +1,4 @@
+import 'package:na_kernel/boundary.dart';
 import 'package:na_kernel/na_kernel.dart';
 
 Settings aSettings({
@@ -21,12 +22,12 @@ JftEntry aJftEntry({
   String text = 'Dagens tekst.',
   String closing = 'Bare for i dag: Jeg vil.',
 }) => JftEntry(
-  day: day,
+  day: DayOfMonth(day),
   month: month,
-  title: title,
-  quote: quote,
-  source: source,
-  text: text,
+  title: JftTitle(title),
+  quote: JftQuote(quote),
+  source: JftSource(source),
+  text: JftText(text),
   closing: JftClosing.parse(text: closing),
 );
 
@@ -47,7 +48,7 @@ JftCalendar aJftCalendar({List<JftEntry> extra = const []}) => JftCalendar(
 );
 
 const AppInfo testAppInfo = AppInfo(
-  version: '2.0.0',
+  version: VersionName('2.0.0'),
   buildType: BuildType('test'),
   approval: BuildApproval.approved,
 );
@@ -57,7 +58,7 @@ AppInfo anAppInfo({
   String buildType = 'test',
   BuildApproval approval = BuildApproval.approved,
 }) => AppInfo(
-  version: version,
+  version: VersionName(version),
   buildType: BuildType(buildType),
   approval: approval,
 );
@@ -67,23 +68,41 @@ LegacyMigrationMarker aMigrationMarker({
   int importedKeys = 4,
   int skippedKeys = 0,
 }) => LegacyMigrationMarker(
-  appVersion: appVersion,
+  appVersion: VersionName(appVersion),
   completedAt: Instant(DateTime.utc(2026, 9, 10, 12)),
-  importedKeys: importedKeys,
-  skippedKeys: skippedKeys,
+  importedKeys: KeyCount(importedKeys),
+  skippedKeys: KeyCount(skippedKeys),
 );
 
-Map<String, Object> aLegacyStoreDump({
+LegacyStoreDumpDto aLegacyStoreDump({
   String language = 'en',
   String firstday = 'su',
-  Object searchRange = 30,
+  String searchRange = '30',
   String cleanTimeUnitSort = 'dmy',
-  Map<String, Object> extra = const {},
-}) => Map.unmodifiable({
-  'language': language,
-  'firstday': firstday,
-  'searchRange': searchRange,
-  'cleanTimeUnitSort': cleanTimeUnitSort,
-  'theme': 'light',
-  ...extra,
-});
+  String theme = 'light',
+}) => LegacyStoreDumpDto(
+  language: language,
+  firstday: firstday,
+  searchRange: searchRange,
+  cleanTimeUnitSort: cleanTimeUnitSort,
+  theme: theme,
+);
+
+LegacyStoreDumpDto aLegacyDumpWithFormats({
+  int fetchedAt = 1757500000000,
+  List<BmltFormatDto> formats = const [],
+}) => LegacyStoreDumpDto(
+  meetingFormatsV1: FormatsCacheDto(fetchedAt: fetchedAt, formats: formats),
+);
+
+String aStoredMigrationMarker({
+  String appVersion = '2.0.0',
+  int importedKeys = 4,
+  int skippedKeys = 0,
+}) => const MigrationMarkerCodec().encode(
+  marker: aMigrationMarker(
+    appVersion: appVersion,
+    importedKeys: importedKeys,
+    skippedKeys: skippedKeys,
+  ),
+);

@@ -15,7 +15,10 @@ final class FakeClock implements Clock {
   @override
   LocalTime localTimeNow() {
     final local = time.localDateTime;
-    return LocalTime(hour: local.hour, minute: local.minute);
+    return LocalTime(
+      hour: HourOfDay(local.hour),
+      minute: MinuteOfHour(local.minute),
+    );
   }
 
   @override

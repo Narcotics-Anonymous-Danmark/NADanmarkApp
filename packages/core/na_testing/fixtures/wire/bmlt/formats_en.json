@@ -1,0 +1,252 @@
+[
+  {
+    "key_string": "BT",
+    "name_string": "Basic Text",
+    "description_string": "This meeting is focused on discussion of the Basic Text of Narcotics Anonymous.",
+    "lang": "en",
+    "id": "3",
+    "world_id": "BT",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "M",
+    "name_string": "Men",
+    "description_string": "This meeting is meant to be attended by men only.",
+    "lang": "en",
+    "id": "15",
+    "world_id": "M",
+    "format_type_enum": "FC3",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "Rr",
+    "name_string": "Round Robin",
+    "description_string": "This meeting has a fixed sharing order (usually a circle.)",
+    "lang": "en",
+    "id": "20",
+    "world_id": "",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "ME",
+    "name_string": "Meditation",
+    "description_string": "This meeting encourages its participants to engage in quiet meditation.",
+    "lang": "en",
+    "id": "41",
+    "world_id": "MED",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "So",
+    "name_string": "Speaker Only",
+    "description_string": "This meeting is a speaker-only meeting. Other attendees do not participate in the discussion.",
+    "lang": "en",
+    "id": "26",
+    "world_id": "SPK",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "VM",
+    "name_string": "Virtual Meeting",
+    "description_string": "Meets Virtually",
+    "lang": "en",
+    "id": "57",
+    "world_id": "VM",
+    "format_type_enum": "FC2",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "AB",
+    "name_string": "Ask-It-Basket",
+    "description_string": "A topic is chosen from suggestions placed into a basket.",
+    "lang": "en",
+    "id": "40",
+    "world_id": "QA",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "B",
+    "name_string": "Beginners",
+    "description_string": "This meeting is focused on the needs of new members of NA.",
+    "lang": "en",
+    "id": "1",
+    "world_id": "BEG",
+    "format_type_enum": "FC3",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "BK",
+    "name_string": "Book Study",
+    "description_string": "Approved N.A. Books",
+    "lang": "en",
+    "id": "36",
+    "world_id": "LIT",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "C",
+    "name_string": "Closed",
+    "description_string": "This meeting is closed to non-addicts. You should attend only if you believe that you may have a problem with substance abuse.",
+    "lang": "en",
+    "id": "4",
+    "world_id": "CLOSED",
+    "format_type_enum": "FC3",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "CW",
+    "name_string": "Children Welcome",
+    "description_string": "Children are welcome at this meeting.",
+    "lang": "en",
+    "id": "44",
+    "world_id": "CW",
+    "format_type_enum": "FC3",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "IP",
+    "name_string": "Informational Pamphlet",
+    "description_string": "This meeting is focused on discussion of one or more Informational Pamphlets.",
+    "lang": "en",
+    "id": "12",
+    "world_id": "IP",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "IW",
+    "name_string": "It Works -How and Why",
+    "description_string": "This meeting is focused on discussion of the It Works -How and Why text.",
+    "lang": "en",
+    "id": "13",
+    "world_id": "IW",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "JT",
+    "name_string": "Just for Today",
+    "description_string": "This meeting is focused on discussion of the Just For Today text.",
+    "lang": "en",
+    "id": "14",
+    "world_id": "JFT",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "GL",
+    "name_string": "Gay/Lesbian/Transgender",
+    "description_string": "This meeting is focused on the needs of gay, lesbian and transgender members of NA.",
+    "lang": "en",
+    "id": "10",
+    "world_id": "GL",
+    "format_type_enum": "FC3",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "LC",
+    "name_string": "Living Clean",
+    "description_string": "This is a discussion of the NA book Living Clean -The Journey Continues.",
+    "lang": "en",
+    "id": "51",
+    "world_id": "LC",
+    "format_type_enum": "",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "O",
+    "name_string": "Open",
+    "description_string": "This meeting is open to addicts and non-addicts alike. All are welcome.",
+    "lang": "en",
+    "id": "17",
+    "world_id": "OPEN",
+    "format_type_enum": "FC3",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "QA",
+    "name_string": "Question and Answer",
+    "description_string": "Attendees may ask questions and expect answers from Group members.",
+    "lang": "en",
+    "id": "43",
+    "world_id": "QA",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "St",
+    "name_string": "Step",
+    "description_string": "This meeting is focused on discussion of the Twelve Steps of NA.",
+    "lang": "en",
+    "id": "27",
+    "world_id": "STEP",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "To",
+    "name_string": "Topic",
+    "description_string": "This meeting is based upon a topic chosen by a speaker or by group conscience.",
+    "lang": "en",
+    "id": "29",
+    "world_id": "TOP",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "Tr",
+    "name_string": "Tradition",
+    "description_string": "This meeting is focused on discussion of the Twelve Traditions of NA.",
+    "lang": "en",
+    "id": "30",
+    "world_id": "TRAD",
+    "format_type_enum": "FC1",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "W",
+    "name_string": "Women",
+    "description_string": "This meeting is meant to be attended by women only.",
+    "lang": "en",
+    "id": "32",
+    "world_id": "W",
+    "format_type_enum": "FC3",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "WC",
+    "name_string": "Wheelchair",
+    "description_string": "This meeting is wheelchair accessible.",
+    "lang": "en",
+    "id": "33",
+    "world_id": "WCHR",
+    "format_type_enum": "FC2",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "WEB",
+    "name_string": "Online Meeting",
+    "description_string": "This is a meeting that gathers on the Internet.",
+    "lang": "en",
+    "id": "50",
+    "world_id": "OPEN",
+    "format_type_enum": "O",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  },
+  {
+    "key_string": "ENG",
+    "name_string": "English speaking",
+    "description_string": "This Meeting can be attended by speakers of English.",
+    "lang": "en",
+    "id": "47",
+    "world_id": "LANG",
+    "format_type_enum": "LANG",
+    "root_server_uri": "https://www.nadanmark.dk/main_server"
+  }
+]

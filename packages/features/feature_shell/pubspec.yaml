@@ -1,7 +1,7 @@
 name: feature_shell
 description: "App shell: side menu, page frame, global loading bar, back-button rules and the home page."
 publish_to: none
-version: 0.1.0
+version: 0.0.0
 
 environment:
   sdk: ^3.11.0
@@ -10,9 +10,9 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
-  flutter_riverpod: ^3.0.0
-  go_router: ^16.0.0
-  meta: ^1.16.0
+  flutter_riverpod: 3.3.2
+  go_router: 16.3.0
+  meta: 1.17.0
   na_design:
     path: ../../core/na_design
   na_kernel:
@@ -21,10 +21,10 @@ dependencies:
     path: ../../core/na_l10n
   na_ports:
     path: ../../core/na_ports
-  riverpod: ^3.0.0
+  riverpod: 3.3.2
 
 dev_dependencies:
-  custom_lint: ^0.8.0
+  custom_lint: 0.8.1
   flutter_localizations:
     sdk: flutter
   flutter_test:

@@ -59,6 +59,23 @@ final class YamlView {
     return const YamlView.empty();
   }
 
+  Map<String, String> dependencySpecs({required final String key}) {
+    final section = _fields[key];
+    if (section is! YamlMap) {
+      return const {};
+    }
+    return Map.unmodifiable({
+      for (final entry in section.entries)
+        entry.key.toString(): switch (entry.value) {
+          final YamlMap source when source.containsKey('path') => 'path:',
+          final YamlMap source when source.containsKey('sdk') => 'sdk:',
+          final YamlMap source => 'source:${source.keys.join(',')}',
+          null => '',
+          final Object value => value.toString(),
+        },
+    });
+  }
+
   List<String> stringList({required final String key}) {
     final value = _fields[key];
     if (value is YamlList) {

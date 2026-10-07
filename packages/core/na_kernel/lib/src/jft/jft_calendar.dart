@@ -43,7 +43,7 @@ final class JftCalendar {
   JftLookup entryFor({required LocalDate date}) {
     final month = DanishMonth.ofNumber(number: date.month);
     final matches = entries.where(
-      (entry) => entry.day == date.day && entry.month == month,
+      (entry) => entry.day.value == date.day && entry.month == month,
     );
     return matches.isEmpty
         ? JftMissing(date: date)
@@ -56,7 +56,9 @@ final class JftCalendar {
           .where(
             (day) =>
                 entries
-                    .where((entry) => entry.day == day && entry.month == month)
+                    .where(
+                      (entry) => entry.day.value == day && entry.month == month,
+                    )
                     .length !=
                 1,
           )

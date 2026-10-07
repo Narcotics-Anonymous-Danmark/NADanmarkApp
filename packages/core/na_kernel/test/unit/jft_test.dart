@@ -5,12 +5,12 @@ import 'package:na_kernel/na_kernel.dart';
 import 'package:test/test.dart';
 
 JftEntry entry({required int day, required DanishMonth month}) => JftEntry(
-  day: day,
+  day: DayOfMonth(day),
   month: month,
-  title: 'Title $day/${month.number}',
-  quote: 'Quote',
-  source: 'Source',
-  text: 'Text',
+  title: JftTitle('Title $day/${month.number}'),
+  quote: const JftQuote('Quote'),
+  source: const JftSource('Source'),
+  text: const JftText('Text'),
   closing: JftClosing.parse(text: 'Bare for i dag: body'),
 );
 
@@ -51,7 +51,7 @@ void main() {
     });
 
     test('reports missing and duplicated days', () {
-      final entries = wholeYear().where((e) => e.day != 1).toList()
+      final entries = wholeYear().where((e) => e.day.value != 1).toList()
         ..add(entry(day: 2, month: DanishMonth.januar));
       final calendar = JftCalendar(entries: entries);
       expect(calendar.missingDays, contains('1. januar'));
@@ -67,13 +67,19 @@ void main() {
   group('JftClosing', () {
     test('splits the Danish lead from the body', () {
       final closing = JftClosing.parse(text: 'Bare for i dag: Jeg vil.');
-      expect(closing, const JftClosingWithLead(body: 'Jeg vil.'));
+      expect(
+        closing,
+        const JftClosingWithLead(body: JftClosingBody('Jeg vil.')),
+      );
       expect(closing.fullText, 'Bare for i dag: Jeg vil.');
     });
 
     test('keeps text without the lead as plain', () {
       final closing = JftClosing.parse(text: 'Noget andet');
-      expect(closing, const JftClosingPlain(body: 'Noget andet'));
+      expect(
+        closing,
+        const JftClosingPlain(body: JftClosingBody('Noget andet')),
+      );
       expect(closing.fullText, 'Noget andet');
     });
   });

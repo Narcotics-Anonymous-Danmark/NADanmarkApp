@@ -14,7 +14,10 @@ final class SystemClock implements Clock {
   @override
   LocalTime localTimeNow() {
     final local = DateTime.now();
-    return LocalTime(hour: local.hour, minute: local.minute);
+    return LocalTime(
+      hour: HourOfDay(local.hour),
+      minute: MinuteOfHour(local.minute),
+    );
   }
 
   @override

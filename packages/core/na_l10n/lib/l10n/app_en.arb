@@ -28,7 +28,7 @@
   "@locating": {
     "description": "Legacy key LOCATING"
   },
-  "findingMtgs": "Finding Meetings ...",
+  "findingMtgs": "Finding meetings…",
   "@findingMtgs": {
     "description": "Legacy key FINDING_MTGS"
   },
@@ -208,7 +208,7 @@
   "@markerInstr": {
     "description": "Legacy key MARKER_INSTR"
   },
-  "nothingFound": "Nothing Found",
+  "nothingFound": "Nothing found",
   "@nothingFound": {
     "description": "Legacy key NOTHING_FOUND"
   },
@@ -284,7 +284,7 @@
   "@meetingDetails": {
     "description": "Legacy key MEETING_DETAILS"
   },
-  "meetingFormats": "Meeting Formats",
+  "meetingFormats": "Meeting formats",
   "@meetingFormats": {
     "description": "Legacy key MEETING_FORMATS"
   },
@@ -292,15 +292,15 @@
   "@cancel": {
     "description": "Legacy key CANCEL"
   },
-  "virtualLink": "Virtual Link",
+  "virtualLink": "Virtual link",
   "@virtualLink": {
     "description": "Legacy key VIRTUAL_LINK"
   },
-  "phoneMeeting": "Phone Meeting Dial-in",
+  "phoneMeeting": "Phone meeting dial-in",
   "@phoneMeeting": {
     "description": "Legacy key PHONE_MEETING"
   },
-  "tempClosed": "Temporarily Closed",
+  "tempClosed": "Temporarily closed",
   "@tempClosed": {
     "description": "Legacy key TEMP_CLOSED"
   },
@@ -320,7 +320,7 @@
   "@visit": {
     "description": "Legacy key VISIT"
   },
-  "weekdays": "Weekdays",
+  "weekdays": "All days",
   "@weekdays": {
     "description": "Legacy key WEEKDAYS"
   },
@@ -849,5 +849,78 @@
   "jftUnavailable": "Today's text could not be loaded",
   "@jftUnavailable": {
     "description": "JFT error state"
+  },
+  "municipalityOnline": "Online",
+  "@municipalityOnline": {
+    "description": "Municipality list entry for meetings without a physical municipality"
+  },
+  "meetingsLoadFailed": "The meetings could not be loaded",
+  "@meetingsLoadFailed": {
+    "description": "Meetings error state"
+  },
+  "tryAgain": "Try again",
+  "@tryAgain": {
+    "description": "Retry button"
+  },
+  "hourRangeLower": "Earliest start hour",
+  "@hourRangeLower": {
+    "description": "Accessibility label of the lower hour-range thumb"
+  },
+  "hourRangeUpper": "Latest start hour",
+  "@hourRangeUpper": {
+    "description": "Accessibility label of the upper hour-range thumb"
+  },
+  "meetingFormatsOpen": "Show meeting formats",
+  "@meetingFormatsOpen": {
+    "description": "Accessibility label of the format chips of a meeting"
+  },
+  "meetingDayCount": "{day} ({count})",
+  "@meetingDayCount": {
+    "description": "Weekday section header with the number of meetings",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "meetingBadge": "{day} {start} - {end}",
+  "@meetingBadge": {
+    "description": "Meeting card badge with weekday, start and end time",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "meetingBusLines": "Bus: {lines}",
+  "@meetingBusLines": {
+    "description": "Bus lines of a meeting",
+    "placeholders": {
+      "lines": {
+        "type": "String"
+      }
+    }
+  },
+  "meetingTrainLines": "Train: {lines}",
+  "@meetingTrainLines": {
+    "description": "Train lines of a meeting",
+    "placeholders": {
+      "lines": {
+        "type": "String"
+      }
+    }
+  },
+  "meetingDayFilter": "Day",
+  "@meetingDayFilter": {
+    "description": "Label of the day selector above the meeting list"
   }
 }

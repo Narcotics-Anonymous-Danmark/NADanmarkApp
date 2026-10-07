@@ -18,6 +18,9 @@ workspace:
   - packages/features/feature_contact
   - packages/features/feature_jft
   - packages/features/feature_legacy_migration
+  - packages/features/feature_meetings
+  - packages/features/feature_meetings_search
+  - packages/adapters/adapter_bmlt
   - packages/adapters/adapter_clock
   - packages/adapters/adapter_storage
   - packages/adapters/adapter_jft
@@ -25,8 +28,8 @@ workspace:
   - packages/adapters/adapter_legacy_store
 
 dev_dependencies:
-  coverage: ^1.11.0
-  custom_lint: ^0.8.0
+  coverage: 1.15.1
+  custom_lint: 0.8.1
   na_lints:
     path: tool/na_lints
-  very_good_analysis: ^10.0.0
+  very_good_analysis: 10.2.0

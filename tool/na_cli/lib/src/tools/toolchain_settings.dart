@@ -1,4 +1,5 @@
-import 'package:na_cli/src/boundary/json_object.dart';
+import 'package:na_cli/src/boundary/tool_wire.dart';
+import 'package:na_cli/src/boundary/wire_json.dart';
 import 'package:na_cli/src/cli_context.dart';
 import 'package:na_cli/src/fs/file_path.dart';
 import 'package:na_cli/src/fs/file_text.dart';
@@ -62,10 +63,13 @@ final class ToolchainSettings {
 
   static String _flutterVersion(final CliContext context) =>
       switch (context.files.readText(path: context.repoRoot.join('.fvmrc'))) {
-        TextRead(:final text) => switch (JsonObject.parse(text: text)) {
-          JsonObjectParsed(:final object) =>
-            object.text(key: 'flutter').orElse(fallback: ''),
-          JsonListParsed() || JsonMalformed() => '',
+        TextRead(:final text) => switch (const WireJson().object(
+          text: text,
+          fromJson: FvmConfigDto.fromJson,
+        )) {
+          WireDecoded(value: FvmConfigDto(flutter: final String version)) =>
+            version,
+          WireDecoded() || WireRejected() => '',
         },
         NoSuchFile() => '',
       };

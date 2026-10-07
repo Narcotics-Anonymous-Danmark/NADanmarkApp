@@ -28,7 +28,7 @@
   "@locating": {
     "description": "Legacy key LOCATING"
   },
-  "findingMtgs": "Finder møder ...",
+  "findingMtgs": "Finder møder …",
   "@findingMtgs": {
     "description": "Legacy key FINDING_MTGS"
   },
@@ -212,11 +212,11 @@
   "@nothingFound": {
     "description": "Legacy key NOTHING_FOUND"
   },
-  "bus": "Note",
+  "bus": "Bus",
   "@bus": {
     "description": "Legacy key BUS"
   },
-  "train": "Mødeformat",
+  "train": "Tog",
   "@train": {
     "description": "Legacy key TRAIN"
   },
@@ -849,5 +849,78 @@
   "jftUnavailable": "Dagens tekst kunne ikke indlæses",
   "@jftUnavailable": {
     "description": "JFT error state"
+  },
+  "municipalityOnline": "Online",
+  "@municipalityOnline": {
+    "description": "Municipality list entry for meetings without a physical municipality"
+  },
+  "meetingsLoadFailed": "Møderne kunne ikke hentes",
+  "@meetingsLoadFailed": {
+    "description": "Meetings error state"
+  },
+  "tryAgain": "Prøv igen",
+  "@tryAgain": {
+    "description": "Retry button"
+  },
+  "hourRangeLower": "Tidligste starttid",
+  "@hourRangeLower": {
+    "description": "Accessibility label of the lower hour-range thumb"
+  },
+  "hourRangeUpper": "Seneste starttid",
+  "@hourRangeUpper": {
+    "description": "Accessibility label of the upper hour-range thumb"
+  },
+  "meetingFormatsOpen": "Vis mødeformater",
+  "@meetingFormatsOpen": {
+    "description": "Accessibility label of the format chips of a meeting"
+  },
+  "meetingDayCount": "{day} ({count})",
+  "@meetingDayCount": {
+    "description": "Weekday section header with the number of meetings",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "meetingBadge": "{day} {start} - {end}",
+  "@meetingBadge": {
+    "description": "Meeting card badge with weekday, start and end time",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "meetingBusLines": "Bus: {lines}",
+  "@meetingBusLines": {
+    "description": "Bus lines of a meeting",
+    "placeholders": {
+      "lines": {
+        "type": "String"
+      }
+    }
+  },
+  "meetingTrainLines": "Tog: {lines}",
+  "@meetingTrainLines": {
+    "description": "Train lines of a meeting",
+    "placeholders": {
+      "lines": {
+        "type": "String"
+      }
+    }
+  },
+  "meetingDayFilter": "Dag",
+  "@meetingDayFilter": {
+    "description": "Label of the day selector above the meeting list"
   }
 }

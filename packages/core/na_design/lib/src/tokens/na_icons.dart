@@ -19,4 +19,13 @@ abstract final class NaIcons {
   static const IconData checked = PhosphorIconsRegular.checkCircle;
   static const IconData unchecked = PhosphorIconsRegular.circle;
   static const IconData caret = PhosphorIconsRegular.caretDown;
+  static const IconData play = PhosphorIconsRegular.playCircle;
+  static const IconData add = PhosphorIconsRegular.plusCircle;
+  static const IconData close = PhosphorIconsRegular.xCircle;
+  static const IconData dismiss = PhosphorIconsRegular.x;
+  static const IconData note = PhosphorIconsRegular.warningCircle;
+  static const IconData mapPin = PhosphorIconsRegular.mapPin;
+  static const IconData cloud = PhosphorIconsRegular.cloud;
+  static const IconData phone = PhosphorIconsRegular.phone;
+  static const IconData clock = PhosphorIconsRegular.clock;
 }

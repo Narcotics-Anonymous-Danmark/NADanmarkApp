@@ -80,8 +80,8 @@ collapse into one ICU plural key. Values shown are the legacy strings.
 | `LOCATION` | *(empty)* | *(empty)* | — | dropped (unused BMLT template key) |
 | `NO_LOCATION` | Placeringen er ikke indstillet | Location not set | `locationNotSet` | ported |
 | `LOCATING` | Finder position ... | Locating... | `loadingLocating` | ported |
-| `FINDING_MTGS` | Finder møder ... | Finding Meetings ... | `loadingFindingMeetings` | ported |
-| `LISTFULL` | Mødeliste | Meetings | `pageMeetings` | ported |
+| `FINDING_MTGS` | Finder møder ... | Finding Meetings ... | `findingMtgs` | ported |
+| `LISTFULL` | Mødeliste | Meetings | `listfull` | ported |
 | `TAGS` | Tags | Tags | — | dropped (unused BMLT template key) |
 | `CATEGORY` | Kategori | Category | — | dropped (unused BMLT template key) |
 | `MENUS` | Menuer | Menus | — | dropped (unused BMLT template key) |
@@ -89,7 +89,7 @@ collapse into one ICU plural key. Values shown are the legacy strings.
 | `MAP_SEARCH_DESC` |  møder nærmest den røde markør. Træk den røde markør for at flytte søgningen. |  meetings nearest the red marker. Drag the red marker to move the search. | — | dropped (unused BMLT template key) |
 | `MEETINGS` |  Møder |  meetings | — | dropped (unused BMLT template key) |
 | `KM` |  km |  km | `unitKm` | ported |
-| `MAP` | Kørselsvejledning | Directions | `meetingDirections` | ported |
+| `MAP` | Kørselsvejledning | Directions | `map` | ported |
 | `SETTINGS` | Indstillinger | Settings | `pageSettings` | ported |
 | `SEARCHRANGESETTING` | Standard søgeradius | Default search range | `settingsDefaultSearchRange` | ported |
 | `FIRSTDAYOFWEEKSETTING` | Ugen starter med | First day of week | `settingsFirstDayOfWeek` | ported |
@@ -125,9 +125,9 @@ collapse into one ICU plural key. Values shown are the legacy strings.
 | `KMS` | km | kms | — | dropped (unused BMLT template key) |
 | `MEETINGS_NEAREST` | møder nærmest | meetings nearest | — | dropped (unused BMLT template key) |
 | `MARKER_INSTR` | Træk markør for at indstille position | Drag marker to set position | — | dropped (unused BMLT template key) |
-| `NOTHING_FOUND` | Intet fundet | Nothing Found | — | dropped (unused BMLT template key) |
-| `BUS` | Note | Bus | `meetingBusLines` | ported |
-| `TRAIN` | Mødeformat | Train | `meetingTrainLines` | ported |
+| `NOTHING_FOUND` | Intet fundet | Nothing Found | `nothingFound` | ported (empty meeting and municipality lists) |
+| `BUS` | Note (wrong in legacy; now "Bus: …") | Bus | `meetingBusLines` | ported |
+| `TRAIN` | Mødeformat (wrong in legacy; now "Tog: …") | Train | `meetingTrainLines` | ported |
 | `SRC_CODE` | Kildekode til app'en | App Source Code | `contactSourceCode` | reused for the localised About page (value replaced) |
 | `BUG_REPORT` | Opret en fejlrapport / unit test | Open a bug report/enhancement request | `contactBugReports` | reused for the localised About page (value replaced) |
 | `FIND_OUT_MORE` | Hvordan finder jeg ud af mere om BMLT? | How do I find out more about the BMLT? | — | dropped (unused BMLT template key) |
@@ -142,18 +142,18 @@ collapse into one ICU plural key. Values shown are the legacy strings.
 | `IS_BMLT_YES_3` | har sat BMLT op for jeres mødeliste. | has implemented the BMLT for their meetings list. | — | dropped (unused BMLT template key) |
 | `IS_BMLT_NO_1` | I BMLT's verdensomspændende database ser det ud til, at det møde, der er nærmest din nuværende placering, er  | On the BMLT worldwide DB, it looks like the nearest meeting to your current location is | — | dropped (unused BMLT template key) |
 | `IS_BMLT_NO_2` | Så det ser ud til, at din lokale service område ikke har implementeret BMLT for jeres mødeliste. | So, it looks like your local service body has not implemented the BMLT for their meetings list. | — | dropped (unused BMLT template key) |
-| `CLOSE` | Luk | Close | `actionClose` | ported |
-| `MEETING_DETAILS` | Mødedetaljer | Meeting Details | `meetingDetailsTitle` | ported |
-| `MEETING_FORMATS` | Mødeformater | Meeting Formats | `meetingFormatsTitle` | ported |
-| `CANCEL` | Annuller | Cancel | `actionCancel` | ported |
-| `VIRTUAL_LINK` | Link til netmøde | Virtual Link | `meetingVirtualLink` | ported |
-| `PHONE_MEETING` | Telefonmøde – opkaldsnummer | Phone Meeting Dial-in | `meetingPhoneDialIn` | ported |
-| `TEMP_CLOSED` | Midlertidigt lukket | Temporarily Closed | `meetingTemporarilyClosed` | ported |
+| `CLOSE` | Luk | Close | `close` | ported |
+| `MEETING_DETAILS` | Mødedetaljer | Meeting Details | `meetingDetails` | ported |
+| `MEETING_FORMATS` | Mødeformater | Meeting Formats | `meetingFormats` | ported |
+| `CANCEL` | Annuller | Cancel | `cancel` | ported |
+| `VIRTUAL_LINK` | Link til netmøde | Virtual Link | `virtualLink` | ported |
+| `PHONE_MEETING` | Telefonmøde – opkaldsnummer | Phone Meeting Dial-in | `phoneMeeting` | ported |
+| `TEMP_CLOSED` | Midlertidigt lukket | Temporarily Closed | `tempClosed` | ported |
 | `VIRTUAL_MEETINGS` | Netmøder: virtual-na.org | virtual-na.org | — | dropped (unused BMLT template key) |
 | `LIST` | Vis liste | List | — | dropped (unused BMLT template key) |
 | `SEARCH` | Søg | Search | — | dropped (unused BMLT template key) |
 | `VISIT` | Besøg | Visit | — | dropped (unused BMLT template key) |
-| `WEEKDAYS` | Alle dage | Weekdays | `allDays` | ported |
+| `WEEKDAYS` | Alle dage | Weekdays | `weekdays` | ported |
 | `VIRTUAL_NA` | Virtual NA er en international serviceressource, hvis hovedformål det er at drive en søgemaskine til NA-møder. Den dækker både online- og telefonmøder fra forskellige lande rundt om i verden. | *(missing)* | — | dropped (da only; virtual-NA feature not ported) |
 | `HOME_MESSAGE_2` | Hvis du har et problem med stoffer, | If you have a problem with substances, | — | dropped (unused) |
 | `HOME_MESSAGE_3` | så kan vi måske hjælpe. | we can perhaps help. | — | dropped (unused) |
@@ -205,7 +205,7 @@ collapse into one ICU plural key. Values shown are the legacy strings.
 | `DMY` | dage - måneder - år | days - months - years | `unitOrderDmy` | ported |
 | `YMD` | år - måneder - dage | years - months - days | `unitOrderYmd` | ported |
 | `OR` | ELLER | OR | `orSeparator` | ported |
-| `BACK` | Tilbage | Back | `actionBack` | ported |
+| `BACK` | Tilbage | Back | `back` | ported |
 | `NEWPROFILE` | Ny profil | New profile | `cleantimeNewProfile` | ported |
 | `NEWPROFILENAMEHERE` | Ny profilnavn her | New profile name here | `cleantimeNewProfileNamePlaceholder` | ported |
 | `CANCELBUTTON` | Afbryd | Cancel | `actionCancel` | ported |

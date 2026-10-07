@@ -1,5 +1,5 @@
-import 'dart:convert';
-
+import 'package:na_cli/src/boundary/google_wire.dart';
+import 'package:na_cli/src/boundary/wire_json.dart';
 import 'package:na_cli/src/release/version.dart';
 
 enum PlayReleaseStatus {
@@ -38,28 +38,26 @@ final class PlayTrackRelease {
 
   static const int notesLimit = 500;
 
-  Map<String, Object> toJson() => {
-    'releases': [
-      {
-        'name': '${version.version} (${version.build.value})',
-        'versionCodes': ['${version.code.value}'],
-        'status': status.wire,
-        ...switch (notes) {
-          NoNotes() => const <String, Object>{},
-          LocalisedNotes(:final language, :final text) => {
-            'releaseNotes': [
-              {
-                'language': language,
-                'text': text.length <= notesLimit
-                    ? text
-                    : text.substring(0, notesLimit),
-              },
-            ],
-          },
+  WireObject toJson() => PlayTrackDto(
+    releases: [
+      PlayReleaseDto(
+        name: '${version.version} (${version.build.value})',
+        versionCodes: ['${version.code.value}'],
+        status: status.wire,
+        releaseNotes: switch (notes) {
+          NoNotes() => null,
+          LocalisedNotes(:final language, :final text) => [
+            PlayReleaseNoteDto(
+              language: language,
+              text: text.length <= notesLimit
+                  ? text
+                  : text.substring(0, notesLimit),
+            ),
+          ],
         },
-      },
+      ),
     ],
-  };
+  ).toJson();
 
-  String render() => jsonEncode(toJson());
+  String render() => const WireJson().encode(json: toJson());
 }

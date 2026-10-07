@@ -23,7 +23,7 @@ group('Requirement: Temporarily closed rule', () {
     final container = TestContainer(overrides: [
       bmltMimic.overrides,
     ]);
-    bmltMimic.searchResults([aBmltMeetingJson(formats: 'O,TC', virtualMeetingLink: '')]);
+    bmltMimic.searchResults([aBmltMeetingDto(formats: 'O,TC', virtualLink: '')]);
     await tester.pumpShell(container, initialRoute: '/listfull');
     ...
     expect(find.text('Temporarily closed'), findsOneWidget);
@@ -52,8 +52,12 @@ group('Requirement: Temporarily closed rule', () {
 - Domain builders: `aMeeting(...)`, `aMeetingFormat(...)`, `aCleantimeProfile(...)`,
   `aResumePoint(...)`, `aSpeak(...)`, `anEvent(...)`. Named optional parameters
   with realistic defaults; a test states only what matters.
-- Wire builders: `aBmltMeetingJson(...)`, `aBmltFormatJson(...)`,
-  `aWordPressEventJson(...)`, `aSpeaksGroupJson(...)`, `aLegacyStoreDump(...)`.
+- Wire builders build the `json_serializable` wire DTOs, never raw maps:
+  `aBmltMeetingDto(...)`, `aBmltFormatDto(...)`, `aBmltMunicipalityDto(...)`,
+  `aLegacyStoreDump(...)`, `aLegacyDumpWithFormats(...)`. Mimics serve them
+  through the DTO's generated `toJson()`, so tests and production share one
+  wire shape. Raw JSON literals appear only in boundary tests that prove a
+  malformed or unexpected payload is rejected.
 - `Gen` is a seedable generator (`Gen(seed: 42)`) for property-style tests
   (`gen.meetings(count: 200)`, `gen.speakYearField()`); the seed is printed on
   failure.
@@ -76,6 +80,24 @@ difference.
 | `CastSessionMimic` | Cast SDK | Session state stream, receiver media status |
 
 Mocks (`mocktail`) only where call order matters and a mimic cannot express it.
+
+## Recorded wire fixtures
+
+`packages/core/na_testing/fixtures/wire/bmlt/` holds responses recorded from
+`https://www.nadanmark.dk/main_server/client_interface/json/` on 2026-09-23:
+
+| File | Query |
+|---|---|
+| `denmark_meetings.json` | `?switcher=GetSearchResults&sort_keys=weekday_tinyint,start_time`, three rows; contact fields, admin notes and the virtual link replaced by placeholders |
+| `denmark_municipalities.json` | `?switcher=GetSearchResults&data_field_key=location_municipality&sort_keys=location_municipality` |
+| `formats_da.json` | `?switcher=GetFormats&lang_enum=da` |
+| `formats_en.json` | `?switcher=GetFormats&lang_enum=en` |
+
+Refresh them deliberately; builders and mimics default to these shapes.
+`na_testing/lib/src/generated/recorded_bmlt.dart` mirrors the files as Dart
+constants so builders and mimics also work on a device, and
+`na_testing/test/unit/bmlt_mimics_test.dart` fails when the two drift.
+Regenerate the mirror whenever a fixture changes.
 
 ## Shared setup
 

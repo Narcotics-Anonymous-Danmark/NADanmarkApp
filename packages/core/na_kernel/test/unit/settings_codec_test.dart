@@ -33,14 +33,14 @@ void main() {
 
   test('app info compares by value', () {
     const info = AppInfo(
-      version: '2.0.0',
+      version: VersionName('2.0.0'),
       buildType: BuildType('release'),
       approval: BuildApproval.approved,
     );
     expect(
       info,
       const AppInfo(
-        version: '2.0.0',
+        version: VersionName('2.0.0'),
         buildType: BuildType('release'),
         approval: BuildApproval.approved,
       ),

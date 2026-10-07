@@ -1,6 +1,8 @@
 import 'dart:convert';
 
-import 'package:na_cli/src/boundary/json_object.dart';
+import 'package:na_cli/src/boundary/app_store_wire.dart';
+import 'package:na_cli/src/boundary/jwt_wire.dart';
+import 'package:na_cli/src/boundary/wire_json.dart';
 import 'package:na_cli/src/cli_failure.dart';
 import 'package:na_cli/src/crypto/epoch_seconds.dart';
 import 'package:na_cli/src/crypto/jwt.dart';
@@ -39,14 +41,14 @@ final class AppStoreConnectClient {
 
   static const String base = 'https://api.appstoreconnect.apple.com';
 
-  Map<String, Object> claims({required final DateTime now}) {
+  JwtClaimsDto claims({required final DateTime now}) {
     final issued = EpochSeconds.of(time: now);
-    return {
-      'iss': credentials.issuerId,
-      'iat': issued.value,
-      'exp': issued.plus(duration: const Duration(minutes: 20)).value,
-      'aud': 'appstoreconnect-v1',
-    };
+    return JwtClaimsDto(
+      iss: credentials.issuerId,
+      iat: issued.value,
+      exp: issued.plus(duration: const Duration(minutes: 20)).value,
+      aud: 'appstoreconnect-v1',
+    );
   }
 
   Future<AppStoreAppId> appId({
@@ -63,7 +65,7 @@ final class AppStoreConnectClient {
         message: 'App Store Connect has no app with bundle ${bundleId.value}',
       );
     }
-    return AppStoreAppId(apps.first.text(key: 'id').orElse(fallback: ''));
+    return AppStoreAppId(apps.first.id);
   }
 
   Future<BuildProcessing> buildState({
@@ -84,11 +86,8 @@ final class AppStoreConnectClient {
     }
     final build = builds.first;
     return BuildProcessing.fromState(
-      buildId: build.text(key: 'id').orElse(fallback: ''),
-      state: build
-          .object(key: 'attributes')
-          .text(key: 'processingState')
-          .orElse(fallback: ''),
+      buildId: build.id,
+      state: build.processingState,
     );
   }
 
@@ -105,55 +104,68 @@ final class AppStoreConnectClient {
         now: now,
       ),
     );
-    final attributes = {'whatsNew': whatsNew};
     if (existing.isEmpty) {
       await _send(
         method: HttpMethod.post,
         url: '$base/v1/betaBuildLocalizations',
         now: now,
-        json: {
-          'data': {
-            'type': 'betaBuildLocalizations',
-            'attributes': {...attributes, 'locale': 'en-US'},
-            'relationships': {
-              'build': {
-                'data': {'type': 'builds', 'id': buildId},
-              },
-            },
-          },
-        },
+        body: AscBody(
+          request: AscRequestDto(
+            data: AscRequestDataDto(
+              type: _localizations,
+              attributes: AscLocalizationAttributesDto(
+                whatsNew: whatsNew,
+                locale: 'en-US',
+              ),
+              relationships: AscRelationshipsDto(
+                build: AscRelationshipDto(
+                  data: AscReferenceDto(type: 'builds', id: buildId),
+                ),
+              ),
+            ),
+          ),
+        ),
       );
       return;
     }
-    final id = existing.first.text(key: 'id').orElse(fallback: '');
+    final id = existing.first.id;
     await _send(
       method: HttpMethod.patch,
       url: '$base/v1/betaBuildLocalizations/$id',
       now: now,
-      json: {
-        'data': {
-          'type': 'betaBuildLocalizations',
-          'id': id,
-          'attributes': attributes,
-        },
-      },
+      body: AscBody(
+        request: AscRequestDto(
+          data: AscRequestDataDto(
+            type: _localizations,
+            id: id,
+            attributes: AscLocalizationAttributesDto(whatsNew: whatsNew),
+          ),
+        ),
+      ),
     );
   }
+
+  static const String _localizations = 'betaBuildLocalizations';
 
   Future<String> _get({
     required final String url,
     required final DateTime now,
-  }) => _send(method: HttpMethod.get, url: url, now: now, json: const {});
+  }) => _send(
+    method: HttpMethod.get,
+    url: url,
+    now: now,
+    body: const NoAscBody(),
+  );
 
   Future<String> _send({
     required final HttpMethod method,
     required final String url,
     required final DateTime now,
-    required final Map<String, Object> json,
+    required final AscRequestBody body,
   }) async {
     final token = jwt.sign(
       key: credentials.key,
-      header: {'kid': credentials.keyId},
+      hint: KeyId(value: credentials.keyId),
       claims: claims(now: now),
     );
     final reply = await http.send(
@@ -164,7 +176,12 @@ final class AppStoreConnectClient {
           'authorization': 'Bearer ${token.value}',
           'content-type': 'application/json',
         },
-        body: json.isEmpty ? const [] : utf8.encode(jsonEncode(json)),
+        body: switch (body) {
+          NoAscBody() => const [],
+          AscBody(:final request) => utf8.encode(
+            const WireJson().encode(json: request.toJson()),
+          ),
+        },
       ),
     );
     if (reply.status.outcome == HttpOutcome.failure) {
@@ -177,9 +194,41 @@ final class AppStoreConnectClient {
     return reply.body;
   }
 
-  List<JsonObject> _data(final String body) =>
-      switch (JsonObject.parse(text: body)) {
-        JsonObjectParsed(:final object) => object.objects(key: 'data'),
-        JsonListParsed() || JsonMalformed() => const [],
-      };
+  List<AscResource> _data(final String body) => switch (const WireJson().object(
+    text: body,
+    fromJson: AscListDto.fromJson,
+  )) {
+    WireDecoded(:final value) => List.unmodifiable(
+      (value.data ?? const <AscResourceDto>[]).map(
+        (final dto) => AscResource(
+          id: dto.id ?? '',
+          processingState: dto.attributes?.processingState ?? '',
+        ),
+      ),
+    ),
+    WireRejected(:final reason) => throw CliFailure.general(
+      message: 'app store connect: unreadable response: $reason',
+    ),
+  };
+}
+
+final class AscResource {
+  const AscResource({required this.id, required this.processingState});
+
+  final String id;
+  final String processingState;
+}
+
+sealed class AscRequestBody {
+  const AscRequestBody();
+}
+
+final class NoAscBody extends AscRequestBody {
+  const NoAscBody();
+}
+
+final class AscBody extends AscRequestBody {
+  const AscBody({required this.request});
+
+  final AscRequestDto request;
 }

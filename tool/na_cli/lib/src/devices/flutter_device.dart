@@ -1,5 +1,5 @@
-import 'package:na_cli/src/boundary/field_text.dart';
-import 'package:na_cli/src/boundary/json_object.dart';
+import 'package:na_cli/src/boundary/tool_wire.dart';
+import 'package:na_cli/src/boundary/wire_json.dart';
 
 extension type const DeviceId(String value) {}
 
@@ -30,17 +30,14 @@ final class FlutterDevice {
     required this.origin,
   });
 
-  factory FlutterDevice.fromJson({required final JsonObject object}) =>
+  factory FlutterDevice.fromDto({required final FlutterDeviceDto dto}) =>
       FlutterDevice(
-        id: DeviceId(object.text(key: 'id').orElse(fallback: '')),
-        name: object.text(key: 'name').orElse(fallback: ''),
-        platform: DevicePlatform.fromTargetPlatform(
-          object.text(key: 'targetPlatform').orElse(fallback: ''),
-        ),
-        origin: switch (object.truth(key: 'emulator')) {
-          FieldTruth.yes => DeviceOrigin.emulator,
-          FieldTruth.no => DeviceOrigin.physical,
-          FieldTruth.absent => DeviceOrigin.physical,
+        id: DeviceId(dto.id ?? ''),
+        name: dto.name ?? '',
+        platform: DevicePlatform.fromTargetPlatform(dto.targetPlatform ?? ''),
+        origin: switch (dto.emulator) {
+          true => DeviceOrigin.emulator,
+          false || null => DeviceOrigin.physical,
         },
       );
 
@@ -50,11 +47,13 @@ final class FlutterDevice {
   final DeviceOrigin origin;
 
   static List<FlutterDevice> parseList({required final String json}) =>
-      switch (JsonObject.parse(text: json)) {
-        JsonListParsed(:final objects) => List.unmodifiable(
-          objects.map((final object) => FlutterDevice.fromJson(object: object)),
+      switch (const WireJson().objects(
+        text: json,
+        fromJson: FlutterDeviceDto.fromJson,
+      )) {
+        WireDecoded(:final value) => List.unmodifiable(
+          value.map((final dto) => FlutterDevice.fromDto(dto: dto)),
         ),
-        JsonObjectParsed() => const [],
-        JsonMalformed() => const [],
+        WireRejected() => const [],
       };
 }

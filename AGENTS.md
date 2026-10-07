@@ -40,7 +40,12 @@ app is the behavioural reference; `openspec/specs/` is the contract.
 
 - No comments. No nullable types. No `!`. No `bool` declarations. No `_` or `default` in switches.
 - Absence is a sealed class with a domain name, never `Option<T>`.
-- `extension type const` for every id, key, URL and measure.
+- `extension type const` for every domain value (ids, keys, URLs, names, texts, codes, measures); no bare primitives in domain classes.
+- No vague types (`Object`, `dynamic`, `List<(Object, Object)>`) anywhere, tests included.
+- JSON only through `json_serializable`: lenient, all-nullable wire DTOs in generated `part` files (`./bin/na gen json`), validated and mapped to domain types right away.
+- Exact dependency versions only (no `^`); internal packages are `version: 0.0.0`.
+- Generated code (l10n, JSON) only via `./bin/na gen`; never hand-written.
+- Prefer established libraries over hand-rolled algorithms; no README files in random folders.
 - Functional collection operations; unmodifiable results.
 - Named parameters everywhere; no default values outside tests.
 - Time only through `Clock`, `Ticker`, `Scheduler`; never `DateTime.now()` or `Timer`.
@@ -78,4 +83,5 @@ through `./bin/na` so local runs and CI use the same code path.
 - Commit `env/release.json`, `Secrets.xcconfig`, keystores or `.na-release/`.
 - Change version numbers by hand.
 - Add translations to only one ARB file.
+- Write a hand-rolled JSON parser, a version range (`^`), or a README outside `docs/`.
 - Reproduce legacy bugs listed under "Intentional deltas" in a spec.
