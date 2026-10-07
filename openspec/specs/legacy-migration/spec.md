@@ -63,7 +63,7 @@ ignored:
 | `theme` | string | — | dropped |
 | `cleanDateProfiles` | `[{name: string, cleandate: ISO timestamp with offset}]` | `cleantimeProfiles` | keep entries with non-empty `name` and parseable `cleandate`; date = calendar date of the timestamp in its own offset |
 | `activeProfile` | string index, e.g. `"1"` | `activeCleantimeProfile` | parse int; clamp to `[0, profiles.length - 1]`; 0 when unparseable |
-| `meeting_formats_v1` | `{fetchedAt: ms, formats: [...]}` | `meetingFormatsCache` | copy when `formats` is a non-empty array; else drop |
+| `meeting_formats_v1` | `{fetchedAt: ms, formats: [...]}` | `meetingFormatsCache` | copy when `fetchedAt` is a number and `formats` is a non-empty array; else drop |
 | `mediaResume.book.<id>` | `{trackId, trackIndex, position, duration?, updatedAt}` | same key | copy when `trackIndex` and `position` are numbers |
 | `mediaResume.speak.<url>` | same | same key | same rule |
 | `mediaResume.index.book`, `mediaResume.index.speak` | `{<id>: point}` | same key | rebuilt from the imported points, not copied |
@@ -87,6 +87,17 @@ ignored:
 
 - **WHEN** the store has `mediaResume.book.basic-text` and `mediaResume.speak.<url>` points
 - **THEN** both points exist under the same keys and both index entries are rebuilt from them
+
+#### Scenario: Meeting formats cache is copied
+
+- **WHEN** `meeting_formats_v1` is `{"fetchedAt": 1757500000000, "formats": [<one GetFormats row>]}`
+- **THEN** `meetingFormatsCache` holds the same `fetchedAt` and row
+- **AND** opening a meeting list within 7 days of `fetchedAt` makes no GetFormats request
+
+#### Scenario: Empty meeting formats cache is dropped
+
+- **WHEN** `meeting_formats_v1` is `{"fetchedAt": 1757500000000, "formats": []}`
+- **THEN** nothing is written under `meetingFormatsCache` and the key counts as skipped
 
 ### Requirement: Failure tolerance
 

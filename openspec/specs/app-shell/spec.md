@@ -57,10 +57,13 @@ The app SHALL show "Version: <x.y.z>" as the last row of the side menu, where
 ### Requirement: Routes
 
 The app SHALL register these routes: `/` (redirects to `/home`), `/home`,
-`/map-search`, `/location-search`, `/listfull`, `/jft`, `/cleantime-counter`,
-`/events`, `/audiobooks`, `/basic-text`, `/how-and-why`, `/step-working-guides`,
-`/speaks`, `/grc`, `/settings`, `/contact`. Meeting details open as a modal
-route on top of the current page, not as a menu destination.
+`/map-search`, `/location-search`, `/listfull`, `/listfull/<municipality>`,
+`/jft`, `/cleantime-counter`, `/events`, `/audiobooks`, `/basic-text`,
+`/how-and-why`, `/step-working-guides`, `/speaks`, `/grc`, `/settings`,
+`/contact`. `<municipality>` is the URL-encoded municipality name as shown in
+the municipality list. The side menu marks "Meetings" as the current entry on
+both `/listfull` routes. Meeting details open as a modal route on top of the
+current page, not as a menu destination.
 
 #### Scenario: Root redirects to home
 
@@ -71,6 +74,11 @@ route on top of the current page, not as a menu destination.
 
 - **WHEN** navigation to an unregistered path is requested
 - **THEN** the app shows the Home page
+
+#### Scenario: Municipality sub-page keeps the menu entry
+
+- **WHEN** the user is on `/listfull/K%C3%B8benhavn` and opens the menu
+- **THEN** "Meetings" is the selected entry and the header reads "København"
 
 ### Requirement: Page header with menu button
 
@@ -106,6 +114,16 @@ background.
 
 - **WHEN** the user is on `/home` with no modal open and presses the system back button
 - **THEN** the app moves to the background and is not closed
+
+#### Scenario: Back from municipality meetings returns to the list
+
+- **WHEN** the user is on `/listfull/Aarhus` and presses the system back button
+- **THEN** the app navigates to `/listfull`
+
+#### Scenario: Back closes the formats popover first
+
+- **WHEN** the formats popover is open on `/listfull/Aarhus` and the user presses the system back button
+- **THEN** the popover closes and the "Aarhus" meetings stay visible
 
 ### Requirement: Global loading bar
 
