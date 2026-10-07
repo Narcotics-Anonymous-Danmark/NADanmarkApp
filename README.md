@@ -40,7 +40,7 @@ analysis server needs.
 | `./bin/na test [unit\|widget\|acceptance\|e2e\|all] [--coverage]` | Run a test level |
 | `./bin/na coverage --merge --html --check` | Merge lcov, render HTML, enforce floors |
 | `./bin/na check` | Format, analyze, custom lints, ARB parity, dependency layers, spec/test parity |
-| `./bin/na gen [l10n\|all]` | Generate localisations |
+| `./bin/na gen [l10n\|json\|assets\|all]` | Generate localisations, JSON part files, launcher icons and splash screens |
 | `./bin/na release version x.y.z [--build n]` | The only way to change version numbers |
 | `./bin/na release check\|android\|ios` | Signed store builds |
 | `./bin/na publish play\|testflight` | Upload to internal testing |

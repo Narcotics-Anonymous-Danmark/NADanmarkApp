@@ -54,6 +54,8 @@ dependencies:
 
 dev_dependencies:
   custom_lint: 0.8.1
+  flutter_launcher_icons: 0.14.4
+  flutter_native_splash: 2.4.7
   flutter_test:
     sdk: flutter
   integration_test:

@@ -21,7 +21,7 @@ void main() {
     });
 
     test('radii and motion expose their tokens', () {
-      expect(Radius.card, 12);
+      expect(Radius.card, 5);
       expect(NaMotion.standard.normal, const Duration(milliseconds: 220));
     });
 

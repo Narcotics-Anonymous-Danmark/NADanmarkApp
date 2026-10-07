@@ -2,10 +2,11 @@ import 'package:args/command_runner.dart';
 import 'package:na_cli/src/boundary/arg_reader.dart';
 import 'package:na_cli/src/cli_context.dart';
 import 'package:na_cli/src/cli_failure.dart';
+import 'package:na_cli/src/gen/assets_generator.dart';
 import 'package:na_cli/src/gen/json_generator.dart';
 import 'package:na_cli/src/gen/l10n_generator.dart';
 
-enum GenTarget { l10n, json, all }
+enum GenTarget { l10n, json, assets, all }
 
 final class GenCommand extends Command<int> {
   GenCommand({required this.context});
@@ -17,10 +18,11 @@ final class GenCommand extends Command<int> {
 
   @override
   String get description =>
-      'Run code generation (l10n from ARB, JSON part files from DTOs).';
+      'Run code generation (l10n from ARB, JSON part files from DTOs, '
+      'launcher icons and splash screens from app/assets/branding).';
 
   @override
-  String get invocation => 'na gen [l10n|json|all]';
+  String get invocation => 'na gen [l10n|json|assets|all]';
 
   @override
   Future<int> run() async {
@@ -37,6 +39,8 @@ final class GenCommand extends Command<int> {
         await generator.generate();
       case GenTarget.json:
         await json.generate();
+      case GenTarget.assets:
+        await AssetsGenerator(context: context).generate();
       case GenTarget.all:
         await generator.pubGet();
         await json.generate();
