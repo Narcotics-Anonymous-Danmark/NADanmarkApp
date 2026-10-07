@@ -82,6 +82,20 @@ final class DestinationPage extends StatelessWidget {
     return ShellPage(
       title: destination.label(l10n: l10n),
       back: const NoBack(),
+      footer: switch (destination) {
+        MenuDestination.nearby => const FooterContent(child: NearbyFooter()),
+        MenuDestination.home ||
+        MenuDestination.map ||
+        MenuDestination.meetings ||
+        MenuDestination.justForToday ||
+        MenuDestination.cleantime ||
+        MenuDestination.events ||
+        MenuDestination.audiobooks ||
+        MenuDestination.speaks ||
+        MenuDestination.groupReadings ||
+        MenuDestination.settings ||
+        MenuDestination.about => const NoFooter(),
+      },
       body: switch (destination) {
         MenuDestination.home => HomeBody(
           cards: [
@@ -97,8 +111,8 @@ final class DestinationPage extends StatelessWidget {
               context.go(municipalityLocation(segment: segment)),
         ),
         MenuDestination.about => const ContactBody(),
+        MenuDestination.nearby => const NearbyMeetingsPageBody(),
         MenuDestination.map ||
-        MenuDestination.nearby ||
         MenuDestination.cleantime ||
         MenuDestination.events ||
         MenuDestination.audiobooks ||
@@ -107,6 +121,17 @@ final class DestinationPage extends StatelessWidget {
       },
     );
   }
+}
+
+final class NearbyMeetingsPageBody extends ConsumerWidget {
+  const NearbyMeetingsPageBody({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => NearbyBody(
+    firstDay: ref.watch(
+      currentSettingsProvider.select((settings) => settings.firstDayOfWeek),
+    ),
+  );
 }
 
 final class BookPage extends StatelessWidget {
@@ -118,6 +143,7 @@ final class BookPage extends StatelessWidget {
   Widget build(BuildContext context) => ShellPage(
     title: book.label(l10n: AppLocalizations.of(context)),
     back: BackTo(parent: MenuDestination.audiobooks.path),
+    footer: const NoFooter(),
     body: const SizedBox.shrink(),
   );
 }
@@ -135,6 +161,7 @@ final class MunicipalityMeetingsPage extends ConsumerWidget {
         context,
       ).municipalityName(municipality: municipality),
       back: BackTo(parent: MenuDestination.meetings.path),
+      footer: const NoFooter(),
       body: MunicipalityMeetingsBody(
         municipality: municipality,
         firstDay: ref.watch(

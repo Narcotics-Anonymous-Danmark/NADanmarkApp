@@ -4,10 +4,18 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:na_kernel/boundary.dart';
+import 'package:na_kernel/na_kernel.dart';
 import 'package:na_testing/src/builders/bmlt_builders.dart';
+import 'package:na_testing/src/builders/test_values.dart';
 import 'package:na_testing/src/generated/recorded_bmlt.dart';
 
-enum BmltEndpoint { meetings, municipalities, formatsDanish, formatsEnglish }
+enum BmltEndpoint {
+  meetings,
+  municipalities,
+  nearby,
+  formatsDanish,
+  formatsEnglish,
+}
 
 sealed class BmltReply {
   const BmltReply();
@@ -28,6 +36,11 @@ final class BmltRows extends BmltReply {
 
   final List<WireObject> rows;
 }
+
+BmltRows aNearbyBmltResponse({RowCount count = const RowCount(3)}) =>
+    BmltRows.meetings(
+      meetings: recordedMeetingDtos().take(count.value).toList(),
+    );
 
 final class BmltNoResults extends BmltReply {
   const BmltNoResults();
@@ -63,15 +76,31 @@ final class BmltServerMimic implements HttpClientAdapter {
         BmltEndpoint.municipalities: BmltRows.municipalities(
           municipalities: recordedMunicipalityDtos(),
         ),
+        BmltEndpoint.nearby: const BmltRows(rows: recordedDenmarkMeetings),
         BmltEndpoint.formatsDanish: const BmltRows(rows: recordedFormatsDa),
         BmltEndpoint.formatsEnglish: const BmltRows(rows: recordedFormatsEn),
       };
 
   final Map<BmltEndpoint, BmltReply> _replies;
+  final Map<Km, BmltReply> _nearbyByRadius = {};
   final List<Uri> requests = [];
 
   void serve({required BmltEndpoint endpoint, required BmltReply reply}) =>
       _replies[endpoint] = reply;
+
+  void serveNearby({required Km radius, required BmltReply reply}) =>
+      _nearbyByRadius[radius] = reply;
+
+  BmltHeld holdNearby({required Km radius}) {
+    final held = BmltHeld(
+      then:
+          _nearbyByRadius[radius] ??
+          _replies[BmltEndpoint.nearby] ??
+          const BmltNoResults(),
+    );
+    _nearbyByRadius[radius] = held;
+    return held;
+  }
 
   BmltHeld hold({required BmltEndpoint endpoint}) {
     final held = BmltHeld(then: _replies[endpoint] ?? const BmltNoResults());
@@ -97,6 +126,16 @@ final class BmltServerMimic implements HttpClientAdapter {
     final uri = options.uri;
     requests.add(uri);
     return switch (_routeOf(uri: uri)) {
+      _Routed(endpoint: BmltEndpoint.nearby) => _answer(
+        reply:
+            switch (int.tryParse(uri.queryParameters['geo_width_km'] ?? '')) {
+              final int radius => _nearbyByRadius[Km(radius)],
+              null => null,
+            } ??
+            _replies[BmltEndpoint.nearby] ??
+            const BmltNoResults(),
+        options: options,
+      ),
       _Routed(:final endpoint) => _answer(
         reply: _replies[endpoint] ?? const BmltNoResults(),
         options: options,
@@ -141,17 +180,21 @@ final class BmltServerMimic implements HttpClientAdapter {
       query['switcher'],
       query['data_field_key'],
       query['lang_enum'],
+      query['geo_width_km'],
     )) {
-      ('GetSearchResults', null, _) => const _Routed(
+      ('GetSearchResults', null, _, final String _) => const _Routed(
+        endpoint: BmltEndpoint.nearby,
+      ),
+      ('GetSearchResults', null, _, null) => const _Routed(
         endpoint: BmltEndpoint.meetings,
       ),
-      ('GetSearchResults', 'location_municipality', _) => const _Routed(
+      ('GetSearchResults', 'location_municipality', _, _) => const _Routed(
         endpoint: BmltEndpoint.municipalities,
       ),
-      ('GetFormats', _, 'en') => const _Routed(
+      ('GetFormats', _, 'en', _) => const _Routed(
         endpoint: BmltEndpoint.formatsEnglish,
       ),
-      ('GetFormats', _, 'da' || null) => const _Routed(
+      ('GetFormats', _, 'da' || null, _) => const _Routed(
         endpoint: BmltEndpoint.formatsDanish,
       ),
       _ => const _Unrouted(),

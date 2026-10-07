@@ -12,6 +12,8 @@ dependencies:
     path: ../packages/adapters/adapter_bmlt
   adapter_clock:
     path: ../packages/adapters/adapter_clock
+  adapter_geolocation:
+    path: ../packages/adapters/adapter_geolocation
   adapter_jft:
     path: ../packages/adapters/adapter_jft
   adapter_legacy_store:

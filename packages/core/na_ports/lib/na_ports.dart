@@ -3,6 +3,7 @@ export 'src/events/event_bus_provider.dart';
 export 'src/jft/jft_port.dart';
 export 'src/legacy/legacy_store_port.dart';
 export 'src/links/external_links_port.dart';
+export 'src/location/geolocation_port.dart';
 export 'src/meetings/meeting_formats_port.dart';
 export 'src/meetings/meeting_search_port.dart';
 export 'src/settings/settings_port.dart';

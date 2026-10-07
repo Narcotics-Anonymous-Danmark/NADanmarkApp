@@ -155,11 +155,20 @@ void main() {
     test('day filters compare by value', () {
       expectValueSemantics<DayFilter>(
         build: () => const AllDays(),
-        different: const OnlyDay(weekday: Weekday.friday),
+        different: DayFilter.of(weekdays: const {Weekday.friday}),
       );
       expectValueSemantics<DayFilter>(
-        build: () => const OnlyDay(weekday: Weekday.friday),
+        build: () => DayFilter.of(weekdays: const {Weekday.friday}),
         different: const AllDays(),
+      );
+      expectValueSemantics<DayFilter>(
+        build: () =>
+            DayFilter.of(weekdays: const {Weekday.friday, Weekday.monday}),
+        different: DayFilter.of(weekdays: const {Weekday.friday}),
+      );
+      expect(
+        DayFilter.of(weekdays: const {Weekday.friday, Weekday.monday}),
+        DayFilter.of(weekdays: const {Weekday.monday, Weekday.friday}),
       );
     });
 

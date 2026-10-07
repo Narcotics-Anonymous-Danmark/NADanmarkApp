@@ -137,7 +137,7 @@ abstract class AppLocalizations {
   /// Legacy key LOCATING
   ///
   /// In en, this message translates to:
-  /// **'Locating...'**
+  /// **'Locating…'**
   String get locating;
 
   /// Legacy key FINDING_MTGS
@@ -1351,6 +1351,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Day'**
   String get meetingDayFilter;
+
+  /// Accessible label of the radius slider on the Meetings nearby page
+  ///
+  /// In en, this message translates to:
+  /// **'Search radius'**
+  String get nearbyRadiusLabel;
+
+  /// Confirm button of a dialog
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// Hour range shown above the meeting list hour slider
+  ///
+  /// In en, this message translates to:
+  /// **'{from} – {until}'**
+  String meetingHourRange(String from, String until);
+
+  /// Current radius above the Meetings nearby slider
+  ///
+  /// In en, this message translates to:
+  /// **'Search radius: {km} km'**
+  String nearbyRadiusValue(int km);
 }
 
 class _AppLocalizationsDelegate

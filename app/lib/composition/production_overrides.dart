@@ -1,5 +1,6 @@
 import 'package:adapter_bmlt/adapter_bmlt.dart';
 import 'package:adapter_clock/adapter_clock.dart';
+import 'package:adapter_geolocation/adapter_geolocation.dart';
 import 'package:adapter_jft/adapter_jft.dart';
 import 'package:adapter_legacy_store/adapter_legacy_store.dart';
 import 'package:adapter_links/adapter_links.dart';
@@ -30,6 +31,7 @@ Future<List<Override>> platformOverrides() async => [
   ...storageOverrides(preferences: SharedPreferencesAsync()),
   ...jftOverrides(bundle: rootBundle),
   ...linksOverrides(),
+  ...geolocationOverrides(platform: GeolocatorPlatform.instance),
   ...legacyStoreOverrides(timeout: const Duration(seconds: 5)),
   eventBusProvider.overrideWithValue(BroadcastEventBus()),
   appInfoProvider.overrideWithValue(await loadAppInfo()),

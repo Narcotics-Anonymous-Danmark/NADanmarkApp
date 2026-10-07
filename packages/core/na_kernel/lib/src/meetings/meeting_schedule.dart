@@ -30,10 +30,25 @@ final class DaySection {
 @immutable
 sealed class DayFilter {
   const DayFilter();
+
+  factory DayFilter.of({required Set<Weekday> weekdays}) =>
+      weekdays.isEmpty || weekdays.length == Weekday.values.length
+      ? const AllDays()
+      : SelectedDays._(weekdays: Set.unmodifiable(weekdays));
+
+  Set<Weekday> get weekdays;
+
+  List<Weekday> orderedFrom({required FirstDayOfWeek firstDay}) =>
+      List.unmodifiable(
+        Weekday.orderedFrom(firstDay: firstDay).where(weekdays.contains),
+      );
 }
 
 final class AllDays extends DayFilter {
   const AllDays();
+
+  @override
+  Set<Weekday> get weekdays => const {};
 
   @override
   int get hashCode => (AllDays).hashCode;
@@ -45,20 +60,26 @@ final class AllDays extends DayFilter {
   String toString() => 'AllDays';
 }
 
-final class OnlyDay extends DayFilter {
-  const OnlyDay({required this.weekday});
-
-  final Weekday weekday;
+final class SelectedDays extends DayFilter {
+  const SelectedDays._({required this.weekdays});
 
   @override
-  int get hashCode => Object.hash(OnlyDay, weekday);
+  final Set<Weekday> weekdays;
+
+  @override
+  int get hashCode => Object.hash(
+    SelectedDays,
+    Object.hashAllUnordered(weekdays),
+  );
 
   @override
   bool operator ==(Object other) =>
-      other is OnlyDay && other.weekday == weekday;
+      other is SelectedDays &&
+      const SetEquality<Weekday>().equals(other.weekdays, weekdays);
 
   @override
-  String toString() => 'OnlyDay(${weekday.name})';
+  String toString() =>
+      'SelectedDays(${weekdays.map((day) => day.name).join(',')})';
 }
 
 @immutable
@@ -72,6 +93,10 @@ final class HourRange {
 
   final HourOfDay lower;
   final HourOfDay upper;
+
+  LocalTime get from => LocalTime(hour: lower, minute: const MinuteOfHour(0));
+
+  LocalTime get until => LocalTime(hour: upper, minute: const MinuteOfHour(59));
 
   HourRangeMembership membershipOf({required LocalTime time}) =>
       time.hour.value >= lower.value && time.hour.value <= upper.value
@@ -123,7 +148,7 @@ final class MeetingSchedule {
         .where(
           (meeting) => switch (day) {
             AllDays() => true,
-            OnlyDay(:final weekday) => meeting.weekday == weekday,
+            SelectedDays(:final weekdays) => weekdays.contains(meeting.weekday),
           },
         )
         .where(

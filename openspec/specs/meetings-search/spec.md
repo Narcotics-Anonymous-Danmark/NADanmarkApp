@@ -25,7 +25,7 @@ exactly these queries:
 |---|---|---|
 | All meetings | Denmark | `?switcher=GetSearchResults&sort_keys=weekday_tinyint,start_time` |
 | Municipalities | Denmark | `?switcher=GetSearchResults&data_field_key=location_municipality&sort_keys=location_municipality` |
-| Formats | Denmark | `?switcher=GetFormats` and `?switcher=GetFormats&lang_enum=dk` |
+| Formats | Denmark | `?switcher=GetFormats&lang_enum=da` and `?switcher=GetFormats&lang_enum=en` |
 | Nearby (radius) | Tomato | `?switcher=GetSearchResults&geo_width_km=<km>&long_val=<lng>&lat_val=<lat>&sort_keys=longitude,latitude&callingApp=bmlt_search_3_ionic` |
 | Map pins | Tomato | `?switcher=GetSearchResults&data_field_key=longitude,latitude,id_bigint&geo_width_km=<km>&long_val=<lng>&lat_val=<lat>&sort_keys=longitude,latitude&callingApp=bmlt_search_3_ionic` |
 | Meetings by id | Tomato | `?switcher=GetSearchResults&meeting_ids[]=<id>[&meeting_ids[]=<id>…]` |
@@ -44,17 +44,28 @@ BMLT admins are told otherwise.
 - **WHEN** a nearby search runs for lat 55.476224, lng 8.4606976, 15 km
 - **THEN** the request is `<tomato>?switcher=GetSearchResults&geo_width_km=15&long_val=8.4606976&lat_val=55.476224&sort_keys=longitude,latitude&callingApp=bmlt_search_3_ionic`
 
+#### Scenario: Formats are fetched in both languages
+
+- **WHEN** the format definitions are fetched
+- **THEN** the requests are `<denmark>?switcher=GetFormats&lang_enum=da` and `<denmark>?switcher=GetFormats&lang_enum=en`
+
 ### Requirement: Full meeting list by municipality
 
 The Meetings page (`/listfull`, title "Meetings" (Mødeliste)) SHALL load the
 municipalities and show one row per distinct municipality with a play chevron.
 Municipalities that are blank, "Online møde", "Viborg online" or "Viborg." SHALL
 be shown as one entry "Online", which sorts last; all others keep the server
-order. Tapping a municipality loads all meetings and shows those whose
-normalised municipality equals the tapped one, in the shared meeting list, with
-the header title set to the municipality name and a "Back" button that returns
-to the municipality list. The loading bar shows "Finding meetings…" (Finder
-møder …) while either request runs.
+order. The "Online" label is localised. Tapping a municipality SHALL open the
+sub-page `/listfull/<municipality>`. The sub-page loads all meetings and shows
+those whose normalised municipality equals the tapped one, in the shared
+meeting list. Its header title is the municipality name, and a "Back" button
+returns to the municipality list. The sub-page SHALL NOT show meetings of a
+previously opened municipality while it loads. The loading bar shows "Finding
+meetings…" (Finder møder …) while either request runs. When the municipality
+query returns no rows the page SHALL show "Nothing found" (Intet fundet). When
+either request fails, the page SHALL show "The meetings could not be loaded"
+(Møderne kunne ikke hentes) with a "Try again" (Prøv igen) button that repeats
+the failed request, and the loading bar SHALL be hidden.
 
 #### Scenario: Municipalities are unique and Online is last
 
@@ -71,6 +82,26 @@ møder …) while either request runs.
 
 - **WHEN** the user taps "Online"
 - **THEN** meetings whose municipality is blank, "Online møde", "Viborg online" or "Viborg." are listed
+
+#### Scenario: Back returns to the municipality list
+
+- **WHEN** the user is on the "Aarhus" meetings and taps "Back"
+- **THEN** the municipality list is shown with the title "Meetings"
+
+#### Scenario: No municipalities
+
+- **WHEN** the municipality query returns `{}`
+- **THEN** the page shows "Nothing found" and the loading bar is hidden
+
+#### Scenario: Failed request can be retried
+
+- **WHEN** the municipality query fails and the user taps "Try again" after the server recovers
+- **THEN** the error is replaced by the municipality rows and the loading bar is hidden
+
+#### Scenario: Previous municipality is not shown while loading
+
+- **WHEN** the user has seen the "Aarhus" meetings, goes back and taps "København" while the meetings request is still pending
+- **THEN** no "Aarhus" meeting is shown
 
 ### Requirement: Meetings nearby
 
@@ -183,10 +214,12 @@ The meeting card SHALL show: a badge "<Weekday> <start> - <end>"; a red
 meeting name as heading; the format chips; then, each on its own line when
 present: `location_text`, `location_street`, `location_city_subsection`,
 `location_neighborhood`, `location_municipality`, `location_sub_province`,
-`location_province`, `location_code_1`, `location_info`, `comments` (with a note
-icon), `virtual_meeting_additional_info`, `contact_phone_1`, `contact_email_1`,
-"Train: <train_lines>", "Bus: <bus_lines>". The literal prefixes
-`Bus Lines#@-@#` and `Train Lines#@-@#` are stripped from the transit fields.
+`location_province`, `location_postal_code_1`, `location_info`, `comments` (with
+a note icon), `virtual_meeting_additional_info`, `contact_phone_1`,
+`contact_email_1`, "Train: <train_lines>", "Bus: <bus_lines>". The literal
+prefixes `Bus Lines#@-@#` and `Train Lines#@-@#` are stripped from the transit
+fields, case-insensitively and at every occurrence. Values are trimmed, and a
+value that is blank after trimming counts as absent.
 
 #### Scenario: Only present fields are rendered
 
@@ -198,11 +231,17 @@ icon), `virtual_meeting_additional_info`, `contact_phone_1`, `contact_email_1`,
 - **WHEN** `bus_lines` is `Bus Lines#@-@#2A, 5C`
 - **THEN** the line reads "Bus: 2A, 5C"
 
+#### Scenario: Postal code is shown
+
+- **WHEN** a meeting has `location_postal_code_1` `8000`
+- **THEN** a location line reads "8000"
+
 ### Requirement: Temporarily closed rule
 
-A meeting SHALL be marked temporarily closed when its `formats` contain the key
-`TC` (case-insensitive) and it has no `virtual_meeting_link`. A hybrid meeting
-is one whose `formats` contain `HY` (case-insensitive).
+A meeting SHALL be marked temporarily closed when its `formats` list contains
+the key `TC` (case-insensitive, compared as a whole comma-separated key after
+trimming) and it has no `virtual_meeting_link`. A hybrid meeting is one whose
+`formats` list contains the key `HY` under the same comparison.
 
 #### Scenario: TC without virtual link is closed
 
@@ -212,6 +251,11 @@ is one whose `formats` contain `HY` (case-insensitive).
 #### Scenario: TC with a virtual link is not closed
 
 - **WHEN** `formats` is `O,TC` and `virtual_meeting_link` is a URL
+- **THEN** no chip is shown
+
+#### Scenario: A key that only contains TC is not closed
+
+- **WHEN** `formats` is `O,ATC` and `virtual_meeting_link` is empty
 - **THEN** no chip is shown
 
 ### Requirement: Meeting card actions
@@ -241,12 +285,15 @@ meeting dial-in" (Telefonmøde – opkaldsnummer) button dialling
 
 ### Requirement: Format definitions and cache
 
-Format definitions SHALL be fetched from both GetFormats queries (default
-language and `lang_enum=dk`), concatenated, and cached under the key
-`meeting_formats_v1` as `{fetchedAt: <epoch ms>, formats: [...]}` for 7 days
-(`7 * 24 * 60 * 60 * 1000` ms). On fetch failure the stale cache is used if
-present, else an empty list, and a retry is allowed after 60 s. The cache is
-never written empty.
+Format definitions SHALL be fetched from both GetFormats queries
+(`lang_enum=da` and `lang_enum=en`), concatenated, and cached under the key
+`meetingFormatsCache` as `{fetchedAt: <epoch ms>, formats: [...]}` for 7 days
+(`7 * 24 * 60 * 60 * 1000` ms). `formats` holds the rows in the GetFormats
+shape (`id`, `key_string`, `name_string`, `description_string`,
+`format_type_enum`, `lang`), so a legacy cache with more fields still reads. On fetch failure the stale cache is used if present, else an empty
+list, and a retry is allowed after 60 s. The cache is never written empty.
+Definitions are fetched at most once at a time; concurrent requests share
+the same fetch.
 
 #### Scenario: Fresh cache avoids the network
 
@@ -263,10 +310,15 @@ never written empty.
 - **WHEN** the fetch fails with no cache
 - **THEN** meetings show raw keys as chips and a new fetch is attempted on the first request after 60 s
 
+#### Scenario: Concurrent meetings share one fetch
+
+- **WHEN** twenty meeting cards request their formats while the cache is empty
+- **THEN** exactly one pair of GetFormats requests is made
+
 ### Requirement: Format category and display language
 
 Each format id SHALL become one definition using the row in the display
-language (`dk` when the app language is `da`, else `en`), falling back to the
+language (`da` when the app language is `da`, else `en`), falling back to the
 `en` row, then to the first row. `format_type_enum` maps to a category:
 `ALERT` → alert, `LANG` → language, prefixes `FC3`, `O`, `C` → audience, prefix
 `FC2` → facility, anything else → content. Chip colours by category: alert
@@ -275,8 +327,13 @@ index is rebuilt when the language changes.
 
 #### Scenario: Danish names in Danish
 
-- **WHEN** the app language is `da` and format id 17 has rows in `dk` and `en`
-- **THEN** the chip shows the `dk` `name_string`
+- **WHEN** the app language is `da` and format id 17 has rows in `da` and `en`
+- **THEN** the chip shows the `da` `name_string`
+
+#### Scenario: English names in English
+
+- **WHEN** the app language is `en` and format id 17 has rows in `da` ("Åben Møde") and `en` ("Open")
+- **THEN** the chip shows "Open"
 
 #### Scenario: Category mapping
 
@@ -292,8 +349,11 @@ at the same position, only when the id count equals the key count and
 that lower-cased key is unambiguous. For any other root server keys resolve
 through the English key index only. Unresolved keys SHALL become a content
 format whose name is the key. Duplicates by key are dropped; the result is
-sorted by category order (alert, language, audience, facility, content) then by
-name with Danish collation. Tapping the chips opens the formats popover.
+sorted by category order (alert, language, audience, facility, content) and
+keeps the meeting's own key order within a category. The legacy app sorted
+names within a category with Danish locale collation; that needs ICU, which
+Dart does not ship, and the server order is meaningful to the meeting's
+organisers. Tapping the chips opens the formats popover.
 
 #### Scenario: Danish meeting resolves by shared id
 
@@ -309,6 +369,11 @@ name with Danish collation. Tapping the chips opens the formats popover.
 
 - **WHEN** two definitions have keys `Se` and `SE`
 - **THEN** the key `se` resolves to neither by the lower-case index
+
+#### Scenario: Formats in one category keep the meeting's order
+
+- **WHEN** `formats` is `T,TR,LI` and all three are content formats
+- **THEN** the chips are "Trin", "Tradition", "Litteratur" in that order
 
 ### Requirement: Formats popover
 
@@ -357,3 +422,12 @@ never shows two overlapping loading bars.
 - The legacy hour slider showed "HH:mm (h:mm a)" preview text that was commented out in the template; not ported.
 - The legacy `isTempClosed` in the modal page ignored the virtual link; the card rule (with the virtual-link exception) is the only rule.
 - The loading texts are localised, including "Loading events…" which was hard-coded English.
+- The legacy hour filter compared the end time; the rewrite filters by start hour.
+- The legacy card read `location_code_1`, which BMLT never sends, so the postal code never showed; the card reads `location_postal_code_1`.
+- The legacy TC/HY checks matched substrings (`ATC` counted as `TC`); they are whole-key matches.
+- The legacy municipality page briefly showed the previously opened municipality's meetings on a second tap; the sub-page never shows stale meetings.
+- A failed legacy request left the loader stuck on a blank page; failures show an error with "Try again" and hide the loading bar.
+- The legacy Danish "Bus" and "Train" labels were wrong; they are corrected.
+- The legacy formats queries (default and `lang_enum=dk`) only ever returned Danish rows, so format names were Danish in both languages; the queries use `lang_enum=da` and `lang_enum=en`.
+- The legacy chip and error colours were below WCAG contrast; the tokens meet it.
+- The legacy app sorted chip names inside a category with Danish collation; chips keep the meeting's own order inside a category.

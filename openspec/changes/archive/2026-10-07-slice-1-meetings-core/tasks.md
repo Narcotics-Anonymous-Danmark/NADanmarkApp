@@ -66,7 +66,7 @@
 - [x] 9.1 Add the Patrol happy path `app/integration_test/meetings_search_test.dart` (open Meetings, tap a municipality, expand a day, open the formats popover) against `BmltServerMimic`; verify with `./bin/na test e2e --device <android emulator>`
 - [x] 9.2 Capture da/en Android screenshots of the municipality list, the meeting list and the popover into `docs/screenshots/meetings-search/`; add iOS screenshots to slice 0's open macOS task
 - [x] 9.3 Run `./bin/na check && ./bin/na test unit widget acceptance --coverage && ./bin/na coverage --merge --html --check` and confirm every floor is met
-- [ ] 9.4 On archive, append the new legacy bugs (hour filter used the end time, `location_code_1`, substring TC/HY, stale list on second tap, stuck loader on failure, wrong Danish Bus/Train labels, Danish-only format names from the `dk` query, chip and error colours below WCAG contrast, chip names inside a category no longer collated but kept in the meeting's order) to "Intentional deltas from the legacy app" in `openspec/specs/meetings-search/spec.md`
+- [x] 9.4 On archive, append the new legacy bugs (hour filter used the end time, `location_code_1`, substring TC/HY, stale list on second tap, stuck loader on failure, wrong Danish Bus/Train labels, Danish-only format names from the `dk` query, chip and error colours below WCAG contrast, chip names inside a category no longer collated but kept in the meeting's order) to "Intentional deltas from the legacy app" in `openspec/specs/meetings-search/spec.md`
 
 ## 10. Standing principles applied to the slice
 

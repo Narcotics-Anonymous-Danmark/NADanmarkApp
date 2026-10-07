@@ -33,10 +33,16 @@ final bool isClosed;
 enum TemporarilyClosed { closed, open }
 ```
 
-**Strong types through `extension type const`.** Domain fields are never bare
-`int`/`String`/`double`: ids, keys, URLs, names, texts, phone numbers, codes,
-coordinates, distances and hours each get their own extension type, so two
-values can never be swapped by mistake and the type says what the value is.
+**Strong types through `extension type const`.** No parameter, field or named
+argument is a bare `int`/`String`/`double`/`bool`: ids, keys, URLs, names,
+texts, labels, phone numbers, codes, coordinates, distances, counts and hours
+each get their own extension type, so two values can never be swapped by
+mistake and the type says what the value is. This holds everywhere: domain
+classes, use cases, controllers, widgets, test builders, mimics and test
+helpers (`aGeoPoint(latitude: Latitude(56.15))`, `serveNearby(radius: Km(30))`,
+never `radiusKm: 30`). Only the extension type's own representation and
+signatures Dart, Flutter or a plugin dictate (overrides, `==`, framework
+callbacks) keep primitives.
 
 ```dart
 extension type const Km(double value) {}

@@ -22,6 +22,11 @@ extension type const ContactLine(String text) {}
 final class GeoPoint {
   const GeoPoint({required this.latitude, required this.longitude});
 
+  static const GeoPoint searchFallback = GeoPoint(
+    latitude: Latitude(55.476224),
+    longitude: Longitude(8.4606976),
+  );
+
   final Latitude latitude;
   final Longitude longitude;
 

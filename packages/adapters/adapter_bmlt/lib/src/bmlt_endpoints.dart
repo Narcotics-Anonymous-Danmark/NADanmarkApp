@@ -1,3 +1,5 @@
+import 'package:na_kernel/na_kernel.dart';
+
 extension type const BmltBaseUrl(String value) {}
 
 final class BmltEndpoints {
@@ -14,6 +16,14 @@ final class BmltEndpoints {
       '${denmark.value}?switcher=GetSearchResults'
       '&data_field_key=location_municipality'
       '&sort_keys=location_municipality';
+
+  String nearby({required GeoPoint centre, required Km radius}) =>
+      '${tomato.value}?switcher=GetSearchResults'
+      '&geo_width_km=${radius.value}'
+      '&long_val=${centre.longitude.value}'
+      '&lat_val=${centre.latitude.value}'
+      '&sort_keys=longitude,latitude'
+      '&callingApp=bmlt_search_3_ionic';
 
   String get danishFormats =>
       '${denmark.value}?switcher=GetFormats&lang_enum=da';

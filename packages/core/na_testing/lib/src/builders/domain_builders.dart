@@ -106,3 +106,8 @@ String aStoredMigrationMarker({
     skippedKeys: skippedKeys,
   ),
 );
+
+GeoPoint aGeoPoint({
+  Latitude latitude = const Latitude(55.6761),
+  Longitude longitude = const Longitude(12.5683),
+}) => GeoPoint(latitude: latitude, longitude: longitude);

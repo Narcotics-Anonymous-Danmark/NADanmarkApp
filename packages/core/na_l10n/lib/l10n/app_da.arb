@@ -24,7 +24,7 @@
   "@noLocation": {
     "description": "Legacy key NO_LOCATION"
   },
-  "locating": "Finder position ...",
+  "locating": "Finder position …",
   "@locating": {
     "description": "Legacy key LOCATING"
   },
@@ -922,5 +922,34 @@
   "meetingDayFilter": "Dag",
   "@meetingDayFilter": {
     "description": "Label of the day selector above the meeting list"
+  },
+  "nearbyRadiusLabel": "Søgeradius",
+  "@nearbyRadiusLabel": {
+    "description": "Accessible label of the radius slider on the Meetings nearby page"
+  },
+  "ok": "OK",
+  "@ok": {
+    "description": "Confirm button of a dialog"
+  },
+  "meetingHourRange": "{from} – {until}",
+  "@meetingHourRange": {
+    "description": "Hour range shown above the meeting list hour slider",
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "until": {
+        "type": "String"
+      }
+    }
+  },
+  "nearbyRadiusValue": "Søgeradius: {km} km",
+  "@nearbyRadiusValue": {
+    "description": "Current radius above the Meetings nearby slider",
+    "placeholders": {
+      "km": {
+        "type": "int"
+      }
+    }
   }
 }

@@ -73,32 +73,27 @@ final class MeetingFilterBar extends ConsumerWidget {
         NaListRow(
           key: const Key('meeting-day-filter'),
           label: l10n.meetingDayFilter,
-          value: l10n.dayFilterName(day: view.day),
+          value: l10n.dayFilterName(day: view.day, firstDay: firstDay),
           onTap: () async {
-            final choice = await showNaOptionDialog<DayFilter>(
+            final choice = await showNaMultiOptionDialog<Weekday>(
               context: context,
-              title: l10n.meetingDayFilter,
-              options:
-                  [
-                        const AllDays(),
-                        ...Weekday.orderedFrom(
-                          firstDay: firstDay,
-                        ).map((weekday) => OnlyDay(weekday: weekday)),
-                      ]
-                      .map(
-                        (day) => NaOption(
-                          value: day,
-                          label: l10n.dayFilterName(day: day),
-                        ),
-                      )
-                      .toList(growable: false),
-              selected: view.day,
-              cancelLabel: l10n.cancel,
+              title: NaLabel(l10n.meetingDayFilter),
+              options: Weekday.orderedFrom(firstDay: firstDay)
+                  .map(
+                    (weekday) => NaMultiOption(
+                      value: weekday,
+                      label: NaLabel(l10n.weekdayName(weekday: weekday)),
+                    ),
+                  )
+                  .toList(growable: false),
+              selected: view.day.weekdays,
+              cancelLabel: NaLabel(l10n.cancel),
+              confirmLabel: NaLabel(l10n.ok),
             );
             switch (choice) {
-              case NaOptionPicked(:final value):
-                controller.selectDay(day: value);
-              case NaOptionCancelled():
+              case NaOptionsConfirmed(:final values):
+                controller.selectDay(day: DayFilter.of(weekdays: values));
+              case NaOptionsCancelled():
                 return;
             }
           },
@@ -128,35 +123,65 @@ final class HourRangeRow extends StatelessWidget {
         border: Border(bottom: BorderSide(color: theme.colors.background)),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: Space.lg),
-        child: Row(
+        padding: const EdgeInsets.fromLTRB(Space.lg, Space.sm, Space.lg, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Icon(NaIcons.clock, size: 20, color: theme.colors.inkMuted),
-            const SizedBox(width: Space.sm),
-            Expanded(
-              child: NaRangeSlider(
-                key: const Key('meeting-hour-range'),
-                values: NaRangeValues(
-                  lower: hours.lower.value,
-                  upper: hours.upper.value,
-                ),
-                min: HourOfDay.first.value,
-                max: HourOfDay.last.value,
-                lowerLabel: l10n.hourRangeLower,
-                upperLabel: l10n.hourRangeUpper,
-                onChanged: (values) => onChanged(
-                  HourRange(
-                    lower: HourOfDay(values.lower),
-                    upper: HourOfDay(values.upper),
-                  ),
-                ),
+            Text(
+              l10n.meetingHourRange(hours.from.hhmm, hours.until.hhmm),
+              key: const Key('meeting-hour-range-label'),
+              style: theme.typography.body.copyWith(
+                color: theme.colors.primary,
               ),
             ),
-            const SizedBox(width: Space.sm),
-            Icon(NaIcons.clock, size: 20, color: theme.colors.inkMuted),
+            HourRangeSliderRow(hours: hours, onChanged: onChanged),
           ],
         ),
       ),
+    );
+  }
+}
+
+final class HourRangeSliderRow extends StatelessWidget {
+  const HourRangeSliderRow({
+    required this.hours,
+    required this.onChanged,
+    super.key,
+  });
+
+  final HourRange hours;
+  final ValueChanged<HourRange> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = NaTheme.of(context);
+    return Row(
+      children: [
+        Icon(NaIcons.clock, size: 20, color: theme.colors.inkMuted),
+        const SizedBox(width: Space.sm),
+        Expanded(
+          child: NaRangeSlider(
+            key: const Key('meeting-hour-range'),
+            values: NaRangeValues(
+              lower: hours.lower.value,
+              upper: hours.upper.value,
+            ),
+            min: HourOfDay.first.value,
+            max: HourOfDay.last.value,
+            lowerLabel: l10n.hourRangeLower,
+            upperLabel: l10n.hourRangeUpper,
+            onChanged: (values) => onChanged(
+              HourRange(
+                lower: HourOfDay(values.lower),
+                upper: HourOfDay(values.upper),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: Space.sm),
+        Icon(NaIcons.clock, size: 20, color: theme.colors.inkMuted),
+      ],
     );
   }
 }

@@ -19,6 +19,7 @@ void main() {
       appInfoProvider: 'AppInfo',
       meetingSearchPortProvider: 'MeetingSearchPort',
       meetingFormatsPortProvider: 'MeetingFormatsPort',
+      geolocationPortProvider: 'GeolocationPort',
     };
     for (final entry in expectations.entries) {
       expect(
