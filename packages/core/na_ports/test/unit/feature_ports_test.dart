@@ -1,6 +1,7 @@
 @Tags(['unit'])
 library;
 
+import 'package:na_kernel/boundary.dart';
 import 'package:na_ports/na_ports.dart';
 import 'package:riverpod/misc.dart';
 import 'package:riverpod/riverpod.dart';
@@ -35,24 +36,29 @@ void main() {
 
   test('legacy store reads compare by value', () {
     expect(
-      const LegacyStoreFound(entries: {'a': 1}),
-      const LegacyStoreFound(entries: {'a': 1}),
+      const LegacyStoreFound(dump: LegacyStoreDumpDto(language: 'da')),
+      const LegacyStoreFound(dump: LegacyStoreDumpDto(language: 'da')),
     );
     expect(
-      const LegacyStoreFound(entries: {'a': 1}),
-      isNot(const LegacyStoreFound(entries: {'a': 2})),
+      const LegacyStoreFound(dump: LegacyStoreDumpDto(language: 'da')),
+      isNot(const LegacyStoreFound(dump: LegacyStoreDumpDto(language: 'en'))),
     );
     expect(const LegacyStoreAbsent(), const LegacyStoreAbsent());
     expect(
       const LegacyStoreUnreadable(detail: 'x'),
       const LegacyStoreUnreadable(detail: 'x'),
     );
-    expect(const LegacyStoreFound(entries: {'a': 1}).toString(), contains('a'));
+    expect(
+      const LegacyStoreFound(
+        dump: LegacyStoreDumpDto(language: 'da'),
+      ).toString(),
+      contains('language'),
+    );
     expect(const LegacyStoreUnreadable(detail: 'x').toString(), contains('x'));
     expect(const LegacyStoreAbsent().toString(), 'LegacyStoreAbsent');
     expect(
-      const LegacyStoreFound(entries: {'a': 1}).hashCode,
-      const LegacyStoreFound(entries: {'b': 2}).hashCode,
+      const LegacyStoreFound(dump: LegacyStoreDumpDto(language: 'da')).hashCode,
+      const LegacyStoreFound(dump: LegacyStoreDumpDto(language: 'da')).hashCode,
     );
     expect(
       const LegacyStoreAbsent().hashCode,

@@ -1,4 +1,4 @@
-import 'package:na_cli/src/boundary/json_object.dart';
+import 'package:na_cli/src/boundary/wire_json.dart';
 
 final class DartDefines {
   const DartDefines({required this.values});
@@ -6,14 +6,13 @@ final class DartDefines {
   final Map<String, String> values;
 
   static DartDefinesParse parse({required final String json}) =>
-      switch (JsonObject.parse(text: json)) {
-        JsonObjectParsed(:final object) => DartDefinesParsed(
-          defines: DartDefines(values: object.stringEntries),
+      switch (const WireJson().textEntries(text: json)) {
+        WireDecoded(:final value) => DartDefinesParsed(
+          defines: DartDefines(values: value),
         ),
-        JsonListParsed() => const DartDefinesRejected(
-          reason: 'env file must be a JSON object',
+        WireRejected(:final reason) => DartDefinesRejected(
+          reason: 'env file: $reason',
         ),
-        JsonMalformed(:final reason) => DartDefinesRejected(reason: reason),
       };
 
   String valueOf({required final String key}) => values[key] ?? '';

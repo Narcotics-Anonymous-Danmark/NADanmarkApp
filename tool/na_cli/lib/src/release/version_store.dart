@@ -1,5 +1,5 @@
-import 'dart:convert';
-
+import 'package:na_cli/src/boundary/tool_wire.dart';
+import 'package:na_cli/src/boundary/wire_json.dart';
 import 'package:na_cli/src/cli_context.dart';
 import 'package:na_cli/src/cli_failure.dart';
 import 'package:na_cli/src/fs/file_path.dart';
@@ -40,12 +40,14 @@ final class VersionStore {
       'version ${version.version} build ${version.build.value} '
       'code ${version.code.value} tag ${version.tag.value}';
 
-  String json({required final AppVersion version}) => jsonEncode({
-    'version': '${version.version}',
-    'build': version.build.value,
-    'versionCode': version.code.value,
-    'tag': version.tag.value,
-  });
+  String json({required final AppVersion version}) => const WireJson().encode(
+    json: VersionInfoDto(
+      version: '${version.version}',
+      build: version.build.value,
+      versionCode: version.code.value,
+      tag: version.tag.value,
+    ).toJson(),
+  );
 
   void appendGithubOutput({required final AppVersion version}) {
     switch (context.environment.lookup(key: const EnvKey('GITHUB_OUTPUT'))) {

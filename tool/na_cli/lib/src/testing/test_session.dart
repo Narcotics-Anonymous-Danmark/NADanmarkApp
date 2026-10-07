@@ -24,6 +24,9 @@ final class TestSession {
 
   Future<TestResult> _runJob(final TestJob job) async {
     context.console.out(line: '[test] ${job.label}');
+    for (final stale in job.staleOutputs) {
+      context.files.deleteTree(path: stale);
+    }
     for (final command in job.commands) {
       final outcome = await context.processes.capture(command: command);
       final output = outcome.combinedOutput.trim();

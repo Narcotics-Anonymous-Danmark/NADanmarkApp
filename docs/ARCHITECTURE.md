@@ -53,6 +53,18 @@ Rules enforced by `./bin/na check deps`:
   `na_kernel/lib/src/boundary/**`, `na_design/lib/src/flutter_bridge/**` and
   generated code.
 
+## Wire data
+
+Every JSON payload is a `json_serializable` wire DTO with a generated part file
+(`./bin/na gen json`). DTOs live next to the code that owns the wire:
+`na_kernel/lib/src/boundary/` (BMLT, legacy store, formats cache, migration
+marker), the adapter that reads it (`adapter_jft`), or
+`tool/na_cli/lib/src/boundary/` (Google Play, App Store Connect, JWT, Flutter
+tooling). Adapters decode bytes into DTOs through `WireJson`; boundary mappers
+(`BmltMapper`, the legacy translators, the cache and marker codecs) validate
+them and return domain types or a `DecodeFailure`. Features and the domain only
+ever see domain types. Rules: `docs/CODING_GUIDELINES.md`, "Wire data and JSON".
+
 ## Riverpod wiring
 
 - Every port has a provider in `na_ports` that throws `UnimplementedError`
@@ -121,6 +133,8 @@ committed. `AppConfig` in `app/` parses them once into typed values.
 WebView's IndexedDB (`_ionicstorage` / `_ionickv`, origin `https://localhost`
 on Android, `ionic://localhost` on iOS) read-only and returns all pairs as
 JSON. The pure translation to typed settings lives in
-`na_kernel/lib/src/boundary/legacy_migration.dart`; the use case in
+`na_kernel/lib/src/boundary/legacy_settings_translation.dart` and
+`legacy_meeting_formats_translation.dart`, fed by the `LegacyStoreDumpDto` wire
+DTO; the use case in
 `feature_legacy_migration` runs once before first render. Contract:
 `openspec/specs/legacy-migration/spec.md`.

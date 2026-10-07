@@ -64,7 +64,7 @@ void main() {
       ]);
       expect(
         meeting.comment,
-        const Comment(text: 'Dyr er ikke tilladt i lokalerne'),
+        const Comment(text: CommentText('Dyr er ikke tilladt i lokalerne')),
       );
     });
 
@@ -84,7 +84,7 @@ void main() {
         const LocalTime(hour: HourOfDay(18), minute: MinuteOfHour(30)),
       );
       expect(meeting.actions, hasLength(2));
-      expect(meeting.transitLines.single.lines, '5C');
+      expect(meeting.transitLines.single.lines, const TransitLines('5C'));
     });
 
     test('a malformed builder row fails loudly', () {
@@ -98,8 +98,10 @@ void main() {
         FormatLanguageCode.english,
       );
       expect(recordedFormatRows(), hasLength(54));
-      expect(aBmltFormatJson(id: 1)['id'], '1');
-      expect(aBmltMunicipalityJson(), {'location_municipality': 'Varde'});
+      expect(aBmltFormatDto(id: 1).id, '1');
+      expect(aBmltMunicipalityDto().toJson(), {
+        'location_municipality': 'Varde',
+      });
     });
   });
 

@@ -24,7 +24,7 @@ List<String> names({
       ),
       origin: origin,
     )
-    .map((format) => format.name)
+    .map((format) => format.name.value)
     .toList();
 
 void main() {
@@ -93,7 +93,7 @@ void main() {
         origin: MeetingOrigin.otherRoot,
       );
       expect(formats.single.key, const FormatKey('ÅM'));
-      expect(formats.single.name, 'Åben Møde');
+      expect(formats.single.name, const FormatName('Åben Møde'));
     });
 
     test('a Danish key stays raw', () {
@@ -109,7 +109,7 @@ void main() {
   });
 
   group('Ordering and duplicates', () {
-    test('category order first, then Danish collation of names', () {
+    test('category order first, then the order of the meeting', () {
       expect(
         names(
           index: danishIndex(),
@@ -120,9 +120,9 @@ void main() {
           'Engelsk Møde',
           'Åben Møde',
           'Handicap venlig',
-          'Bare For I Dag',
           'Basis Tekst',
           'XYZ',
+          'Bare For I Dag',
         ],
       );
     });
@@ -197,7 +197,7 @@ void main() {
       };
       for (final entry in table.entries) {
         expect(
-          FormatCategory.fromTypeEnum(typeEnum: entry.key),
+          FormatCategory.fromTypeEnum(typeEnum: FormatTypeCode(entry.key)),
           entry.value,
           reason: entry.key,
         );
@@ -210,11 +210,11 @@ void main() {
         final format = MeetingFormat.fromRow(
           row: aFormatRow(key: 'K', name: ' ', description: ''),
         );
-        expect(format.name, 'K');
+        expect(format.name, const FormatName('K'));
         expect(format.description, const NoDescription());
         expect(
           MeetingFormat.fromRow(row: aFormatRow()).description,
-          const Described(text: 'Alle er velkomne'),
+          const Described(text: FormatDescriptionText('Alle er velkomne')),
         );
       },
     );
@@ -235,7 +235,10 @@ void main() {
         MeetingFormat.fromRow(row: aFormatRow()).toString(),
         'MeetingFormat(ÅM, Åben Møde, audience)',
       );
-      expect(const Described(text: 'a'), const Described(text: 'a'));
+      expect(
+        const Described(text: FormatDescriptionText('a')),
+        const Described(text: FormatDescriptionText('a')),
+      );
       expect(
         FormatIndex.empty.formatsOf(
           codes: MeetingFormatCodes.none,
@@ -243,37 +246,6 @@ void main() {
         ),
         isEmpty,
       );
-    });
-  });
-
-  group('Danish collation', () {
-    const collation = DanishCollation();
-
-    List<String> sorted(List<String> words) =>
-        [...words]
-          ..sort((left, right) => collation.compare(left: left, right: right));
-
-    test('æ, ø and å come after z', () {
-      expect(sorted(['Åben', 'Zebra', 'Ærlig', 'Øl', 'abc', 'Basis']), [
-        'abc',
-        'Basis',
-        'Zebra',
-        'Ærlig',
-        'Øl',
-        'Åben',
-      ]);
-    });
-
-    test('aa sorts as å and ä, ö as æ, ø', () {
-      expect(sorted(['Aarhus', 'Øst', 'Zulu']), ['Zulu', 'Øst', 'Aarhus']);
-      expect(collation.compare(left: 'ä', right: 'æ'), 0);
-      expect(collation.compare(left: 'ö', right: 'ø'), 0);
-    });
-
-    test('letters compare case-insensitively, lower case first on a tie', () {
-      expect(sorted(['b', 'A', 'a']), ['a', 'A', 'b']);
-      expect(collation.compare(left: 'Café', right: 'cafe'), 1);
-      expect(collation.compare(left: 'ab', right: 'abc'), -1);
     });
   });
 }

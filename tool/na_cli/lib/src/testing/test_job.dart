@@ -36,6 +36,11 @@ final class TestJob {
   FilePath get rawCoverageDir =>
       member.directory.joinAll(['coverage', 'raw', level.name]);
 
+  List<FilePath> get staleOutputs => switch ((tool, options.coverage)) {
+    (TestTool.dart, CoverageCollection.on) => [rawCoverageDir],
+    _ => const [],
+  };
+
   List<String> get _selection => switch (scope) {
     WholeSuite() => ['--tags', level.name],
     SingleFile(:final path) => [path.relativeTo(member.directory)],

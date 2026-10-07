@@ -22,21 +22,30 @@ void main() {
 
     test('the sealed parts compare by value', () {
       expect(
-        const Mapped(point: GeoPoint(latitude: 1, longitude: 2)),
-        const Mapped(point: GeoPoint(latitude: 1, longitude: 2)),
+        const Mapped(
+          point: GeoPoint(latitude: Latitude(1), longitude: Longitude(2)),
+        ),
+        const Mapped(
+          point: GeoPoint(latitude: Latitude(1), longitude: Longitude(2)),
+        ),
       );
       expect(const Unmapped(), const Unmapped());
       expect(aVirtualLink(), aVirtualLink());
       expect(const NoVirtualLink(), isNot(aVirtualLink()));
       expect(
-        const DialInNumber(number: '+45 1'),
-        const DialInNumber(number: '+45 1'),
+        const DialInNumber(number: PhoneNumber('+45 1')),
+        const DialInNumber(number: PhoneNumber('+45 1')),
       );
-      expect(const Comment(text: 'x'), const Comment(text: 'x'));
-      expect(const NoComment(), isNot(const Comment(text: 'x')));
+      expect(
+        const Comment(text: CommentText('x')),
+        const Comment(text: CommentText('x')),
+      );
+      expect(const NoComment(), isNot(const Comment(text: CommentText('x'))));
       expect(
         {
-          const Mapped(point: GeoPoint(latitude: 1, longitude: 2)).hashCode,
+          const Mapped(
+            point: GeoPoint(latitude: Latitude(1), longitude: Longitude(2)),
+          ).hashCode,
           const Unmapped().hashCode,
           const NoDialIn().hashCode,
           const NoComment().hashCode,
@@ -127,7 +136,7 @@ void main() {
       () {
         final meeting = aMeeting(
           virtualLink: aVirtualLink(),
-          dialIn: const DialInNumber(number: '+45 12 34'),
+          dialIn: const DialInNumber(number: PhoneNumber('+45 12 34')),
         );
         expect(meeting.venue, isA<Virtual>());
         expect(meeting.actions, [
@@ -140,7 +149,9 @@ void main() {
     );
 
     test('a dial-in number without a virtual link offers nothing extra', () {
-      final meeting = aMeeting(dialIn: const DialInNumber(number: '+45 12 34'));
+      final meeting = aMeeting(
+        dialIn: const DialInNumber(number: PhoneNumber('+45 12 34')),
+      );
       expect(meeting.actions.single, isA<OpenDirections>());
     });
 

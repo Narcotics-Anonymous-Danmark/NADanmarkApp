@@ -43,6 +43,11 @@ extension type const Km(double value) {}
 extension type const MeetingId(int value) {}
 ```
 
+The one exception is a value type whose components are themselves the meaning:
+`LocalDate(year, month, day)` or a semantic version's `major.minor.patch` keep
+plain `int` components inside that single type, because wrapping each part adds
+nothing; everything that holds such a value uses the value type.
+
 **No vague types.** Never `Object`, `Object?`, `dynamic`, `List<(Object, Object)>`
 or `Map<String, Object?>` where a precise type, a sealed hierarchy or a type
 parameter can say what the value is. This applies to tests too: write one typed
@@ -87,12 +92,18 @@ is a `@JsonSerializable` wire DTO with its implementation in a generated
 `part '<file>.g.dart'`, produced by `./bin/na gen json`. Generated files are never
 edited by hand.
 
-**Wire DTOs are lenient; domain types are strict.** Every DTO field is nullable,
-without `checked` or `disallowUnrecognizedKeys`: the wire is never trusted. A
-boundary mapper validates the DTO right after decoding and converts it into
-domain types, returning `Outcome<Domain, DecodeFailure>`; malformed data becomes
-an error value that is handled and reported, never a crash. Domain code never
-sees a DTO.
+**Wire DTOs are lenient; domain types are strict.** Every DTO field is nullable
+and unknown keys are ignored (no `disallowUnrecognizedKeys`): the wire is never
+trusted. Scalars go through lenient converters (`LenientText`, `LenientInt`,
+`LenientFlag`) so a number sent as text, or text sent as a number, still reads,
+and anything else becomes absent. DTOs use `checked: true`, and decoding goes
+through `WireJson`, which turns a wrong shape (`CheckedFromJsonException`,
+malformed text) into a `DecodeFailure` instead of a crash. A boundary mapper
+then validates the DTO and converts it into domain types right away, returning
+`Outcome<Domain, DecodeFailure>`; failures are handled and reported. Domain code
+never sees a DTO. Outgoing JSON (request bodies, caches, JWT claims) is a DTO
+with a generated `toJson()` as well, never a hand-built map. Free-form key/value
+documents (ARB files, dart-define files) are read with `WireJson.textEntries`.
 
 ```dart
 // bad
@@ -120,7 +131,9 @@ version, changed by `./bin/na release version`. `./bin/na check deps`.
 
 **Generated code comes from `./bin/na gen`.** Localisations are generated from
 the ARB files and JSON part files from the DTOs (`./bin/na gen l10n`, `gen json`,
-`gen all`). Never hand-write or edit them.
+`gen all`). Never hand-write or edit them. Generated files are committed, so a
+fresh checkout builds and `./bin/na` (which runs `tool/na_cli` from source) works
+before anything is generated.
 
 **Prefer established solutions.** Do not hand-roll algorithms a library or the
 platform already solves (locale collation, formatting, parsing, crypto). If no

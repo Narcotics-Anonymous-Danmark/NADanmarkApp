@@ -41,9 +41,9 @@ Future<void> happyPath(PatrolTester $) async {
   );
   await $(const Key('menu-button')).tap();
   await $(const Key('menu-meetings')).tap();
-  await $(
-    const Key('municipality-row-Varde'),
-  ).scrollTo(view: $(NaPageFrame).$(Scrollable)).tap();
+  await $(const Key('municipality-row-Varde'))
+      .scrollTo(view: $(NaPageFrame).$(Scrollable), step: 400, maxScrolls: 60)
+      .tap();
   await $(const Key('meeting-section-sunday')).tap();
   await $(const Key('meeting-card-115')).waitUntilVisible();
   await $(const Key('meeting-formats-115')).tap();

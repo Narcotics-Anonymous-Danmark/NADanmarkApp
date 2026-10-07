@@ -13,19 +13,19 @@ String municipalityPath(String name) =>
     '/listfull/${Uri.encodeComponent(name)}';
 
 BmltServerMimic bmltServing({
-  List<Map<String, String>> meetings = const [],
+  List<BmltMeetingDto> meetings = const [],
   List<String> municipalities = const [],
 }) => BmltServerMimic()
   ..serve(
     endpoint: BmltEndpoint.meetings,
-    reply: BmltRows(rows: meetings),
+    reply: BmltRows.meetings(meetings: meetings),
   )
   ..serve(
     endpoint: BmltEndpoint.municipalities,
-    reply: BmltRows(
-      rows: List.unmodifiable(
+    reply: BmltRows.municipalities(
+      municipalities: List.unmodifiable(
         municipalities.map(
-          (name) => aBmltMunicipalityJson(municipality: name),
+          (name) => aBmltMunicipalityDto(municipality: name),
         ),
       ),
     ),
@@ -51,11 +51,11 @@ Future<AppHarness> pumpMeetings({
 
 String formatsCache({
   required Instant fetchedAt,
-  List<Map<String, String>> rows = const [],
-}) => const FormatRowsCodec().encodeSnapshot(
+  List<BmltFormatDto> rows = const [],
+}) => const FormatsCacheCodec().encode(
   snapshot: FormatsSnapshot(
     fetchedAt: fetchedAt,
-    rows: formatRowsFrom(json: rows.isEmpty ? recordedFormatRowsJson() : rows),
+    rows: rows.isEmpty ? recordedFormatRows() : formatRowsFrom(dtos: rows),
   ),
 );
 

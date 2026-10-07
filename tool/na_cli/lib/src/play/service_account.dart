@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-import 'package:na_cli/src/boundary/json_object.dart';
+import 'package:na_cli/src/boundary/google_wire.dart';
+import 'package:na_cli/src/boundary/wire_json.dart';
 
 final class ServiceAccount {
   const ServiceAccount({
@@ -14,29 +15,28 @@ final class ServiceAccount {
   static ServiceAccountParse parse({required final String raw}) {
     final trimmed = raw.trim();
     final json = trimmed.startsWith('{') ? trimmed : _decodeBase64(trimmed);
-    return switch (JsonObject.parse(text: json)) {
-      JsonObjectParsed(:final object) => _fromObject(object),
-      JsonListParsed() => const ServiceAccountRejected(
-        reason: 'service account must be a JSON object',
-      ),
-      JsonMalformed(:final reason) => ServiceAccountRejected(
+    return switch (const WireJson().object(
+      text: json,
+      fromJson: ServiceAccountDto.fromJson,
+    )) {
+      WireDecoded(:final value) => _fromDto(value),
+      WireRejected(:final reason) => ServiceAccountRejected(
         reason: 'service account JSON: $reason',
       ),
     };
   }
 
-  static ServiceAccountParse _fromObject(final JsonObject object) {
-    final email = object.text(key: 'client_email').orElse(fallback: '');
-    final key = object.text(key: 'private_key').orElse(fallback: '');
-    if (email.isEmpty || key.isEmpty) {
-      return const ServiceAccountRejected(
-        reason: 'service account needs client_email and private_key',
-      );
-    }
-    return ServiceAccountParsed(
-      account: ServiceAccount(clientEmail: email, privateKeyPem: key),
-    );
-  }
+  static ServiceAccountParse _fromDto(final ServiceAccountDto dto) =>
+      switch ((dto.clientEmail, dto.privateKey)) {
+        (final String email, final String key)
+            when email.isNotEmpty && key.isNotEmpty =>
+          ServiceAccountParsed(
+            account: ServiceAccount(clientEmail: email, privateKeyPem: key),
+          ),
+        _ => const ServiceAccountRejected(
+          reason: 'service account needs client_email and private_key',
+        ),
+      };
 
   static String _decodeBase64(final String text) {
     try {

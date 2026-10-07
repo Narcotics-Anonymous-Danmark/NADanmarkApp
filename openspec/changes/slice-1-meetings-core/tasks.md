@@ -7,14 +7,14 @@
 - [x] 1.3 Add `Municipality.normalise` and the ordering (unique, server order, "Online" last), plus the online-group membership test; verify with unit tests for the three municipality scenarios
 - [x] 1.4 Add `MeetingSchedule.group` (first-day order, counts, start-time sort, stable ties) and `MeetingFilter` (`DayFilter`, `HourRange` on start hour, counts recomputed); verify with unit tests, including an hour range of 18–20 that excludes 17:30 and includes 20:59
 - [x] 1.5 Add `FormatRow`, `FormatCategory`, `FormatIndex.build` (display row da/en/first, by-id, by-key, ambiguous lower-key removal including a third clashing row, English-key index) and `FormatResolver`; verify with table-driven unit tests ported from the legacy `meeting-formats.service.test.ts` cases
-- [x] 1.6 Add `DanishCollation`; verify with unit tests ordering a–z, æ, ø, å case-insensitively
-- [x] 1.7 Add boundary readers `BmltMeetingReader`, `FormatRowReader`/writer and `LegacyMeetingFormatsTranslation` in `na_kernel/lib/src/boundary/`, with trimming and blank = absent; verify with unit tests on the recorded fixture rows and malformed input
+- [x] 1.6 Order chips by category with a stable sort that keeps the meeting's key order inside a category (the hand-written `DanishCollation` was removed); verify with unit tests and the acceptance scenario "Formats in one category keep the meeting's order"
+- [x] 1.7 Add `json_serializable` wire DTOs (`BmltMeetingDto`, `BmltMunicipalityDto`, `BmltFormatDto`, `FormatsCacheDto`, `LegacyStoreDumpDto`, `MigrationMarkerDto`) with generated part files, `WireJson`, `BmltMapper`, `FormatsCacheCodec`, `MigrationMarkerCodec` and `LegacyMeetingFormatsTranslator` in `na_kernel/lib/src/boundary/`, with trimming and blank = absent; verify with unit tests on the recorded fixture rows and malformed input
 - [x] 1.8 Add `BusyActivity`, `BusyStarted` and `BusyEnded` domain events; verify with a unit test publishing through `BroadcastEventBus`
 
 ## 2. Ports, builders and mimics (D4, D5)
 
 - [x] 2.1 Add `MeetingSearchPort` and `MeetingFormatsPort` with unbound providers; verify the unbound-port unit test lists both
-- [x] 2.2 Record one Danish meeting row, one municipality row and one format row per language into `na_testing/fixtures/wire/bmlt/`; add `aMeeting`, `aMeetingFormatRow`, `aBmltMeetingJson` and `aBmltFormatJson` builders seeded from them; verify with a builder unit test that decodes each through the boundary readers
+- [x] 2.2 Record one Danish meeting row, one municipality row and one format row per language into `na_testing/fixtures/wire/bmlt/`; add `aMeeting`, `aMeetingFormatRow`, `aBmltMeetingDto`, `aBmltFormatDto` and `aBmltMunicipalityDto` builders seeded from them; verify with a builder unit test that decodes each through the boundary readers
 - [x] 2.3 Add `BmltServerMimic` (a dio `HttpClientAdapter`: per-switcher JSON, `{}`, failure, held responses, recorded URIs) plus `MeetingSearchMimic` and `MeetingFormatsMimic` port mimics, and wire the port mimics into `TestContainer`; verify with mimic unit tests
 - [x] 2.4 Add `dio` to `na_testing`; verify that `./bin/na check deps` passes
 
@@ -63,7 +63,16 @@
 
 ## 9. End to end and definition of done
 
-- [ ] 9.1 Add the Patrol happy path `app/integration_test/meetings_search_test.dart` (open Meetings, tap a municipality, expand a day, open the formats popover) against `BmltServerMimic`; verify with `./bin/na test e2e --device <android emulator>`
-- [ ] 9.2 Capture da/en Android screenshots of the municipality list, the meeting list and the popover into `docs/screenshots/meetings-search/`; add iOS screenshots to slice 0's open macOS task
+- [x] 9.1 Add the Patrol happy path `app/integration_test/meetings_search_test.dart` (open Meetings, tap a municipality, expand a day, open the formats popover) against `BmltServerMimic`; verify with `./bin/na test e2e --device <android emulator>`
+- [x] 9.2 Capture da/en Android screenshots of the municipality list, the meeting list and the popover into `docs/screenshots/meetings-search/`; add iOS screenshots to slice 0's open macOS task
 - [x] 9.3 Run `./bin/na check && ./bin/na test unit widget acceptance --coverage && ./bin/na coverage --merge --html --check` and confirm every floor is met
-- [ ] 9.4 On archive, append the new legacy bugs (hour filter used the end time, `location_code_1`, substring TC/HY, stale list on second tap, stuck loader on failure, wrong Danish Bus/Train labels, Danish-only format names from the `dk` query, chip and error colours below WCAG contrast) to "Intentional deltas from the legacy app" in `openspec/specs/meetings-search/spec.md`
+- [ ] 9.4 On archive, append the new legacy bugs (hour filter used the end time, `location_code_1`, substring TC/HY, stale list on second tap, stuck loader on failure, wrong Danish Bus/Train labels, Danish-only format names from the `dk` query, chip and error colours below WCAG contrast, chip names inside a category no longer collated but kept in the meeting's order) to "Intentional deltas from the legacy app" in `openspec/specs/meetings-search/spec.md`
+
+## 10. Standing principles applied to the slice
+
+- [x] 10.1 Replace every hand-written JSON reader in the workspace (kernel, adapters, `na_testing`, `tool/na_cli`) with `json_serializable` wire DTOs and generated part files; `./bin/na gen json` runs `build_runner` in every member that has it; verify with `./bin/na gen all` leaving no diff and `./bin/na check`
+- [x] 10.2 Pin every dependency to an exact version and set every internal package to `version: 0.0.0`; `./bin/na check deps` enforces both; verify with its unit tests and `./bin/na check`
+- [x] 10.3 Give every domain value a strong type (`MeetingName`, `Latitude`/`Longitude`, `HourOfDay`/`MinuteOfHour`, `PhoneNumber`, `FormatName`, `KeyCount`, `VersionName`, JFT texts, …) and remove `Object`-typed test tables; verify with `./bin/na check` and the unit tests
+- [x] 10.4 Move the BMLT fixture notes from a README in the fixture folder into `docs/TESTING.md`
+- [x] 10.5 Make `./bin/na test --coverage` clear `coverage/raw/<level>` before a Dart suite runs, so raw data from deleted tests never reaches the lcov; verify with a `na_cli` unit test
+

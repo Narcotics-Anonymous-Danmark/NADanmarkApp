@@ -129,7 +129,7 @@ void main() {
           schedule.filter(
             meetings: meetings,
             day: const AllDays(),
-            hours: const HourRange(lower: 18, upper: 20),
+            hours: const HourRange(lower: HourOfDay(18), upper: HourOfDay(20)),
           ),
         ),
         [2, 3, 5],
@@ -141,7 +141,7 @@ void main() {
         meetings: schedule.filter(
           meetings: meetings,
           day: const AllDays(),
-          hours: const HourRange(lower: 18, upper: 20),
+          hours: const HourRange(lower: HourOfDay(18), upper: HourOfDay(20)),
         ),
         firstDay: FirstDayOfWeek.monday,
       );
@@ -158,8 +158,8 @@ void main() {
         const OnlyDay(weekday: Weekday.friday),
       );
       expect(
-        const HourRange(lower: 1, upper: 2),
-        const HourRange(lower: 1, upper: 2),
+        const HourRange(lower: HourOfDay(1), upper: HourOfDay(2)),
+        const HourRange(lower: HourOfDay(1), upper: HourOfDay(2)),
       );
       expect(HourRange.wholeDay.toString(), '0-23');
     });

@@ -94,7 +94,7 @@ void main() {
         location: '/listfull/K%C3%B8benhavn',
         bmlt: bmltServing(
           meetings: [
-            aBmltMeetingJson(id: 1, weekday: 2, municipality: 'København'),
+            aBmltMeetingDto(id: 1, weekday: 2, municipality: 'København'),
           ],
         ),
       );
@@ -154,7 +154,7 @@ void main() {
         bmlt: bmltServing(
           municipalities: ['Aarhus'],
           meetings: [
-            aBmltMeetingJson(id: 1, weekday: 2, municipality: 'Aarhus'),
+            aBmltMeetingDto(id: 1, weekday: 2, municipality: 'Aarhus'),
           ],
         ),
       );
@@ -171,7 +171,7 @@ void main() {
         location: municipalityPath('Aarhus'),
         bmlt: bmltServing(
           meetings: [
-            aBmltMeetingJson(id: 1, weekday: 2, municipality: 'Aarhus'),
+            aBmltMeetingDto(id: 1, weekday: 2, municipality: 'Aarhus'),
           ],
         ),
       );

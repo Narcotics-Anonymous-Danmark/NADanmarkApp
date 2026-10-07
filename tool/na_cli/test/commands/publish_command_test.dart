@@ -132,4 +132,29 @@ void main() {
     expect(http.calls.last.url.toString(), endsWith('/edits/edit-1'));
     expect(console.errLines.single, contains('tracks/internal failed (400)'));
   });
+
+  test('play stops on a token or edit response it cannot use', () async {
+    for (final replies in [
+      [ok('{"token":"x"}')],
+      [ok('[]')],
+      [ok('{"access_token":"tok"}'), ok('{"name":"no id"}')],
+      [ok('{"access_token":"tok"}'), ok('<html>')],
+    ]) {
+      final errors = ConsoleMimic();
+      final code = await runCli(
+        context: aContext(
+          files: files,
+          console: errors,
+          http: HttpTransportMimic(replies: replies),
+          environment: environment(notesLanguage: ''),
+        ),
+        arguments: ['publish', 'play', '--aab', 'dist/app.aab', '--yes'],
+      );
+      expect(code.value, 1, reason: '$replies');
+      expect(
+        errors.errLines.single,
+        anyOf(contains('token response'), contains('edit response')),
+      );
+    }
+  });
 }

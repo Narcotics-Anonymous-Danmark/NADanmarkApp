@@ -42,9 +42,11 @@ void main() {
 
   test('the hour range applies 350 ms after the last change', () {
     final subject = listUnderTest();
-    const evening = HourRange(lower: 18, upper: 20);
+    const evening = HourRange(lower: HourOfDay(18), upper: HourOfDay(20));
     subject.controller
-      ..dragHours(hours: const HourRange(lower: 17, upper: 23))
+      ..dragHours(
+        hours: const HourRange(lower: HourOfDay(17), upper: HourOfDay(23)),
+      )
       ..dragHours(hours: evening);
     final view = subject.harness.read(meetingListProvider(key));
     expect(view.draftHours, evening);

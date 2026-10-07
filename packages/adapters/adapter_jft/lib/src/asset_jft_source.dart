@@ -29,7 +29,7 @@ final class AssetJftSource implements JftPort {
       switch (_wire
           .parse(text: text, context: 'jft.json')
           .flatMap(
-            transform: (json) => _wire.rows(
+            transform: (json) => _wire.list(
               json: json,
               fromJson: JftEntryDto.fromJson,
               context: 'jft',

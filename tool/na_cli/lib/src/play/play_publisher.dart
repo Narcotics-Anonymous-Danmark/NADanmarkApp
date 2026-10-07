@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-import 'package:na_cli/src/boundary/json_object.dart';
+import 'package:na_cli/src/boundary/google_wire.dart';
+import 'package:na_cli/src/boundary/wire_json.dart';
 import 'package:na_cli/src/cli_failure.dart';
 import 'package:na_cli/src/http/http_call.dart';
 import 'package:na_cli/src/http/http_reply.dart';
@@ -69,12 +70,17 @@ final class PlayPublisher {
       headers: const {},
       body: const [],
     );
-    return switch (JsonObject.parse(text: body)) {
-      JsonObjectParsed(:final object) => EditId(
-        object.text(key: 'id').orElse(fallback: ''),
+    return switch (const WireJson().object(
+      text: body,
+      fromJson: PlayEditDto.fromJson,
+    )) {
+      WireDecoded(value: PlayEditDto(:final String id)) when id.isNotEmpty =>
+        EditId(id),
+      WireDecoded() => throw const CliFailure.general(
+        message: 'play: edit response has no id',
       ),
-      JsonListParsed() || JsonMalformed() => throw const CliFailure.general(
-        message: 'play: edit response is not a JSON object',
+      WireRejected(:final reason) => throw CliFailure.general(
+        message: 'play: edit response: $reason',
       ),
     };
   }

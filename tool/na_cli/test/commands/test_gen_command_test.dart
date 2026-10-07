@@ -92,6 +92,32 @@ void main() {
     expect(console.outLines.last, contains('na_design:unit  skipped'));
   });
 
+  test('dart coverage starts from an empty raw directory', () async {
+    final files = workspace();
+    await runCli(
+      context: aContext(
+        files: files,
+        console: console,
+        processes: ProcessRunnerMimic(),
+      ),
+      arguments: ['test', 'unit', '--package', 'na_kernel', '--coverage'],
+    );
+    expect(files.deleted, ['/repo/packages/core/na_kernel/coverage/raw/unit']);
+  });
+
+  test('without coverage nothing is deleted', () async {
+    final files = workspace();
+    await runCli(
+      context: aContext(
+        files: files,
+        console: console,
+        processes: ProcessRunnerMimic(),
+      ),
+      arguments: ['test', 'unit', '--package', 'na_kernel'],
+    );
+    expect(files.deleted, isEmpty);
+  });
+
   test('a skipped dart suite does not run format_coverage', () async {
     final runner = ProcessRunnerMimic(
       responses: [whenRun(match: 'dart test --tags unit', exitCode: 79)],
@@ -144,6 +170,7 @@ void main() {
       isTrue,
     );
     expect(files.texts['/repo/coverage/e2e-ios.lcov.info'], 'SF:x');
+    expect(files.deleted, ['/repo/app/integration_test/test_bundle.dart']);
   });
 
   test('--file, --name and --update-goldens reach the runner', () async {

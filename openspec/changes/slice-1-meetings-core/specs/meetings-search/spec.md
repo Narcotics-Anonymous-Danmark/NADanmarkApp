@@ -169,13 +169,49 @@ trimming) and it has no `virtual_meeting_link`. A hybrid meeting is one whose
 - **WHEN** `formats` is `O,ATC` and `virtual_meeting_link` is empty
 - **THEN** no chip is shown
 
+### Requirement: Resolving a meeting's formats
+
+For a meeting from the Danish root (`root_server_uri` contains `nadanmark.dk`)
+each key in `formats` SHALL be resolved by shared id (`format_shared_id_list`
+at the same position, only when the id count equals the key count and
+`root_server_id` is absent), then by exact key, then by lower-cased key when
+that lower-cased key is unambiguous. For any other root server keys resolve
+through the English key index only. Unresolved keys SHALL become a content
+format whose name is the key. Duplicates by key are dropped; the result is
+sorted by category order (alert, language, audience, facility, content) and
+keeps the meeting's own key order within a category. The legacy app sorted
+names within a category with Danish locale collation; that needs ICU, which
+Dart does not ship, and the server order is meaningful to the meeting's
+organisers. Tapping the chips opens the formats popover.
+
+#### Scenario: Danish meeting resolves by shared id
+
+- **WHEN** `formats` is `O,TC`, `format_shared_id_list` is `17,54` and the meeting is from `nadanmark.dk`
+- **THEN** the chips are the definitions with ids 17 and 54 sorted alert first
+
+#### Scenario: Unknown key is shown raw
+
+- **WHEN** `formats` contains `XYZ` that no index knows
+- **THEN** a dark chip labelled "XYZ" is shown
+
+#### Scenario: Ambiguous lower-case key is not guessed
+
+- **WHEN** two definitions have keys `Se` and `SE`
+- **THEN** the key `se` resolves to neither by the lower-case index
+
+#### Scenario: Formats in one category keep the meeting's order
+
+- **WHEN** `formats` is `T,TR,LI` and all three are content formats
+- **THEN** the chips are "Trin", "Tradition", "Litteratur" in that order
+
 ### Requirement: Format definitions and cache
 
 Format definitions SHALL be fetched from both GetFormats queries
 (`lang_enum=da` and `lang_enum=en`), concatenated, and cached under the key
 `meetingFormatsCache` as `{fetchedAt: <epoch ms>, formats: [...]}` for 7 days
-(`7 * 24 * 60 * 60 * 1000` ms). `formats` holds the rows as the server sent
-them. On fetch failure the stale cache is used if present, else an empty
+(`7 * 24 * 60 * 60 * 1000` ms). `formats` holds the rows in the GetFormats
+shape (`id`, `key_string`, `name_string`, `description_string`,
+`format_type_enum`, `lang`), so a legacy cache with more fields still reads. On fetch failure the stale cache is used if present, else an empty
 list, and a retry is allowed after 60 s. The cache is never written empty.
 Definitions are fetched at most once at a time; concurrent requests share
 the same fetch.

@@ -88,6 +88,36 @@ final class WireJson {
     _ => Err(error: DecodeFailure(detail: '$context: not a list')),
   };
 
+  Outcome<List<T>, DecodeFailure> list<T>({
+    required Object? json,
+    required T Function(WireObject json) fromJson,
+    required String context,
+  }) => switch (json) {
+    final List<dynamic> items when items.isNotEmpty => _all(
+      decoded: List.unmodifiable(
+        items.indexed.map(
+          (entry) => object(
+            json: entry.$2,
+            fromJson: fromJson,
+            context: '$context[${entry.$1}]',
+          ),
+        ),
+      ),
+    ),
+    _ => Err(error: DecodeFailure(detail: '$context: not a non-empty list')),
+  };
+
+  Outcome<List<T>, DecodeFailure> _all<T>({
+    required List<Outcome<T, DecodeFailure>> decoded,
+  }) => switch (decoded.whereType<Err<T, DecodeFailure>>().firstOrNull) {
+    Err(:final error) => Err(error: error),
+    null => Ok(
+      value: List<T>.unmodifiable(
+        decoded.whereType<Ok<T, DecodeFailure>>().map((ok) => ok.value),
+      ),
+    ),
+  };
+
   Outcome<T, DecodeFailure> _guard<T>({
     required T Function() build,
     required String context,

@@ -20,8 +20,8 @@ system, as the definition of done requires.
   temporarily-closed and hybrid rules, the directions / virtual-link /
   dial-in actions, municipality normalisation ("Online").
 - **Meeting formats**: the definition index in the display language, category
-  mapping, resolution by shared id / key / unambiguous lower-case key, Danish
-  collation, the 7-day cache with stale fallback and a 60 s retry, stored under
+  mapping, resolution by shared id / key / unambiguous lower-case key, category
+  order with the meeting's own order inside a category, the 7-day cache with stale fallback and a 60 s retry, stored under
   `meetingFormatsCache`.
 - **Shared meeting list** (`feature_meetings` library): weekday sections in
   first-day-of-week order with counts, today highlighted, one section open at

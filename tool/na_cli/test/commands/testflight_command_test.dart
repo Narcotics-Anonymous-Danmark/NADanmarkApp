@@ -160,6 +160,22 @@ void main() {
     expect(http.calls, isEmpty);
   });
 
+  test('an unreadable App Store Connect response fails', () async {
+    final code = await runCli(
+      context: aContext(
+        files: files,
+        console: console,
+        http: HttpTransportMimic(
+          replies: [const HttpReply(status: HttpStatus(200), body: '<html>')],
+        ),
+        environment: environment,
+      ),
+      arguments: ['publish', 'testflight', '--ipa', 'dist/app.ipa'],
+    );
+    expect(code.value, 1);
+    expect(console.errLines.single, contains('unreadable response'));
+  });
+
   test('an INVALID build fails', () async {
     final http = HttpTransportMimic(
       replies: [

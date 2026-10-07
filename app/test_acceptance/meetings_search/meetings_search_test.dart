@@ -4,6 +4,7 @@ library;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:na_design/na_design.dart';
+import 'package:na_kernel/boundary.dart';
 import 'package:na_testing/na_testing.dart';
 
 import '../support/meetings.dart';
@@ -30,7 +31,7 @@ void main() {
 
     testWidgets('Formats are fetched in both languages', (tester) async {
       final bmlt = bmltServing(
-        meetings: [aBmltMeetingJson(id: 1, weekday: 2, municipality: 'Aarhus')],
+        meetings: [aBmltMeetingDto(id: 1, weekday: 2, municipality: 'Aarhus')],
       );
       final app = await pumpMeetings(
         tester: tester,
@@ -94,8 +95,8 @@ void main() {
         bmlt: bmltServing(
           municipalities: ['Aarhus', 'København'],
           meetings: [
-            aBmltMeetingJson(id: 1, weekday: 2, municipality: 'Aarhus'),
-            aBmltMeetingJson(id: 2, weekday: 2, municipality: 'København'),
+            aBmltMeetingDto(id: 1, weekday: 2, municipality: 'Aarhus'),
+            aBmltMeetingDto(id: 2, weekday: 2, municipality: 'København'),
           ],
         ),
       );
@@ -115,11 +116,11 @@ void main() {
         bmlt: bmltServing(
           municipalities: ['Aarhus', ''],
           meetings: [
-            aBmltMeetingJson(id: 1, weekday: 2, municipality: ''),
-            aBmltMeetingJson(id: 2, weekday: 2, municipality: 'Online møde'),
-            aBmltMeetingJson(id: 3, weekday: 2, municipality: 'Viborg online'),
-            aBmltMeetingJson(id: 4, weekday: 2, municipality: 'Viborg.'),
-            aBmltMeetingJson(id: 5, weekday: 2, municipality: 'Aarhus'),
+            aBmltMeetingDto(id: 1, weekday: 2, municipality: ''),
+            aBmltMeetingDto(id: 2, weekday: 2, municipality: 'Online møde'),
+            aBmltMeetingDto(id: 3, weekday: 2, municipality: 'Viborg online'),
+            aBmltMeetingDto(id: 4, weekday: 2, municipality: 'Viborg.'),
+            aBmltMeetingDto(id: 5, weekday: 2, municipality: 'Aarhus'),
           ],
         ),
       );
@@ -142,7 +143,7 @@ void main() {
         bmlt: bmltServing(
           municipalities: ['Aarhus'],
           meetings: [
-            aBmltMeetingJson(id: 1, weekday: 2, municipality: 'Aarhus'),
+            aBmltMeetingDto(id: 1, weekday: 2, municipality: 'Aarhus'),
           ],
         ),
       );
@@ -178,7 +179,9 @@ void main() {
       expect(find.byKey(const Key('global-loading-bar')), findsNothing);
       bmlt.serve(
         endpoint: BmltEndpoint.municipalities,
-        reply: BmltRows(rows: [aBmltMunicipalityJson(municipality: 'Aarhus')]),
+        reply: BmltRows.municipalities(
+          municipalities: [aBmltMunicipalityDto(municipality: 'Aarhus')],
+        ),
       );
       await tester.tap(find.byKey(const Key('meetings-retry')));
       await tester.pumpAndSettle();
@@ -193,8 +196,8 @@ void main() {
       final bmlt = bmltServing(
         municipalities: ['Aarhus', 'København'],
         meetings: [
-          aBmltMeetingJson(id: 1, weekday: 2, municipality: 'Aarhus'),
-          aBmltMeetingJson(id: 2, weekday: 3, municipality: 'København'),
+          aBmltMeetingDto(id: 1, weekday: 2, municipality: 'Aarhus'),
+          aBmltMeetingDto(id: 2, weekday: 3, municipality: 'København'),
         ],
       );
       final app = await pumpMeetings(tester: tester, bmlt: bmlt);
@@ -222,8 +225,8 @@ void main() {
         location: municipalityPath('Aarhus'),
         bmlt: bmltServing(
           meetings: [
-            aBmltMeetingJson(id: 1, weekday: 1, municipality: 'Aarhus'),
-            aBmltMeetingJson(id: 2, weekday: 2, municipality: 'Aarhus'),
+            aBmltMeetingDto(id: 1, weekday: 1, municipality: 'Aarhus'),
+            aBmltMeetingDto(id: 2, weekday: 2, municipality: 'Aarhus'),
           ],
         ),
       );
@@ -241,8 +244,8 @@ void main() {
         time: TestTime.copenhagen(startAt: anInstant(day: 9)),
         bmlt: bmltServing(
           meetings: [
-            aBmltMeetingJson(id: 1, weekday: 3, municipality: 'Aarhus'),
-            aBmltMeetingJson(id: 2, weekday: 4, municipality: 'Aarhus'),
+            aBmltMeetingDto(id: 1, weekday: 3, municipality: 'Aarhus'),
+            aBmltMeetingDto(id: 2, weekday: 4, municipality: 'Aarhus'),
           ],
         ),
       );
@@ -258,8 +261,8 @@ void main() {
         location: municipalityPath('Aarhus'),
         bmlt: bmltServing(
           meetings: [
-            aBmltMeetingJson(id: 1, weekday: 2, municipality: 'Aarhus'),
-            aBmltMeetingJson(id: 2, weekday: 3, municipality: 'Aarhus'),
+            aBmltMeetingDto(id: 1, weekday: 2, municipality: 'Aarhus'),
+            aBmltMeetingDto(id: 2, weekday: 3, municipality: 'Aarhus'),
           ],
         ),
       );
@@ -274,26 +277,26 @@ void main() {
   });
 
   group('Requirement: Day and hour filters', () {
-    List<Map<String, String>> fridayAndMonday() => [
-      aBmltMeetingJson(
+    List<BmltMeetingDto> fridayAndMonday() => [
+      aBmltMeetingDto(
         id: 1,
         weekday: 6,
         startTime: '17:30:00',
         municipality: 'Aarhus',
       ),
-      aBmltMeetingJson(
+      aBmltMeetingDto(
         id: 2,
         weekday: 6,
         startTime: '18:00:00',
         municipality: 'Aarhus',
       ),
-      aBmltMeetingJson(
+      aBmltMeetingDto(
         id: 3,
         weekday: 6,
         startTime: '20:59:00',
         municipality: 'Aarhus',
       ),
-      aBmltMeetingJson(
+      aBmltMeetingDto(
         id: 4,
         weekday: 2,
         startTime: '19:00:00',
@@ -360,7 +363,7 @@ void main() {
         location: municipalityPath('Aarhus'),
         bmlt: bmltServing(
           meetings: [
-            aBmltMeetingJson(
+            aBmltMeetingDto(
               id: 1,
               weekday: 2,
               startTime: '19:00:00',
@@ -382,7 +385,7 @@ void main() {
   group('Requirement: Meeting card', () {
     Future<AppHarness> pumpOne(
       WidgetTester tester,
-      Map<String, String> meeting,
+      BmltMeetingDto meeting,
     ) async {
       final app = await pumpMeetings(
         tester: tester,
@@ -396,7 +399,7 @@ void main() {
     testWidgets('Only present fields are rendered', (tester) async {
       final app = await pumpOne(
         tester,
-        aBmltMeetingJson(
+        aBmltMeetingDto(
           id: 1,
           weekday: 2,
           municipality: 'Aarhus',
@@ -416,7 +419,7 @@ void main() {
     testWidgets('Transit prefix is stripped', (tester) async {
       final app = await pumpOne(
         tester,
-        aBmltMeetingJson(
+        aBmltMeetingDto(
           id: 1,
           weekday: 2,
           municipality: 'Aarhus',
@@ -430,7 +433,7 @@ void main() {
     testWidgets('Postal code is shown', (tester) async {
       final app = await pumpOne(
         tester,
-        aBmltMeetingJson(
+        aBmltMeetingDto(
           id: 1,
           weekday: 2,
           municipality: 'Aarhus',
@@ -456,7 +459,7 @@ void main() {
         location: municipalityPath('Aarhus'),
         bmlt: bmltServing(
           meetings: [
-            aBmltMeetingJson(
+            aBmltMeetingDto(
               id: 1,
               weekday: 2,
               municipality: 'Aarhus',
@@ -516,7 +519,7 @@ void main() {
         location: municipalityPath('Aarhus'),
         bmlt: bmltServing(
           meetings: [
-            aBmltMeetingJson(
+            aBmltMeetingDto(
               id: 1,
               weekday: 2,
               municipality: 'Aarhus',
@@ -579,7 +582,7 @@ void main() {
   });
 
   group('Requirement: Format definitions and cache', () {
-    final aarhusMeeting = aBmltMeetingJson(
+    final aarhusMeeting = aBmltMeetingDto(
       id: 1,
       weekday: 2,
       municipality: 'Aarhus',
@@ -667,11 +670,11 @@ void main() {
       bmlt
         ..serve(
           endpoint: BmltEndpoint.formatsDanish,
-          reply: BmltRows(rows: recordedFormatsDaJson()),
+          reply: BmltRows.formats(formats: recordedDanishFormatDtos()),
         )
         ..serve(
           endpoint: BmltEndpoint.formatsEnglish,
-          reply: BmltRows(rows: recordedFormatsEnJson()),
+          reply: BmltRows.formats(formats: recordedEnglishFormatDtos()),
         );
       await tester.tap(find.byKey(const Key('back-button')));
       await tester.pumpAndSettle();
@@ -688,7 +691,7 @@ void main() {
       final bmlt = bmltServing(
         meetings: List.generate(
           20,
-          (index) => aBmltMeetingJson(
+          (index) => aBmltMeetingDto(
             id: index + 1,
             weekday: 2,
             municipality: 'Aarhus',
@@ -728,7 +731,7 @@ void main() {
         storedValues: storedValues,
         bmlt: bmltServing(
           meetings: [
-            aBmltMeetingJson(
+            aBmltMeetingDto(
               id: 1,
               weekday: 2,
               municipality: 'Aarhus',
@@ -786,7 +789,7 @@ void main() {
         storedValues: const {},
         bmlt: bmltServing(
           meetings: [
-            aBmltMeetingJson(
+            aBmltMeetingDto(
               id: 1,
               weekday: 2,
               municipality: 'Aarhus',
@@ -807,7 +810,7 @@ void main() {
         location: municipalityPath('Aarhus'),
         bmlt: bmltServing(
           meetings: [
-            aBmltMeetingJson(
+            aBmltMeetingDto(
               id: 1,
               weekday: 2,
               municipality: 'Aarhus',
@@ -823,11 +826,35 @@ void main() {
       expect(chipColour(tester, 'XYZ'), darkChipColour);
     });
 
+    testWidgets("Formats in one category keep the meeting's order", (
+      tester,
+    ) async {
+      final app = await pumpMeetings(
+        tester: tester,
+        location: municipalityPath('Aarhus'),
+        storedValues: const {},
+        bmlt: bmltServing(
+          meetings: [
+            aBmltMeetingDto(
+              id: 1,
+              weekday: 2,
+              municipality: 'Aarhus',
+              formats: 'T,TR,LI',
+              sharedIds: '',
+            ),
+          ],
+        ),
+      );
+      addTearDown(app.dispose);
+      await toggleDay(tester, 'monday');
+      expect(chipLabels(tester, 1), ['Trin', 'Tradition', 'Litteratur']);
+    });
+
     testWidgets('Ambiguous lower-case key is not guessed', (tester) async {
       final bmlt =
           bmltServing(
               meetings: [
-                aBmltMeetingJson(
+                aBmltMeetingDto(
                   id: 1,
                   weekday: 2,
                   municipality: 'Aarhus',
@@ -838,10 +865,10 @@ void main() {
             )
             ..serve(
               endpoint: BmltEndpoint.formatsDanish,
-              reply: BmltRows(
-                rows: [
-                  aBmltFormatJson(id: 90, key: 'Se', name: 'Seniorer'),
-                  aBmltFormatJson(id: 91, key: 'SE', name: 'Svensk'),
+              reply: BmltRows.formats(
+                formats: [
+                  aBmltFormatDto(id: 90, key: 'Se', name: 'Seniorer'),
+                  aBmltFormatDto(id: 91, key: 'SE', name: 'Svensk'),
                 ],
               ),
             )
@@ -865,7 +892,7 @@ void main() {
       final bmlt =
           bmltServing(
             meetings: [
-              aBmltMeetingJson(
+              aBmltMeetingDto(
                 id: 1,
                 weekday: 2,
                 name: 'Håb i Aarhus',
@@ -877,10 +904,10 @@ void main() {
             ],
           )..serve(
             endpoint: BmltEndpoint.formatsEnglish,
-            reply: BmltRows(
-              rows: [
-                ...recordedFormatsEnJson(),
-                aBmltFormatJson(
+            reply: BmltRows.formats(
+              formats: [
+                ...recordedEnglishFormatDtos(),
+                aBmltFormatDto(
                   id: 99,
                   key: 'TC',
                   name: 'Temporarily Closed',
@@ -956,7 +983,7 @@ void main() {
         location: municipalityPath('Aarhus'),
         bmlt: bmltServing(
           meetings: [
-            aBmltMeetingJson(
+            aBmltMeetingDto(
               id: 1,
               weekday: 2,
               municipality: 'Aarhus',

@@ -89,7 +89,7 @@ void main() {
       final clock = FakeClock(time: time);
       expect(
         clock.localTimeNow(),
-        aLocalTime(hour: HourOfDay(10), minute: MinuteOfHour(30)),
+        aLocalTime(hour: 10, minute: 30),
       );
       expect(clock.zone(), TimeZoneId.copenhagen);
     });

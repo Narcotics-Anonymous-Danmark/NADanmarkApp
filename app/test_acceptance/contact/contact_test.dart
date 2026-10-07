@@ -67,7 +67,7 @@ void main() {
         initialLocation: '/contact',
         container: realJftContainer(
           appInfo: anAppInfo(
-            version: VersionName('2.0.0'),
+            version: '2.0.0',
             buildType: 'release',
           ),
         ),

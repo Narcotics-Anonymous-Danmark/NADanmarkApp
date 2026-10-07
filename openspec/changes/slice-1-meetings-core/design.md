@@ -76,9 +76,14 @@ The rules live on the types:
 
 These are wire-agnostic, which keeps them cheap to unit test and lets slices 2
 and 7 reuse them unchanged. Nullable and blank BMLT fields stop in
-`na_kernel/lib/src/boundary/bmlt_meeting_reader.dart`. That reader turns a JSON
-map into a `Meeting` through `JsonReader`, trimming values and mapping a blank
-value to the "absent" case of the matching sealed type.
+`na_kernel/lib/src/boundary/`: `json_serializable` wire DTOs
+(`BmltMeetingDto`, `BmltMunicipalityDto`, `BmltFormatDto`, generated
+`bmlt_wire.g.dart`) take the JSON with every field nullable and lenient scalar
+converters, and `BmltMapper` validates each DTO and converts it into a
+`Meeting`, trimming values and mapping a blank value to the "absent" case of the
+matching sealed type. `WireJson` turns malformed text or a wrong shape into a
+`DecodeFailure`. Every domain value is a strong type (`MeetingName`,
+`Latitude`, `HourOfDay`, `PhoneNumber`, …).
 
 Decisions taken while implementing:
 - **Malformed rows are skipped.** A row without a readable `id_bigint`,
@@ -94,13 +99,19 @@ Decisions taken while implementing:
 ### D3 Formats
 
 These are pure kernel types:
-- **Raw data:** `FormatRow`, the raw GetFormats row, with its own boundary
-  reader and writer so the cache stores exactly what the server sent.
+- **Rows:** `FormatRow`, the validated GetFormats row (strongly typed id, key,
+  name, description, type code and language), mapped from `BmltFormatDto`. The
+  cache is the `FormatsCacheDto` (`fetchedAt` plus the format DTOs), written and
+  read by `FormatsCacheCodec`; it keeps the GetFormats field names, so a legacy
+  cache with more fields reads too.
 - **Index:** `FormatIndex.build(rows, displayLanguage)` holds by-id, by-key,
   by-lower-key (ambiguous entries removed permanently) and English-key maps.
 - **Resolution:** `FormatResolver.resolve(meeting, index)`.
-- **Classification and ordering:** `FormatCategory`, and `DanishCollation` for
-  name ordering.
+- **Classification and ordering:** `FormatCategory`; chips sort by category
+  with a stable sort, so within a category the meeting's own key order stays.
+  The legacy `localeCompare('da')` ordering is dropped: Dart has no ICU
+  collation, and a hand-written collation table was rejected in favour of the
+  server order (see the modified requirement "Resolving a meeting's formats").
 
 `MeetingFormatsController` in `feature_meetings` owns the cache policy:
 - It reads the cache from `KeyValueStorePort` (`meetingFormatsCache`) and uses
@@ -315,10 +326,9 @@ that were never adopted.
 
 ## Risks / Trade-offs
 
-- **Danish collation.** Dart has no ICU collation. `DanishCollation` follows
-  ICU `da` for the letters BMLT format names use: a–z, then æ (and ä), ø (and
-  ö), å (and "aa"), case-insensitive first, case as tie-break, common accents
-  folded to their base letter. Table-driven tests cover the legacy Jest cases.
+- **Chip order differs from the legacy app inside a category.** The legacy app
+  sorted names with Danish collation; the rewrite keeps the meeting's key order
+  there. Category order, which carries the meaning (alert first), is unchanged.
 - **Imported legacy cache is Danish only.** The legacy app cached only `da`
   rows, so after the import an English UI shows Danish format names until
   the cache expires (at most 7 days). Accepted; the Danish UI is the default.

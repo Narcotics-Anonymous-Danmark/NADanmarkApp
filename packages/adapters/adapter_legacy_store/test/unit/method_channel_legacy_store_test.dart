@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:adapter_legacy_store/adapter_legacy_store.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:na_kernel/boundary.dart';
 import 'package:na_ports/na_ports.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -27,14 +28,16 @@ void main() {
         .setMockMethodCallHandler(channel, null);
   });
 
-  test('a JSON dump becomes the found entries without nulls', () async {
+  test('a JSON dump becomes the found dump without nulls', () async {
     answer((call) async {
       expect(call.method, 'readAll');
       return '{"language":"en","searchRange":30,"theme":null}';
     });
     expect(
       await store.readAll(),
-      const LegacyStoreFound(entries: {'language': 'en', 'searchRange': 30}),
+      const LegacyStoreFound(
+        dump: LegacyStoreDumpDto(language: 'en', searchRange: '30'),
+      ),
     );
   });
 

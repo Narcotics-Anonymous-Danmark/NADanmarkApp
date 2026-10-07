@@ -1,4 +1,6 @@
+import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:meta/meta.dart';
 import 'package:na_kernel/src/boundary/bmlt_wire.dart';
 import 'package:na_kernel/src/boundary/wire_json.dart';
 import 'package:na_kernel/src/results/outcome.dart';
@@ -11,6 +13,7 @@ part 'legacy_wire.g.dart';
   explicitToJson: true,
   converters: [LenientText()],
 )
+@immutable
 final class LegacyStoreDumpDto {
   const LegacyStoreDumpDto({
     this.language,
@@ -33,6 +36,15 @@ final class LegacyStoreDumpDto {
   final FormatsCacheDto? meetingFormatsV1;
 
   WireObject toJson() => _$LegacyStoreDumpDtoToJson(this);
+
+  static const DeepCollectionEquality _equality = DeepCollectionEquality();
+
+  @override
+  int get hashCode => _equality.hash(toJson());
+
+  @override
+  bool operator ==(Object other) =>
+      other is LegacyStoreDumpDto && _equality.equals(other.toJson(), toJson());
 
   @override
   String toString() => 'LegacyStoreDumpDto(${toJson().keys.join(', ')})';

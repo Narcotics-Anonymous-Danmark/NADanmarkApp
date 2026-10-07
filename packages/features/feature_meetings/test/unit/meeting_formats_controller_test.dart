@@ -8,7 +8,7 @@ import 'package:na_kernel/na_kernel.dart';
 import 'package:na_testing/na_testing.dart';
 
 String cacheWrittenAt({required Instant fetchedAt}) =>
-    const FormatRowsCodec().encodeSnapshot(
+    const FormatsCacheCodec().encode(
       snapshot: FormatsSnapshot(
         fetchedAt: fetchedAt,
         rows: [aMeetingFormatRow()],
@@ -46,7 +46,7 @@ void main() {
     await harness.read(meetingFormatsProvider.notifier).ensureLoaded();
     expect(loadedRows(harness), hasLength(54));
     expect(harness.meetingFormats.calls, 1);
-    final stored = const FormatRowsCodec().decodeSnapshot(
+    final stored = const FormatsCacheCodec().decode(
       text: harness.storage.snapshot[MeetingFormatKeys.cache.name] ?? '',
     );
     expect(

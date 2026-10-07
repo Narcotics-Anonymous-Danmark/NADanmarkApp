@@ -19,9 +19,9 @@ void main() {
         tester: tester,
         container: realJftContainer(
           storedValues: {
-            'legacyMigration.completed': aMigrationMarker().encoded,
+            'legacyMigration.completed': aStoredMigrationMarker(),
           },
-          legacyStore: LegacyStoreFound(entries: aLegacyStoreDump()),
+          legacyStore: LegacyStoreFound(dump: aLegacyStoreDump()),
         ),
       );
       addTearDown(app.dispose);
@@ -47,13 +47,13 @@ void main() {
         tester: tester,
         initialLocation: '/settings',
         container: realJftContainer(
-          legacyStore: const LegacyStoreFound(
-            entries: {
+          legacyStore: LegacyStoreFound(
+            dump: LegacyStoreDumpDto.fromJson(const {
               'language': 'en',
               'firstday': 'su',
               'searchRange': 30,
               'cleanTimeUnitSort': 'dmy',
-            },
+            }),
           ),
         ),
       );
@@ -68,7 +68,7 @@ void main() {
 
     testWidgets('Meeting formats cache is copied', (tester) async {
       final bmlt = bmltServing(
-        meetings: [aBmltMeetingJson(id: 1, weekday: 2, municipality: 'Aarhus')],
+        meetings: [aBmltMeetingDto(id: 1, weekday: 2, municipality: 'Aarhus')],
       );
       final app = await pumpMeetings(
         tester: tester,
@@ -78,16 +78,11 @@ void main() {
           startAt: Instant(DateTime.utc(2025, 9, 12, 12)),
         ),
         legacyStore: LegacyStoreFound(
-          entries: {
-            'meeting_formats_v1': {
-              'fetchedAt': 1757500000000,
-              'formats': [aBmltFormatJson()],
-            },
-          },
+          dump: aLegacyDumpWithFormats(formats: [aBmltFormatDto()]),
         ),
       );
       addTearDown(app.dispose);
-      final cached = const FormatRowsCodec().decodeSnapshot(
+      final cached = const FormatsCacheCodec().decode(
         text: app.storage.snapshot['meetingFormatsCache'] ?? '',
       );
       final snapshot = (cached as Ok<FormatsSnapshot, DecodeFailure>).value;
@@ -102,24 +97,24 @@ void main() {
       final app = await pumpApp(
         tester: tester,
         container: realJftContainer(
-          legacyStore: const LegacyStoreFound(
-            entries: {
+          legacyStore: LegacyStoreFound(
+            dump: LegacyStoreDumpDto.fromJson(const {
               'meeting_formats_v1': {
                 'fetchedAt': 1757500000000,
                 'formats': <Object?>[],
               },
-            },
+            }),
           ),
         ),
       );
       addTearDown(app.dispose);
       expect(app.storage.snapshot.containsKey('meetingFormatsCache'), isFalse);
-      final marker = LegacyMigrationMarker.decode(
+      final marker = const MigrationMarkerCodec().decode(
         text: app.storage.snapshot['legacyMigration.completed'] ?? '',
       );
       expect(
         (marker as Ok<LegacyMigrationMarker, DecodeFailure>).value.skippedKeys,
-        1,
+        const KeyCount(1),
       );
     });
   });
@@ -129,8 +124,11 @@ void main() {
       final app = await pumpApp(
         tester: tester,
         container: realJftContainer(
-          legacyStore: const LegacyStoreFound(
-            entries: {'cleanDateProfiles': 'oops', 'language': 'en'},
+          legacyStore: LegacyStoreFound(
+            dump: LegacyStoreDumpDto.fromJson(const {
+              'cleanDateProfiles': 'oops',
+              'language': 'en',
+            }),
           ),
         ),
       );
@@ -158,10 +156,10 @@ void main() {
   group('Requirement: Idempotency and safety', () {
     testWidgets('Translation is a pure function', (tester) async {
       const translator = LegacySettingsTranslator();
-      final entries = aLegacyStoreDump();
+      final dump = aLegacyStoreDump();
       expect(
-        translator.translate(entries: entries),
-        translator.translate(entries: entries),
+        translator.translate(dump: dump),
+        translator.translate(dump: dump),
       );
       final app = await pumpApp(tester: tester);
       addTearDown(app.dispose);
@@ -178,7 +176,7 @@ void main() {
         tester: tester,
         initialLocation: '/contact',
         container: realJftContainer(
-          legacyStore: LegacyStoreFound(entries: aLegacyStoreDump()),
+          legacyStore: LegacyStoreFound(dump: aLegacyStoreDump()),
         ),
       );
       addTearDown(app.dispose);
