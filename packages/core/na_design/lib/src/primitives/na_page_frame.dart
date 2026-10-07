@@ -20,9 +20,13 @@ final class NaPageFrame extends StatelessWidget {
       children: [
         header,
         Expanded(
-          child: Padding(
-            padding: EdgeInsets.only(bottom: bottomInset),
-            child: body,
+          child: MediaQuery.removePadding(
+            context: context,
+            removeTop: true,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: bottomInset),
+              child: body,
+            ),
           ),
         ),
       ],
@@ -36,8 +40,15 @@ final class NaScrollBody extends StatelessWidget {
   final List<Widget> children;
 
   @override
-  Widget build(BuildContext context) => ListView(
-    padding: EdgeInsets.zero,
-    children: children,
-  );
+  Widget build(BuildContext context) {
+    final insets = MediaQuery.paddingOf(context);
+    return ListView(
+      padding: EdgeInsets.only(
+        left: insets.left,
+        right: insets.right,
+        bottom: insets.bottom,
+      ),
+      children: children,
+    );
+  }
 }

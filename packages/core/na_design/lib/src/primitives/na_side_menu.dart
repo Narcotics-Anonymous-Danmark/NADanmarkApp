@@ -18,6 +18,7 @@ final class NaSideMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = NaTheme.of(context);
+    final insets = MediaQuery.paddingOf(context);
     return ColoredBox(
       color: theme.colors.surface,
       child: Column(
@@ -28,11 +29,31 @@ final class NaSideMenu extends StatelessWidget {
             trailing: const NaHeaderSpacer(),
           ),
           Expanded(
-            child: ListView(padding: EdgeInsets.zero, children: entries),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(Space.lg),
-            child: footer,
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              child: ListView(
+                padding: EdgeInsets.only(
+                  left: insets.left,
+                  bottom: insets.bottom,
+                ),
+                children: [
+                  ...entries,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: Space.lg,
+                      vertical: Space.md,
+                    ),
+                    child: DefaultTextStyle(
+                      style: theme.typography.caption.copyWith(
+                        color: theme.colors.primary,
+                      ),
+                      child: footer,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

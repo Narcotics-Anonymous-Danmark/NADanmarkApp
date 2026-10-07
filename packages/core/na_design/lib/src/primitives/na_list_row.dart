@@ -25,42 +25,56 @@ final class NaListRow extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         behavior: HitTestBehavior.opaque,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: theme.colors.surface,
-            border: Border(bottom: BorderSide(color: theme.colors.background)),
-          ),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 56),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: Space.lg,
-                vertical: Space.md,
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      label,
-                      style: theme.typography.body.copyWith(
-                        color: theme.colors.primary,
-                      ),
-                    ),
+        child: NaListBlock(
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  label,
+                  style: theme.typography.body.copyWith(
+                    color: theme.colors.primary,
                   ),
-                  ExcludeSemantics(
-                    child: Text(
-                      value,
-                      style: theme.typography.body.copyWith(
-                        color: theme.colors.primary,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: Space.xs),
-                  Icon(NaIcons.caret, size: 16, color: theme.colors.inkMuted),
-                ],
+                ),
               ),
-            ),
+              ExcludeSemantics(
+                child: Text(
+                  value,
+                  style: theme.typography.body.copyWith(
+                    color: theme.colors.primary,
+                  ),
+                ),
+              ),
+              const SizedBox(width: Space.xs),
+              Icon(NaIcons.caret, size: 16, color: theme.colors.inkMuted),
+            ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+final class NaListBlock extends StatelessWidget {
+  const NaListBlock({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = NaTheme.of(context);
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: theme.colors.surface,
+        border: Border(bottom: BorderSide(color: theme.colors.background)),
+      ),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 56),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: Space.lg,
+            vertical: Space.md,
+          ),
+          child: child,
         ),
       ),
     );
