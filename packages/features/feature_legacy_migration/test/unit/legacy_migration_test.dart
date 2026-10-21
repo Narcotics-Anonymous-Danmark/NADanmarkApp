@@ -105,6 +105,68 @@ void main() {
     expect(run, isA<MigrationRan>());
     expect(harness.storage.snapshot['language'], 'en');
     expect(harness.storage.snapshot.containsKey('firstday'), isFalse);
+    expect(
+      harness.storage.snapshot.containsKey('cleantimeProfiles'),
+      isFalse,
+    );
+    expect((run as MigrationRan).skippedKeys, const KeyCount(2));
+  });
+
+  test('cleantime profiles and their index are imported', () async {
+    final harness = TestContainer.build(
+      legacyStore: LegacyStoreFound(
+        dump: aLegacyCleantimeDump(
+          profiles: [
+            aLegacyCleanDateProfile(),
+            aLegacyCleanDateProfile(
+              name: ' ',
+              cleandate: '2021-01-02T00:00:00.000+01:00',
+            ),
+          ],
+          activeProfile: '4',
+        ),
+      ),
+    );
+    addTearDown(harness.dispose);
+    final run = await harness.read(legacyMigrationProvider).runIfNeeded();
+    expect(
+      harness.storage.snapshot['cleantimeProfiles'],
+      '[{"name":"Anna","cleanDate":"2020-05-03"},'
+      '{"name":"Profil 2","cleanDate":"2021-01-02"}]',
+    );
+    expect(harness.storage.snapshot['activeCleantimeProfile'], '1');
+    expect((run as MigrationRan).importedKeys, const KeyCount(2));
+  });
+
+  test('unnamed profiles are named in the imported language', () async {
+    final harness = TestContainer.build(
+      legacyStore: LegacyStoreFound(
+        dump: LegacyStoreDumpDto.fromJson(const {
+          'language': 'en',
+          'cleanDateProfiles': [
+            {'name': '', 'cleandate': '2021-01-02T00:00:00.000+01:00'},
+          ],
+        }),
+      ),
+    );
+    addTearDown(harness.dispose);
+    await harness.read(legacyMigrationProvider).runIfNeeded();
+    expect(
+      harness.storage.snapshot['cleantimeProfiles'],
+      '[{"name":"Profile 1","cleanDate":"2021-01-02"}]',
+    );
+  });
+
+  test('existing cleantime profiles are never overwritten', () async {
+    final harness = TestContainer.build(
+      storedValues: aStoredCleantimeProfiles(
+        entries: [aCleantimeProfile(name: const ProfileName('Bo'))],
+      ),
+      legacyStore: LegacyStoreFound(dump: aLegacyCleantimeDump()),
+    );
+    addTearDown(harness.dispose);
+    await harness.read(legacyMigrationProvider).runIfNeeded();
+    expect(harness.storage.snapshot['cleantimeProfiles'], contains('Bo'));
   });
 
   test('existing new-format values are never overwritten', () async {

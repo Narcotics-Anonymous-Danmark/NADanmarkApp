@@ -57,6 +57,6 @@ final class MigrationMarkerCodec {
           skippedKeys: KeyCount(skipped),
         ),
       ),
-    _ => const Err(error: DecodeFailure(detail: 'marker: incomplete')),
+    Record() => const Err(error: DecodeFailure(detail: 'marker: incomplete')),
   };
 }

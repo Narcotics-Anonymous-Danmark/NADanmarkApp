@@ -4,7 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:na_kernel/src/results/failure.dart';
 import 'package:na_kernel/src/results/outcome.dart';
 
-typedef WireObject = Map<String, dynamic>;
+typedef WireObject = Map<String, Object?>;
 
 final class LenientText implements JsonConverter<String?, Object?> {
   const LenientText();
@@ -15,7 +15,7 @@ final class LenientText implements JsonConverter<String?, Object?> {
     final double number when number == number.roundToDouble() =>
       number.toInt().toString(),
     final num number => number.toString(),
-    _ => null,
+    Object() || null => null,
   };
 
   @override
@@ -30,7 +30,7 @@ final class LenientInt implements JsonConverter<int?, Object?> {
     final int number => number,
     final double number when number == number.roundToDouble() => number.toInt(),
     final String text => int.tryParse(text.trim()),
-    _ => null,
+    Object() || null => null,
   };
 
   @override
@@ -60,7 +60,9 @@ final class WireJson {
       build: () => fromJson(map),
       context: context,
     ),
-    _ => Err(error: DecodeFailure(detail: '$context: not a JSON object')),
+    Object() || null => Err(
+      error: DecodeFailure(detail: '$context: not a JSON object'),
+    ),
   };
 
   Outcome<List<T>, DecodeFailure> rows<T>({
@@ -68,7 +70,7 @@ final class WireJson {
     required T Function(WireObject json) fromJson,
     required String context,
   }) => switch (json) {
-    final List<dynamic> items => Ok(
+    final List<Object?> items => Ok(
       value: List<T>.unmodifiable(
         items.indexed
             .map(
@@ -85,7 +87,9 @@ final class WireJson {
     final WireObject map when map.isEmpty => Ok(
       value: List<T>.unmodifiable([]),
     ),
-    _ => Err(error: DecodeFailure(detail: '$context: not a list')),
+    Object() || null => Err(
+      error: DecodeFailure(detail: '$context: not a list'),
+    ),
   };
 
   Outcome<List<T>, DecodeFailure> list<T>({
@@ -93,7 +97,7 @@ final class WireJson {
     required T Function(WireObject json) fromJson,
     required String context,
   }) => switch (json) {
-    final List<dynamic> items when items.isNotEmpty => _all(
+    final List<Object?> items when items.isNotEmpty => _all(
       decoded: List.unmodifiable(
         items.indexed.map(
           (entry) => object(
@@ -104,7 +108,9 @@ final class WireJson {
         ),
       ),
     ),
-    _ => Err(error: DecodeFailure(detail: '$context: not a non-empty list')),
+    Object() || null => Err(
+      error: DecodeFailure(detail: '$context: not a non-empty list'),
+    ),
   };
 
   Outcome<List<T>, DecodeFailure> _all<T>({

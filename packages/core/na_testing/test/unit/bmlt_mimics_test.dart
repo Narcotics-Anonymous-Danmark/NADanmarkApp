@@ -38,7 +38,7 @@ void main() {
         final List<Object?> rows => rows.map(
           (row) => switch (row) {
             {'location_municipality': final String name} => name,
-            _ => fail('not a municipality row: $row'),
+            Object() || null => fail('not a municipality row: $row'),
           },
         ),
         final Object? other => fail('not a list: $other'),

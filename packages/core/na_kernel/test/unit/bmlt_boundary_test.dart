@@ -119,7 +119,7 @@ void main() {
 
     test('an empty object is no meetings and malformed rows are skipped', () {
       expect(
-        (mapper.meetings(json: <String, dynamic>{})
+        (mapper.meetings(json: <String, Object?>{})
                 as Ok<List<Meeting>, DecodeFailure>)
             .value,
         isEmpty,

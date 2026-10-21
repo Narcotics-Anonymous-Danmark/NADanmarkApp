@@ -38,7 +38,7 @@ final class TestJob {
 
   List<FilePath> get staleOutputs => switch ((tool, options.coverage)) {
     (TestTool.dart, CoverageCollection.on) => [rawCoverageDir],
-    _ => const [],
+    Record() => const [],
   };
 
   List<String> get _selection => switch (scope) {

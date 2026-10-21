@@ -28,4 +28,7 @@ abstract final class NaIcons {
   static const IconData cloud = PhosphorIconsRegular.cloud;
   static const IconData phone = PhosphorIconsRegular.phone;
   static const IconData clock = PhosphorIconsRegular.clock;
+  static const IconData edit = PhosphorIconsRegular.pencilSimple;
+  static const IconData trash = PhosphorIconsRegular.trash;
+  static const IconData addPlain = PhosphorIconsRegular.plus;
 }

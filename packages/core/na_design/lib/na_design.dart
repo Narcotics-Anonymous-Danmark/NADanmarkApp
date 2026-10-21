@@ -1,12 +1,17 @@
 export 'src/app/na_app.dart';
+export 'src/flutter_bridge/na_carousel.dart';
+export 'src/flutter_bridge/na_date_picker.dart';
 export 'src/flutter_bridge/na_indeterminate_bar.dart';
 export 'src/flutter_bridge/na_multi_option_dialog.dart';
 export 'src/flutter_bridge/na_range_slider.dart';
 export 'src/flutter_bridge/na_slider.dart';
+export 'src/flutter_bridge/na_text_input_dialog.dart';
 export 'src/primitives/na_action_button.dart';
 export 'src/primitives/na_button.dart';
 export 'src/primitives/na_card.dart';
 export 'src/primitives/na_chip.dart';
+export 'src/primitives/na_confirm_dialog.dart';
+export 'src/primitives/na_dialog_surface.dart';
 export 'src/primitives/na_disclosure_row.dart';
 export 'src/primitives/na_drawer_layout.dart';
 export 'src/primitives/na_fade_clip.dart';

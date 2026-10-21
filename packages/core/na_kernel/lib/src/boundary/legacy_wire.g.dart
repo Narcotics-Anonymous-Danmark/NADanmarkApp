@@ -36,6 +36,14 @@ LegacyStoreDumpDto _$LegacyStoreDumpDtoFromJson(Map<String, dynamic> json) =>
             'meeting_formats_v1',
             (v) => _formatsCache(v),
           ),
+          cleanDateProfiles: $checkedConvert(
+            'cleanDateProfiles',
+            (v) => _cleanDateProfiles(v),
+          ),
+          activeProfile: $checkedConvert(
+            'activeProfile',
+            (v) => const LenientText().fromJson(v),
+          ),
         );
         return val;
       },
@@ -51,6 +59,30 @@ Map<String, dynamic> _$LegacyStoreDumpDtoToJson(
   'cleanTimeUnitSort': ?const LenientText().toJson(instance.cleanTimeUnitSort),
   'theme': ?const LenientText().toJson(instance.theme),
   'meeting_formats_v1': ?instance.meetingFormatsV1?.toJson(),
+  'cleanDateProfiles': ?instance.cleanDateProfiles
+      ?.map((e) => e.toJson())
+      .toList(),
+  'activeProfile': ?const LenientText().toJson(instance.activeProfile),
+};
+
+LegacyCleanDateProfileDto _$LegacyCleanDateProfileDtoFromJson(
+  Map<String, dynamic> json,
+) => $checkedCreate('LegacyCleanDateProfileDto', json, ($checkedConvert) {
+  final val = LegacyCleanDateProfileDto(
+    name: $checkedConvert('name', (v) => const LenientText().fromJson(v)),
+    cleandate: $checkedConvert(
+      'cleandate',
+      (v) => const LenientText().fromJson(v),
+    ),
+  );
+  return val;
+});
+
+Map<String, dynamic> _$LegacyCleanDateProfileDtoToJson(
+  LegacyCleanDateProfileDto instance,
+) => <String, dynamic>{
+  'name': ?const LenientText().toJson(instance.name),
+  'cleandate': ?const LenientText().toJson(instance.cleandate),
 };
 
 MigrationMarkerDto _$MigrationMarkerDtoFromJson(

@@ -23,4 +23,16 @@ final class FakeClock implements Clock {
 
   @override
   TimeZoneId zone() => time.zone;
+
+  @override
+  Instant instantOf({required LocalDate date, required LocalTime time}) =>
+      Instant(
+        DateTime.utc(
+          date.year,
+          date.month,
+          date.day,
+          time.hour.value,
+          time.minute.value,
+        ).subtract(this.time.utcOffset),
+      );
 }

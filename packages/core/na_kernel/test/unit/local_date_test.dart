@@ -62,5 +62,44 @@ void main() {
     test('formats as ISO 8601', () {
       expect(aDate(year: 2026, month: 1, day: 5).iso8601, '2026-01-05');
     });
+
+    test('parses an ISO calendar date', () {
+      expect(
+        LocalDate.parseIso(text: '2024-02-29'),
+        Ok<LocalDate, DecodeFailure>(
+          value: aDate(year: 2024, month: 2, day: 29),
+        ),
+      );
+    });
+
+    test('rejects dates that do not exist', () {
+      expect(
+        LocalDate.parseIso(text: '2025-02-29'),
+        isA<Err<LocalDate, DecodeFailure>>(),
+      );
+      expect(
+        LocalDate.parseIso(text: '2025-13-01'),
+        isA<Err<LocalDate, DecodeFailure>>(),
+      );
+      expect(
+        LocalDate.parseIso(text: '2025-04-31'),
+        isA<Err<LocalDate, DecodeFailure>>(),
+      );
+    });
+
+    test('rejects text that is not exactly yyyy-MM-dd', () {
+      expect(
+        LocalDate.parseIso(text: '2025-1-01'),
+        isA<Err<LocalDate, DecodeFailure>>(),
+      );
+      expect(
+        LocalDate.parseIso(text: '2020-05-03T00:00:00.000+02:00'),
+        isA<Err<LocalDate, DecodeFailure>>(),
+      );
+      expect(
+        LocalDate.parseIso(text: 'soon'),
+        isA<Err<LocalDate, DecodeFailure>>(),
+      );
+    });
   });
 }

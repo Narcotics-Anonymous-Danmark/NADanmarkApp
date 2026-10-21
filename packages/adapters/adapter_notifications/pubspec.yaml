@@ -1,0 +1,27 @@
+name: adapter_notifications
+description: NotificationsPort adapter on flutter_local_notifications.
+publish_to: none
+version: 0.0.0
+
+environment:
+  sdk: ^3.11.0
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_local_notifications: 22.3.1
+  flutter_local_notifications_platform_interface: 12.2.0
+  na_kernel:
+    path: ../../core/na_kernel
+  na_ports:
+    path: ../../core/na_ports
+  riverpod: 3.3.2
+  timezone: 0.11.1
+
+dev_dependencies:
+  custom_lint: 0.8.1
+  flutter_test:
+    sdk: flutter
+  na_lints:
+    path: ../../../tool/na_lints

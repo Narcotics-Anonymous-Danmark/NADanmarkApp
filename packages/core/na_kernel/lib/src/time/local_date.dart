@@ -1,4 +1,6 @@
 import 'package:meta/meta.dart';
+import 'package:na_kernel/src/results/failure.dart';
+import 'package:na_kernel/src/results/outcome.dart';
 import 'package:na_kernel/src/time/instant.dart';
 import 'package:na_kernel/src/time/weekday.dart';
 
@@ -11,6 +13,30 @@ final class LocalDate {
     month: dateTime.month,
     day: dateTime.day,
   );
+
+  static Outcome<LocalDate, DecodeFailure> parseIso({required String text}) =>
+      switch (_isoDate.firstMatch(text)) {
+        final RegExpMatch match => _existing(
+          date: LocalDate(
+            year: int.parse(match.group(1) ?? ''),
+            month: int.parse(match.group(2) ?? ''),
+            day: int.parse(match.group(3) ?? ''),
+          ),
+          text: text,
+        ),
+        null => Err(
+          error: DecodeFailure(detail: 'date: "$text" is not yyyy-MM-dd'),
+        ),
+      };
+
+  static Outcome<LocalDate, DecodeFailure> _existing({
+    required LocalDate date,
+    required String text,
+  }) => LocalDate.fromDateTime(dateTime: date.atMidnightUtc) == date
+      ? Ok(value: date)
+      : Err(error: DecodeFailure(detail: 'date: "$text" does not exist'));
+
+  static final RegExp _isoDate = RegExp(r'^(\d{4})-(\d{2})-(\d{2})$');
 
   final int year;
   final int month;
@@ -59,7 +85,7 @@ final class LocalDate {
       switch (atMidnightUtc.compareTo(other.atMidnightUtc)) {
         < 0 => Comparison.before,
         0 => Comparison.same,
-        _ => Comparison.after,
+        int() => Comparison.after,
       };
 
   String get iso8601 =>

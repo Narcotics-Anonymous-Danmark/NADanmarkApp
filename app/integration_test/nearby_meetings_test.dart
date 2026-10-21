@@ -52,7 +52,7 @@ Future<void> nearbyMeetings(
     const Key('meeting-section-sunday'),
   ).waitUntilVisible(timeout: const Duration(seconds: 60));
   await $(const Key('meeting-section-sunday')).tap();
-  await $(const Key('meeting-card-115')).waitUntilVisible();
+  await $(const Key('meeting-card-115')).scrollTo();
   final slider = $(const Key('nearby-radius-slider'));
   final rect = $.tester.getRect(slider.finder);
   await $.tester.tapAt(Offset(rect.right - 13, rect.center.dy));

@@ -1,3 +1,6 @@
+export 'src/cleantime/anniversary.dart';
+export 'src/cleantime/clean_time.dart';
+export 'src/cleantime/cleantime_profiles.dart';
 export 'src/events/broadcast_event_bus.dart';
 export 'src/events/busy_tracker.dart';
 export 'src/events/domain_event.dart';
@@ -13,6 +16,7 @@ export 'src/meetings/meeting_formats.dart';
 export 'src/meetings/meeting_schedule.dart';
 export 'src/meetings/meeting_values.dart';
 export 'src/meetings/municipality.dart';
+export 'src/notifications/notifications.dart';
 export 'src/results/failure.dart';
 export 'src/results/load_result.dart';
 export 'src/results/outcome.dart';

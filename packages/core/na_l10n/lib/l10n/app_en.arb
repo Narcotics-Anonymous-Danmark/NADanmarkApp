@@ -951,5 +951,96 @@
         "type": "int"
       }
     }
+  },
+  "cleantimeDefaultProfileName": "Profile {position}",
+  "@cleantimeDefaultProfileName": {
+    "description": "Name of a profile created without a name",
+    "placeholders": {
+      "position": {
+        "type": "int"
+      }
+    }
+  },
+  "cleantimeSelectProfile": "Select profile",
+  "@cleantimeSelectProfile": {
+    "description": "Accessible label of the cleantime profile selector"
+  },
+  "cleantimeAddProfile": "Add profile",
+  "@cleantimeAddProfile": {
+    "description": "Accessible label of the add profile button"
+  },
+  "cleantimeDeleteProfile": "Delete profile",
+  "@cleantimeDeleteProfile": {
+    "description": "Accessible label of the delete profile button"
+  },
+  "cleantimeKeyTag": "{anniversary} key tag",
+  "@cleantimeKeyTag": {
+    "description": "Accessible label of the key tag image",
+    "placeholders": {
+      "anniversary": {
+        "type": "String"
+      }
+    }
+  },
+  "cleantimeHomeBreakdown": "{years}, {months}, {days}",
+  "@cleantimeHomeBreakdown": {
+    "description": "Years, months and days on the home cleantime card",
+    "placeholders": {
+      "years": {
+        "type": "String"
+      },
+      "months": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "cleantimeCardPosition": "Card {position} of {count}",
+  "@cleantimeCardPosition": {
+    "description": "Accessible position of a home cleantime card",
+    "placeholders": {
+      "position": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "datePickerDay": "Day",
+  "@datePickerDay": {
+    "description": "Accessible label of the date picker day wheel"
+  },
+  "datePickerMonth": "Month",
+  "@datePickerMonth": {
+    "description": "Accessible label of the date picker month wheel"
+  },
+  "datePickerYear": "Year",
+  "@datePickerYear": {
+    "description": "Accessible label of the date picker year wheel"
+  },
+  "notificationCleandayTitle": "Cleanday - {name}",
+  "@notificationCleandayTitle": {
+    "description": "Title of the anniversary notification",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationCleandayBody": "Congratulations on {anniversary}",
+  "@notificationCleandayBody": {
+    "description": "Body of the anniversary notification",
+    "placeholders": {
+      "anniversary": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationChannelCleanday": "Cleanday",
+  "@notificationChannelCleanday": {
+    "description": "Android notification channel for anniversaries"
   }
 }

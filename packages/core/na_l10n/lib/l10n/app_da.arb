@@ -951,5 +951,96 @@
         "type": "int"
       }
     }
+  },
+  "cleantimeDefaultProfileName": "Profil {position}",
+  "@cleantimeDefaultProfileName": {
+    "description": "Name of a profile created without a name",
+    "placeholders": {
+      "position": {
+        "type": "int"
+      }
+    }
+  },
+  "cleantimeSelectProfile": "Vælg profil",
+  "@cleantimeSelectProfile": {
+    "description": "Accessible label of the cleantime profile selector"
+  },
+  "cleantimeAddProfile": "Tilføj profil",
+  "@cleantimeAddProfile": {
+    "description": "Accessible label of the add profile button"
+  },
+  "cleantimeDeleteProfile": "Slet profil",
+  "@cleantimeDeleteProfile": {
+    "description": "Accessible label of the delete profile button"
+  },
+  "cleantimeKeyTag": "Nøglering for {anniversary}",
+  "@cleantimeKeyTag": {
+    "description": "Accessible label of the key tag image",
+    "placeholders": {
+      "anniversary": {
+        "type": "String"
+      }
+    }
+  },
+  "cleantimeHomeBreakdown": "{years}, {months}, {days}",
+  "@cleantimeHomeBreakdown": {
+    "description": "Years, months and days on the home cleantime card",
+    "placeholders": {
+      "years": {
+        "type": "String"
+      },
+      "months": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "cleantimeCardPosition": "Kort {position} af {count}",
+  "@cleantimeCardPosition": {
+    "description": "Accessible position of a home cleantime card",
+    "placeholders": {
+      "position": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "datePickerDay": "Dag",
+  "@datePickerDay": {
+    "description": "Accessible label of the date picker day wheel"
+  },
+  "datePickerMonth": "Måned",
+  "@datePickerMonth": {
+    "description": "Accessible label of the date picker month wheel"
+  },
+  "datePickerYear": "År",
+  "@datePickerYear": {
+    "description": "Accessible label of the date picker year wheel"
+  },
+  "notificationCleandayTitle": "Mærkedag - {name}",
+  "@notificationCleandayTitle": {
+    "description": "Title of the anniversary notification",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationCleandayBody": "Tillykke med {anniversary}",
+  "@notificationCleandayBody": {
+    "description": "Body of the anniversary notification",
+    "placeholders": {
+      "anniversary": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationChannelCleanday": "Mærkedag",
+  "@notificationChannelCleanday": {
+    "description": "Android notification channel for anniversaries"
   }
 }

@@ -6,6 +6,7 @@ export 'src/links/external_links_port.dart';
 export 'src/location/geolocation_port.dart';
 export 'src/meetings/meeting_formats_port.dart';
 export 'src/meetings/meeting_search_port.dart';
+export 'src/notifications/notifications_port.dart';
 export 'src/settings/settings_port.dart';
 export 'src/storage/key_value_store_port.dart';
 export 'src/storage/stored_value.dart';

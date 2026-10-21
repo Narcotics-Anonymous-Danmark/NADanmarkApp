@@ -58,7 +58,7 @@ final class NearbyResultsView extends StatelessWidget {
       },
       switch (meetings) {
         [] => const NothingFound(),
-        [_, ...] => MeetingList(
+        [Meeting(), ...] => MeetingList(
           listKey: nearbyListKey,
           meetings: meetings,
           firstDay: firstDay,

@@ -33,7 +33,7 @@ final class ServiceAccount {
           ServiceAccountParsed(
             account: ServiceAccount(clientEmail: email, privateKeyPem: key),
           ),
-        _ => const ServiceAccountRejected(
+        Record() => const ServiceAccountRejected(
           reason: 'service account needs client_email and private_key',
         ),
       };

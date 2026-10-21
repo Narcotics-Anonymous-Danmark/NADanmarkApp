@@ -2,6 +2,7 @@
 library;
 
 import 'package:feature_legacy_migration/feature_legacy_migration.dart';
+import 'package:feature_shell/feature_shell.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:na_kernel/boundary.dart';
@@ -9,8 +10,38 @@ import 'package:na_kernel/na_kernel.dart';
 import 'package:na_ports/na_ports.dart';
 import 'package:na_testing/na_testing.dart';
 
+import '../support/cleantime.dart';
 import '../support/meetings.dart';
 import '../support/pump_app.dart';
+
+const WireObject anna2020 = {
+  'name': 'Anna',
+  'cleandate': '2020-05-03T00:00:00.000+02:00',
+};
+const WireObject bo2019 = {
+  'name': 'Bo',
+  'cleandate': '2019-11-30T00:00:00.000+01:00',
+};
+
+Future<AppHarness> pumpMigratedProfiles({
+  required WidgetTester tester,
+  required List<WireObject> profiles,
+  Language language = Language.english,
+  WireObject active = const {'activeProfile': '0'},
+  RoutePath location = homePath,
+}) => pumpApp(
+  tester: tester,
+  initialLocation: location.value,
+  container: realJftContainer(
+    legacyStore: LegacyStoreFound(
+      dump: LegacyStoreDumpDto.fromJson({
+        'language': language.code,
+        'cleanDateProfiles': profiles,
+        ...active,
+      }),
+    ),
+  ),
+);
 
 void main() {
   group('Requirement: Run once, before first render', () {
@@ -117,6 +148,102 @@ void main() {
         const KeyCount(1),
       );
     });
+
+    testWidgets('Cleantime profiles keep their calendar date', (tester) async {
+      final app = await pumpMigratedProfiles(
+        tester: tester,
+        profiles: [anna2020],
+      );
+      addTearDown(app.dispose);
+      expect(savedProfiles(app), [aCleantimeProfile()]);
+    });
+
+    testWidgets('Picker-written clean date', (tester) async {
+      final app = await pumpMigratedProfiles(
+        tester: tester,
+        profiles: const [
+          {'name': 'Bo', 'cleandate': '2019-11-30T23:30:00.000Z'},
+        ],
+      );
+      addTearDown(app.dispose);
+      expect(savedProfiles(app), [
+        aCleantimeProfile(
+          name: bo,
+          cleanDate: const LocalDate(year: 2019, month: 11, day: 30),
+        ),
+      ]);
+    });
+
+    testWidgets('Unparseable entries are dropped', (tester) async {
+      final app = await pumpMigratedProfiles(
+        tester: tester,
+        profiles: const [
+          anna2020,
+          {'name': 'X', 'cleandate': 'soon'},
+          {'name': 'Y'},
+        ],
+      );
+      addTearDown(app.dispose);
+      expect(savedProfiles(app), [aCleantimeProfile()]);
+    });
+
+    testWidgets('Unnamed profile keeps its date', (tester) async {
+      final app = await pumpMigratedProfiles(
+        tester: tester,
+        language: Language.danish,
+        profiles: const [
+          anna2020,
+          {'name': ' ', 'cleandate': '2021-01-02T00:00:00.000+01:00'},
+        ],
+      );
+      addTearDown(app.dispose);
+      expect(savedProfiles(app), [
+        aCleantimeProfile(),
+        aCleantimeProfile(
+          name: const ProfileName('Profil 2'),
+          cleanDate: const LocalDate(year: 2021, month: 1, day: 2),
+        ),
+      ]);
+    });
+
+    testWidgets('Active index is clamped', (tester) async {
+      final app = await pumpMigratedProfiles(
+        tester: tester,
+        profiles: const [anna2020, bo2019],
+        active: const {'activeProfile': '5'},
+      );
+      addTearDown(app.dispose);
+      expect(savedActive(app), '1');
+    });
+
+    testWidgets('Numeric active index', (tester) async {
+      final app = await pumpMigratedProfiles(
+        tester: tester,
+        profiles: const [anna2020, bo2019],
+        active: const {'activeProfile': 1},
+      );
+      addTearDown(app.dispose);
+      expect(savedActive(app), '1');
+    });
+
+    testWidgets('Imported profiles appear in the calculator', (tester) async {
+      final app = await pumpMigratedProfiles(
+        tester: tester,
+        profiles: const [anna2020, bo2019],
+        active: const {'activeProfile': '1'},
+        location: cleantimePath,
+      );
+      addTearDown(app.dispose);
+      expect(selectedProfileName(tester), 'Bo');
+      expect(find.text('30 Nov 2019'), findsOneWidget);
+      await openMenu(tester);
+      await tester.tap(inMenu(find.text('Home')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('home-cleantime-card-0')), findsOneWidget);
+      await tester.fling(find.byKey(homeCarousel), const Offset(-400, 0), 1000);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('home-cleantime-card-1')), findsOneWidget);
+    });
   });
 
   group('Requirement: Failure tolerance', () {
@@ -135,6 +262,11 @@ void main() {
       addTearDown(app.dispose);
       expect(app.storage.snapshot['language'], 'en');
       expect(find.text('Narcotics Anonymous Denmark'), findsOneWidget);
+      expect(app.storage.snapshot.containsKey('cleantimeProfiles'), isFalse);
+      expect(
+        app.events.recordedOf<LegacyMigrationCompleted>().single.skippedKeys,
+        const KeyCount(1),
+      );
     });
 
     testWidgets('Corrupt database', (tester) async {

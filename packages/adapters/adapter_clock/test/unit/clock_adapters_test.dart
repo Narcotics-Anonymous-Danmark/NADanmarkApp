@@ -24,6 +24,25 @@ void main() {
       expect(clock.localTimeNow().hour, inInclusiveRange(0, 23));
       expect(clock.zone(), TimeZoneId.copenhagen);
     });
+
+    test('turns a local date and time into the device-local instant', () {
+      const clock = SystemClock(zoneName: TimeZoneId.copenhagen);
+      for (final date in const [
+        LocalDate(year: 2026, month: 3, day: 29),
+        LocalDate(year: 2026, month: 10, day: 25),
+        LocalDate(year: 2024, month: 2, day: 29),
+      ]) {
+        final instant = clock.instantOf(
+          date: date,
+          time: const LocalTime(hour: HourOfDay(10), minute: MinuteOfHour(0)),
+        );
+        final local = instant.utc.toLocal();
+        expect(
+          (local.year, local.month, local.day, local.hour, local.minute),
+          (date.year, date.month, date.day, 10, 0),
+        );
+      }
+    });
   });
 
   group('DartTicker', () {

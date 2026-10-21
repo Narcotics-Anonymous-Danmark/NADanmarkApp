@@ -22,4 +22,16 @@ final class SystemClock implements Clock {
 
   @override
   TimeZoneId zone() => zoneName;
+
+  @override
+  Instant instantOf({required LocalDate date, required LocalTime time}) =>
+      Instant(
+        DateTime(
+          date.year,
+          date.month,
+          date.day,
+          time.hour.value,
+          time.minute.value,
+        ).toUtc(),
+      );
 }

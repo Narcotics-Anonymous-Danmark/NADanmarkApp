@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:na_kernel/src/results/failure.dart';
 import 'package:na_kernel/src/values/language.dart';
 import 'package:na_kernel/src/values/legacy_migration_marker.dart';
 import 'package:na_kernel/src/values/settings.dart';
@@ -42,4 +43,10 @@ final class BusyEnded extends DomainEvent {
   const BusyEnded({required this.activity});
 
   final BusyActivity activity;
+}
+
+final class NotificationsFailed extends DomainEvent {
+  const NotificationsFailed({required this.failure});
+
+  final UnavailableFailure failure;
 }

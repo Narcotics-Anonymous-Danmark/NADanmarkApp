@@ -4,6 +4,7 @@ import 'package:adapter_geolocation/adapter_geolocation.dart';
 import 'package:adapter_jft/adapter_jft.dart';
 import 'package:adapter_legacy_store/adapter_legacy_store.dart';
 import 'package:adapter_links/adapter_links.dart';
+import 'package:adapter_notifications/adapter_notifications.dart';
 import 'package:adapter_storage/adapter_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
@@ -32,6 +33,9 @@ Future<List<Override>> platformOverrides() async => [
   ...jftOverrides(bundle: rootBundle),
   ...linksOverrides(),
   ...geolocationOverrides(platform: GeolocatorPlatform.instance),
+  ...notificationsOverrides(
+    platform: FlutterLocalNotificationsPlatform.instance,
+  ),
   ...legacyStoreOverrides(timeout: const Duration(seconds: 5)),
   eventBusProvider.overrideWithValue(BroadcastEventBus()),
   appInfoProvider.overrideWithValue(await loadAppInfo()),

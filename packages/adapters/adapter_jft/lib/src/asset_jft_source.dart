@@ -91,6 +91,6 @@ final class AssetJftSource implements JftPort {
           closing: JftClosing.parse(text: jft),
         ),
       ),
-    _ => Err(error: DecodeFailure(detail: '$context: incomplete entry')),
+    Record() => Err(error: DecodeFailure(detail: '$context: incomplete entry')),
   };
 }

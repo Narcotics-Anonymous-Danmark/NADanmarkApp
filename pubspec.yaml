@@ -20,6 +20,7 @@ workspace:
   - packages/features/feature_legacy_migration
   - packages/features/feature_meetings
   - packages/features/feature_meetings_search
+  - packages/features/feature_cleantime
   - packages/adapters/adapter_bmlt
   - packages/adapters/adapter_geolocation
   - packages/adapters/adapter_clock
@@ -27,6 +28,7 @@ workspace:
   - packages/adapters/adapter_jft
   - packages/adapters/adapter_links
   - packages/adapters/adapter_legacy_store
+  - packages/adapters/adapter_notifications
 
 dev_dependencies:
   coverage: 1.15.1

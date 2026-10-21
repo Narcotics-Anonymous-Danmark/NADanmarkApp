@@ -22,6 +22,8 @@ final class LegacyStoreDumpDto {
     this.cleanTimeUnitSort,
     this.theme,
     this.meetingFormatsV1,
+    this.cleanDateProfiles,
+    this.activeProfile,
   });
 
   factory LegacyStoreDumpDto.fromJson(WireObject json) =>
@@ -34,6 +36,9 @@ final class LegacyStoreDumpDto {
   final String? theme;
   @JsonKey(name: 'meeting_formats_v1', fromJson: _formatsCache)
   final FormatsCacheDto? meetingFormatsV1;
+  @JsonKey(fromJson: _cleanDateProfiles)
+  final List<LegacyCleanDateProfileDto>? cleanDateProfiles;
+  final String? activeProfile;
 
   WireObject toJson() => _$LegacyStoreDumpDtoToJson(this);
 
@@ -64,8 +69,51 @@ FormatsCacheDto? _formatsCache(Object? json) => switch (json) {
     Ok(:final value) => value,
     Err() => null,
   },
-  _ => null,
+  Object() || null => null,
 };
+
+List<LegacyCleanDateProfileDto>? _cleanDateProfiles(Object? json) =>
+    switch (json) {
+      null => null,
+      final List<Object?> items => List.unmodifiable(
+        items.whereType<WireObject>().map(LegacyCleanDateProfileDto.fromJson),
+      ),
+      final String text => switch (const WireJson().parse(
+        text: text,
+        context: 'cleanDateProfiles',
+      )) {
+        Ok(:final List<Object?> value) => _cleanDateProfiles(value),
+        Ok() || Err() => const [],
+      },
+      Object() => const [],
+    };
+
+@JsonSerializable(
+  checked: true,
+  includeIfNull: false,
+  converters: [LenientText()],
+)
+@immutable
+final class LegacyCleanDateProfileDto {
+  const LegacyCleanDateProfileDto({this.name, this.cleandate});
+
+  factory LegacyCleanDateProfileDto.fromJson(WireObject json) =>
+      _$LegacyCleanDateProfileDtoFromJson(json);
+
+  final String? name;
+  final String? cleandate;
+
+  WireObject toJson() => _$LegacyCleanDateProfileDtoToJson(this);
+
+  @override
+  int get hashCode => Object.hash(name, cleandate);
+
+  @override
+  bool operator ==(Object other) =>
+      other is LegacyCleanDateProfileDto &&
+      other.name == name &&
+      other.cleandate == cleandate;
+}
 
 @JsonSerializable(
   checked: true,

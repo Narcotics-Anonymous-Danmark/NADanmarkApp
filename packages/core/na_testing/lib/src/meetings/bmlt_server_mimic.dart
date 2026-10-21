@@ -182,22 +182,29 @@ final class BmltServerMimic implements HttpClientAdapter {
       query['lang_enum'],
       query['geo_width_km'],
     )) {
-      ('GetSearchResults', null, _, final String _) => const _Routed(
+      ('GetSearchResults', null, String() || null, String()) => const _Routed(
         endpoint: BmltEndpoint.nearby,
       ),
-      ('GetSearchResults', null, _, null) => const _Routed(
+      ('GetSearchResults', null, String() || null, null) => const _Routed(
         endpoint: BmltEndpoint.meetings,
       ),
-      ('GetSearchResults', 'location_municipality', _, _) => const _Routed(
-        endpoint: BmltEndpoint.municipalities,
-      ),
-      ('GetFormats', _, 'en', _) => const _Routed(
+      (
+        'GetSearchResults',
+        'location_municipality',
+        String() || null,
+        String() || null,
+      ) =>
+        const _Routed(
+          endpoint: BmltEndpoint.municipalities,
+        ),
+      ('GetFormats', String() || null, 'en', String() || null) => const _Routed(
         endpoint: BmltEndpoint.formatsEnglish,
       ),
-      ('GetFormats', _, 'da' || null, _) => const _Routed(
-        endpoint: BmltEndpoint.formatsDanish,
-      ),
-      _ => const _Unrouted(),
+      ('GetFormats', String() || null, 'da' || null, String() || null) =>
+        const _Routed(
+          endpoint: BmltEndpoint.formatsDanish,
+        ),
+      Record() => const _Unrouted(),
     };
   }
 

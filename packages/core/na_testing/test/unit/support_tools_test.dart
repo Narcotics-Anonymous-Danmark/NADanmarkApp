@@ -93,6 +93,22 @@ void main() {
       );
       expect(clock.zone(), TimeZoneId.copenhagen);
     });
+
+    test(
+      'turns a local date and time into an instant with the test offset',
+      () {
+        final clock = FakeClock(
+          time: TestTime.copenhagen(startAt: anInstant()),
+        );
+        expect(
+          clock.instantOf(
+            date: aLocalDate(month: 10, day: 10),
+            time: aLocalTime(hour: 10),
+          ),
+          anInstant(month: 10, day: 10, hour: 8),
+        );
+      },
+    );
   });
 
   group('TestTime', () {

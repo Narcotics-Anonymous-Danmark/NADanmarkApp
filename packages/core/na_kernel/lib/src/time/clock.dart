@@ -11,4 +11,6 @@ abstract interface class Clock {
   LocalTime localTimeNow();
 
   TimeZoneId zone();
+
+  Instant instantOf({required LocalDate date, required LocalTime time});
 }

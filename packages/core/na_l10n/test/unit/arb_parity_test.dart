@@ -27,7 +27,7 @@ Set<String> keysOf({required String file}) {
   return switch (json) {
     final Map<String, Object?> map =>
       map.keys.where((key) => !key.startsWith('@')).toSet(),
-    _ => throw StateError('$file is not a JSON object'),
+    Object() || null => throw StateError('$file is not a JSON object'),
   };
 }
 

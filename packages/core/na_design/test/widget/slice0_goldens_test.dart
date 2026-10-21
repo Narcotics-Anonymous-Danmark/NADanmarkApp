@@ -18,12 +18,14 @@ void main() {
         leading: NaIconButton(
           icon: NaIcons.menu,
           label: 'Åbn menu',
+          tone: NaTone.neutral,
           onPressed: () {},
         ),
         title: 'Indstillinger',
         trailing: NaIconButton(
           icon: NaIcons.back,
           label: 'Tilbage',
+          tone: NaTone.neutral,
           onPressed: () {},
         ),
       ),

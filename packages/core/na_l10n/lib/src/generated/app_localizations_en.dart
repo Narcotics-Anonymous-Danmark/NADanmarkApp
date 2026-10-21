@@ -691,4 +691,55 @@ class AppLocalizationsEn extends AppLocalizations {
   String nearbyRadiusValue(int km) {
     return 'Search radius: $km km';
   }
+
+  @override
+  String cleantimeDefaultProfileName(int position) {
+    return 'Profile $position';
+  }
+
+  @override
+  String get cleantimeSelectProfile => 'Select profile';
+
+  @override
+  String get cleantimeAddProfile => 'Add profile';
+
+  @override
+  String get cleantimeDeleteProfile => 'Delete profile';
+
+  @override
+  String cleantimeKeyTag(String anniversary) {
+    return '$anniversary key tag';
+  }
+
+  @override
+  String cleantimeHomeBreakdown(String years, String months, String days) {
+    return '$years, $months, $days';
+  }
+
+  @override
+  String cleantimeCardPosition(int position, int count) {
+    return 'Card $position of $count';
+  }
+
+  @override
+  String get datePickerDay => 'Day';
+
+  @override
+  String get datePickerMonth => 'Month';
+
+  @override
+  String get datePickerYear => 'Year';
+
+  @override
+  String notificationCleandayTitle(String name) {
+    return 'Cleanday - $name';
+  }
+
+  @override
+  String notificationCleandayBody(String anniversary) {
+    return 'Congratulations on $anniversary';
+  }
+
+  @override
+  String get notificationChannelCleanday => 'Cleanday';
 }

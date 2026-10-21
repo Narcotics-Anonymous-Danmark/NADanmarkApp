@@ -23,6 +23,7 @@ void main() {
             NaIconButton(
               icon: NaIcons.menu,
               label: 'Menu',
+              tone: NaTone.neutral,
               onPressed: () => taps += 1,
             ),
             NaListRow(label: 'Sprog', value: 'Dansk', onTap: () => taps += 1),

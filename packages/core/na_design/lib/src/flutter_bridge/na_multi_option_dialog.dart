@@ -148,11 +148,13 @@ final class _NaMultiOptionSheetState<T> extends State<NaMultiOptionSheet<T>> {
                     NaDialogTextButton(
                       key: const Key('na-multi-option-cancel'),
                       label: widget.cancelLabel,
+                      availability: NaAvailability.enabled,
                       onTap: widget.onCancelled,
                     ),
                     NaDialogTextButton(
                       key: const Key('na-multi-option-confirm'),
                       label: widget.confirmLabel,
+                      availability: NaAvailability.enabled,
                       onTap: () =>
                           widget.onConfirmed(Set.unmodifiable(_checked)),
                     ),
@@ -170,33 +172,47 @@ final class _NaMultiOptionSheetState<T> extends State<NaMultiOptionSheet<T>> {
 final class NaDialogTextButton extends StatelessWidget {
   const NaDialogTextButton({
     required this.label,
+    required this.availability,
     required this.onTap,
     super.key,
   });
 
   final NaLabel label;
+  final NaAvailability availability;
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => Semantics(
-    button: true,
-    label: label.value,
-    child: GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minWidth: 64, minHeight: 48),
-        child: Padding(
-          padding: const EdgeInsets.all(Space.md),
-          child: ExcludeSemantics(
-            child: Text(
-              label.value.toUpperCase(),
-              textAlign: TextAlign.center,
-              style: NaTheme.of(context).typography.label,
+  Widget build(BuildContext context) {
+    final typography = NaTheme.of(context).typography;
+    return Semantics(
+      button: true,
+      enabled: availability == NaAvailability.enabled,
+      label: label.value,
+      child: GestureDetector(
+        onTap: switch (availability) {
+          NaAvailability.enabled => onTap,
+          NaAvailability.disabled => null,
+        },
+        behavior: HitTestBehavior.opaque,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minWidth: 64, minHeight: 48),
+          child: Padding(
+            padding: const EdgeInsets.all(Space.md),
+            child: ExcludeSemantics(
+              child: Text(
+                label.value.toUpperCase(),
+                textAlign: TextAlign.center,
+                style: switch (availability) {
+                  NaAvailability.enabled => typography.label,
+                  NaAvailability.disabled => typography.label.copyWith(
+                    color: NaTheme.of(context).colors.inkMuted,
+                  ),
+                },
+              ),
             ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
