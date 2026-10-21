@@ -8,6 +8,7 @@ import 'package:na_testing/src/legacy/legacy_store_mimic.dart';
 import 'package:na_testing/src/links/external_links_mimic.dart';
 import 'package:na_testing/src/location/geolocation_mimic.dart';
 import 'package:na_testing/src/meetings/meeting_port_mimics.dart';
+import 'package:na_testing/src/notifications/notifications_mimic.dart';
 import 'package:na_testing/src/settings/settings_store_mimic.dart';
 import 'package:na_testing/src/storage/key_value_store_mimic.dart';
 import 'package:na_testing/src/time/fake_clock.dart';
@@ -32,6 +33,7 @@ final class TestContainer {
     required this.meetingSearch,
     required this.meetingFormats,
     required this.geolocation,
+    required this.notifications,
   });
 
   factory TestContainer.build({
@@ -72,6 +74,11 @@ final class TestContainer {
       promptAnswer: PromptAnswer.grant,
       delivery: FixAtOnce(fix: Located(point: aGeoPoint())),
     );
+    final notifications = NotificationsMimic(
+      permission: NotificationPermission.undetermined,
+      prompt: NotificationPrompt.grant,
+      behaviour: ScheduleBehaviour.accept,
+    );
     final container = ProviderContainer(
       overrides: [
         clockProvider.overrideWithValue(FakeClock(time: testTime)),
@@ -87,6 +94,7 @@ final class TestContainer {
         externalLinksPortProvider.overrideWithValue(links),
         appInfoProvider.overrideWithValue(info),
         geolocationPortProvider.overrideWithValue(geolocation),
+        notificationsPortProvider.overrideWithValue(notifications),
         ...switch (meetingPorts) {
           MeetingPortBinding.portMimics => [
             meetingSearchPortProvider.overrideWithValue(meetingSearch),
@@ -109,6 +117,7 @@ final class TestContainer {
       meetingSearch: meetingSearch,
       meetingFormats: meetingFormats,
       geolocation: geolocation,
+      notifications: notifications,
     );
   }
 
@@ -123,6 +132,7 @@ final class TestContainer {
   final MeetingSearchMimic meetingSearch;
   final MeetingFormatsMimic meetingFormats;
   final GeolocationMimic geolocation;
+  final NotificationsMimic notifications;
 
   T read<T>(ProviderListenable<T> provider) => container.read(provider);
 

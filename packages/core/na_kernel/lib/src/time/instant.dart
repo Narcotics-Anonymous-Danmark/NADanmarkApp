@@ -8,7 +8,7 @@ extension type const Instant(DateTime utc) {
   )) {
     < 0 => Comparison.before,
     0 => Comparison.same,
-    _ => Comparison.after,
+    int() => Comparison.after,
   };
 
   int get epochMilliseconds => utc.millisecondsSinceEpoch;

@@ -1,3 +1,4 @@
+import 'package:feature_cleantime/feature_cleantime.dart';
 import 'package:feature_contact/feature_contact.dart';
 import 'package:feature_jft/feature_jft.dart';
 import 'package:feature_meetings/feature_meetings.dart';
@@ -99,6 +100,9 @@ final class DestinationPage extends StatelessWidget {
       body: switch (destination) {
         MenuDestination.home => HomeBody(
           cards: [
+            CleantimeHomeCards(
+              onTap: () => context.go(MenuDestination.cleantime.path.value),
+            ),
             JftPreviewCard(
               onTap: () => context.go(MenuDestination.justForToday.path.value),
             ),
@@ -112,8 +116,8 @@ final class DestinationPage extends StatelessWidget {
         ),
         MenuDestination.about => const ContactBody(),
         MenuDestination.nearby => const NearbyMeetingsPageBody(),
+        MenuDestination.cleantime => const CleantimeBody(),
         MenuDestination.map ||
-        MenuDestination.cleantime ||
         MenuDestination.events ||
         MenuDestination.audiobooks ||
         MenuDestination.speaks ||

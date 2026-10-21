@@ -18,14 +18,17 @@ String shapeName({required final Shape shape}) => switch (shape) {
 
 String sizeName({required final int size}) => switch (size) {
   0 => 'none',
-  _ => 'some',
+  int() => 'some',
 };
 
-String textName({required final String text}) {
-  switch (text) {
-    case 'a':
-      return 'first';
-    default:
-      return 'other';
-  }
-}
+String pairName({required final (Shape, Colour) pair}) => switch (pair) {
+  (Circle(), Colour()) => 'circle',
+  (Square(), Colour.red) => 'red square',
+  (Square(), Colour.green) => 'green square',
+};
+
+String valueName({required final Object? value}) => switch (value) {
+  final String text => text,
+  Object() => 'other',
+  null => 'nothing',
+};

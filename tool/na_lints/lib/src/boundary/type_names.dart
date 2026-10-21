@@ -2,8 +2,6 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 
-enum ScrutineeKind { enumType, sealedType, openType }
-
 Set<String> qualifiedSuperTypeNamesOf({
   required final ClassDeclaration declaration,
 }) {
@@ -39,21 +37,6 @@ Set<String> qualifiedTypeNamesOf({required final DartType type}) {
     return const {};
   }
   return _qualifiedNamesOf([type, ...type.element.allSupertypes]);
-}
-
-ScrutineeKind scrutineeKindOf({required final Expression expression}) {
-  final type = expression.staticType;
-  if (type is! InterfaceType) {
-    return ScrutineeKind.openType;
-  }
-  final element = type.element;
-  if (element is EnumElement) {
-    return ScrutineeKind.enumType;
-  }
-  if (element is ClassElement && element.isSealed) {
-    return ScrutineeKind.sealedType;
-  }
-  return ScrutineeKind.openType;
 }
 
 Set<String> _qualifiedNamesOf(final Iterable<InterfaceType> types) =>

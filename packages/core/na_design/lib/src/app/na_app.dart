@@ -16,7 +16,7 @@ final class NaApp extends StatelessWidget {
   final String title;
   final NaThemeData theme;
   final RouterConfig<Object> routerConfig;
-  final Iterable<LocalizationsDelegate<dynamic>> localizationsDelegates;
+  final Iterable<LocalizationsDelegate<Object>> localizationsDelegates;
   final Iterable<Locale> supportedLocales;
   final Locale locale;
 

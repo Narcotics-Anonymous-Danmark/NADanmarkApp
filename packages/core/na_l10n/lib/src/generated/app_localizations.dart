@@ -84,8 +84,8 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
+  static const List<LocalizationsDelegate<Object?>> localizationsDelegates =
+      <LocalizationsDelegate<Object?>>[
         delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
@@ -1375,6 +1375,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search radius: {km} km'**
   String nearbyRadiusValue(int km);
+
+  /// Name of a profile created without a name
+  ///
+  /// In en, this message translates to:
+  /// **'Profile {position}'**
+  String cleantimeDefaultProfileName(int position);
+
+  /// Accessible label of the cleantime profile selector
+  ///
+  /// In en, this message translates to:
+  /// **'Select profile'**
+  String get cleantimeSelectProfile;
+
+  /// Accessible label of the add profile button
+  ///
+  /// In en, this message translates to:
+  /// **'Add profile'**
+  String get cleantimeAddProfile;
+
+  /// Accessible label of the delete profile button
+  ///
+  /// In en, this message translates to:
+  /// **'Delete profile'**
+  String get cleantimeDeleteProfile;
+
+  /// Accessible label of the key tag image
+  ///
+  /// In en, this message translates to:
+  /// **'{anniversary} key tag'**
+  String cleantimeKeyTag(String anniversary);
+
+  /// Years, months and days on the home cleantime card
+  ///
+  /// In en, this message translates to:
+  /// **'{years}, {months}, {days}'**
+  String cleantimeHomeBreakdown(String years, String months, String days);
+
+  /// Accessible position of a home cleantime card
+  ///
+  /// In en, this message translates to:
+  /// **'Card {position} of {count}'**
+  String cleantimeCardPosition(int position, int count);
+
+  /// Accessible label of the date picker day wheel
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get datePickerDay;
+
+  /// Accessible label of the date picker month wheel
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get datePickerMonth;
+
+  /// Accessible label of the date picker year wheel
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get datePickerYear;
+
+  /// Title of the anniversary notification
+  ///
+  /// In en, this message translates to:
+  /// **'Cleanday - {name}'**
+  String notificationCleandayTitle(String name);
+
+  /// Body of the anniversary notification
+  ///
+  /// In en, this message translates to:
+  /// **'Congratulations on {anniversary}'**
+  String notificationCleandayBody(String anniversary);
+
+  /// Android notification channel for anniversaries
+  ///
+  /// In en, this message translates to:
+  /// **'Cleanday'**
+  String get notificationChannelCleanday;
 }
 
 class _AppLocalizationsDelegate

@@ -27,6 +27,8 @@ final class AppHarness {
 
   GeolocationMimic get geolocation => container.geolocation;
 
+  NotificationsMimic get notifications => container.notifications;
+
   TestTime get time => container.time;
 
   Future<void> dispose() => container.dispose();

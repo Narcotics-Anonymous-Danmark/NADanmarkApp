@@ -57,8 +57,8 @@ scenarios: `openspec/specs/legacy-migration/spec.md`.
 | `searchRange` | number | `Km searchRadiusKm` | copy if integer 5–50, else 15 |
 | `cleanTimeUnitSort` | `"ymd"` / `"dmy"` | `UnitOrder cleanTimeUnitOrder` | copy if valid, else `ymd` |
 | `theme` | string | — | dropped |
-| `cleanDateProfiles` | `[{name, cleandate: ISO with offset}]` | `List<CleantimeProfile>` (`LocalDate`) | keep valid entries; calendar date in the stored offset |
-| `activeProfile` | `"0"`, `"1"`, … | `ProfileIndex activeCleantimeProfile` | parse, clamp to range, else 0 |
+| `cleanDateProfiles` | `[{name, cleandate: ISO with offset}]` | `cleantimeProfiles` (`List<CleantimeProfile>`, `cleanDate` as `yyyy-MM-dd`) | keep entries with a leading valid date; calendar date in the stored offset; blank names become "Profil <n>" / "Profile <n>" |
+| `activeProfile` | `"0"`, `"1"`, … or a number | `activeCleantimeProfile` (`ProfileIndex`) | parse, clamp to range, else 0; only with imported profiles |
 | `meeting_formats_v1` | `{fetchedAt, formats}` | `MeetingFormatsCache` | copy when non-empty |
 | `mediaResume.book.<id>` | `{trackId, trackIndex, position, duration?, updatedAt}` | `ResumePoint` under the same key | copy when numeric |
 | `mediaResume.speak.<url>` | same | same key | same |
@@ -165,7 +165,7 @@ collapse into one ICU plural key. Values shown are the legacy strings.
 | `SPEAKS` | Speaks | Speaks | `pageSpeaks` | ported |
 | `JFT` | Dagens tekst | Just for today | `pageJustForToday` | ported |
 | `AUDIOBOOKS` | Lydbøger | Audiobooks | `pageAudiobooks` | ported |
-| `NACC` | Cleantimeberegner | Cleantime calculator | `pageCleantimeCalculator` | ported |
+| `NACC` | Cleantimeberegner | Cleantime calculator | `nacc` | ported |
 | `GRC` | Gruppeoplæsninger | Group readings | `pageGroupReadings` | ported |
 | `COMING_SOON` | Kommer snart. | *(missing)* | — | dropped (unused, da only) |
 | `COMING_SOON_BODY` | Vi arbejder på det .. | *(missing)* | — | dropped (unused, da only) |
@@ -179,41 +179,41 @@ collapse into one ICU plural key. Values shown are the legacy strings.
 | `TRADITIONS` | Traditioner | *(missing)* | — | dropped (da only, unused) |
 | `NA_HISTORY` | NA's historie | *(missing)* | — | dropped (da only, unused) |
 | `mapsearch.search` | Søg | Search | `mapSearchPlaceholder` | ported |
-| `CLEANTIME` | Cleantime | Cleantime | `cleantimeCardTitle` | ported |
-| `DATETIME` | Cleantimeberegner | Cleantime counter | `pageCleantimeCalculator` | ported |
-| `ENTERCLEANDATE` | Første clean dag | First clean day | `cleantimeFirstCleanDay` | ported |
-| `CLEANTIMEINDAYS` | Clean dage | Clean days | `cleantimeCleanDays` | ported |
-| `DAY` | dag | day | `unitDays (ICU plural)` | ported |
-| `DAYS` | dage | days | `unitDays (ICU plural)` | ported |
+| `CLEANTIME` | Cleantime | Cleantime | `cleantime` | ported |
+| `DATETIME` | Cleantimeberegner | Cleantime counter | `datetime` | ported |
+| `ENTERCLEANDATE` | Første clean dag | First clean day | `entercleandate` | ported |
+| `CLEANTIMEINDAYS` | Clean dage | Clean days | `cleantimeindays` | ported |
+| `DAY` | dag | day | `day` | ported |
+| `DAYS` | dage | days | `days` | ported |
 | `CLEANTIMEINWEEKS` | Clean uger | Clean weeks | — | dropped (unused) |
 | `WEEK` | uge | week | — | dropped (unused) |
 | `WEEKS` | uger | weeks | — | dropped (unused) |
-| `CLEANTIMEINYEARS` | Clean år | Clean years | `cleantimeCleanYears` | ported |
-| `YEAR` | år | year | `unitYears (ICU plural)` | ported |
-| `YEARS` | år | years | `unitYears (ICU plural)` | ported |
-| `CLEANTIMEINMONTHS` | Clean måneder | Clean months | `cleantimeCleanMonths` | ported |
-| `MONTH` | måned | month | `unitMonths (ICU plural)` | ported |
-| `MONTHS` | måneder | months | `unitMonths (ICU plural)` | ported |
-| `BIRTHDAY` | Mærkedag | Cleanday | `cleantimeCleanday` | ported |
-| `DAYCLEAN` | dag | day | `unitDays (ICU plural)` | ported |
-| `DAYSCLEAN` | dage | days | `unitDays (ICU plural)` | ported |
-| `MONTHCLEAN` | måned | month | `unitMonths (ICU plural)` | ported (was hard-coded in template) |
-| `MONTHSCLEAN` | måneder | months | `unitMonths (ICU plural)` | ported |
-| `YEARCLEAN` | år | year | `unitYears (ICU plural)` | ported |
-| `YEARSCLEAN` | år | years | `unitYears (ICU plural)` | ported |
-| `CLEANTIMEUNITSORT` | Cleantime sortering | Cleantime sorting | `settingsCleantimeSorting` | ported |
-| `DMY` | dage - måneder - år | days - months - years | `unitOrderDmy` | ported |
-| `YMD` | år - måneder - dage | years - months - days | `unitOrderYmd` | ported |
-| `OR` | ELLER | OR | `orSeparator` | ported |
+| `CLEANTIMEINYEARS` | Clean år | Clean years | `cleantimeinyears` | ported |
+| `YEAR` | år | year | `year` | ported |
+| `YEARS` | år | years | `years` | ported |
+| `CLEANTIMEINMONTHS` | Clean måneder | Clean months | `cleantimeinmonths` | ported |
+| `MONTH` | måned | month | `month` | ported |
+| `MONTHS` | måneder | months | `months` | ported |
+| `BIRTHDAY` | Mærkedag | Cleanday | `birthday` | ported |
+| `DAYCLEAN` | dag | day | `dayclean` | ported |
+| `DAYSCLEAN` | dage | days | `daysclean` | ported |
+| `MONTHCLEAN` | måned | month | `monthclean` | ported (was hard-coded in template) |
+| `MONTHSCLEAN` | måneder | months | `monthsclean` | ported |
+| `YEARCLEAN` | år | year | `yearclean` | ported |
+| `YEARSCLEAN` | år | years | `yearsclean` | ported |
+| `CLEANTIMEUNITSORT` | Cleantime sortering | Cleantime sorting | `cleantimeunitsort` | ported |
+| `DMY` | dage - måneder - år | days - months - years | `dmy` | ported |
+| `YMD` | år - måneder - dage | years - months - days | `ymd` | ported |
+| `OR` | ELLER | OR | `or` | ported |
 | `BACK` | Tilbage | Back | `back` | ported |
-| `NEWPROFILE` | Ny profil | New profile | `cleantimeNewProfile` | ported |
-| `NEWPROFILENAMEHERE` | Ny profilnavn her | New profile name here | `cleantimeNewProfileNamePlaceholder` | ported |
-| `CANCELBUTTON` | Afbryd | Cancel | `actionCancel` | ported |
-| `ADDBUTTON` | Opret | Create | `actionCreate` | ported |
-| `RENAMEPROFILE` | Omdøb profil | Rename profile | `cleantimeRenameProfile` | ported |
-| `RENAME` | Omdøb | Rename | `actionRename` | ported |
-| `AREYOUSURE` | Er du sikker? | Are you sure? | `confirmAreYouSure` | ported |
-| `DELETE` | Slet | Delete | `actionDelete` | ported |
+| `NEWPROFILE` | Ny profil | New profile | `newprofile` | ported |
+| `NEWPROFILENAMEHERE` | Ny profilnavn her | New profile name here | `newprofilenamehere` | ported |
+| `CANCELBUTTON` | Afbryd | Cancel | `cancelbutton` | ported |
+| `ADDBUTTON` | Opret | Create | `addbutton` | ported |
+| `RENAMEPROFILE` | Omdøb profil | Rename profile | `renameprofile` | ported |
+| `RENAME` | Omdøb | Rename | `rename` | ported |
+| `AREYOUSURE` | Er du sikker? | Are you sure? | `areyousure` | ported |
+| `DELETE` | Slet | Delete | `delete` | ported |
 | `PLAYER_CONTINUE` | Fortsæt afspilning | Continue playing | — | dropped (superseded by PLAYER_CONTINUE_LISTENING) |
 | `PLAYER_PLAY` | Afspil | Play | `playerPlay` | ported |
 | `PLAYER_PAUSE` | Pause | Pause | `playerPause` | ported |
@@ -259,12 +259,16 @@ or new states). Slice 0 added: `languageDanish`, `languageEnglish`,
 `contactNaOnlineTitle`, `contactAboutTitle`, `contactSourceCode`,
 `contactBugReports`, `contactBuildType`, `contactVersion`,
 `contactFinePrintTitle`, `contactFinePrintBody`, `contactImportedSettings`,
-`jftCopyright`, `jftUnavailable`. Planned for later slices: `contactMeetingListChangesTitle`, `contactMeetingListServant`,
+`jftCopyright`, `jftUnavailable`. Slice 3 added: `cleantimeDefaultProfileName`,
+`cleantimeSelectProfile`, `cleantimeAddProfile`, `cleantimeDeleteProfile`,
+`cleantimeKeyTag`, `cleantimeHomeBreakdown`, `cleantimeCardPosition`,
+`datePickerDay`, `datePickerMonth`, `datePickerYear`,
+`notificationCleandayTitle`, `notificationCleandayBody`,
+`notificationChannelCleanday`. Planned for later slices: `contactMeetingListChangesTitle`, `contactMeetingListServant`,
 `contactNaOnlineTitle`, `contactAboutTitle`, `contactBuildType`,
 `contactVersion`, `contactFinePrintTitle`, `contactFinePrintBody`,
 `contactNotApprovedTitle`, `contactNotApprovedBody`, `contactImportedSettings`,
-`cleantimeDefaultProfileName`, `cleantimeSelect`, `notificationCleandayTitle`,
-`notificationCleandayBody`, `readingsSelectPlaceholder`, `eventsLoadError`,
+`readingsSelectPlaceholder`, `eventsLoadError`,
 `eventsRetry`, `loadingEvents`, `mapUnavailable`, `jftCopyright`,
 `menuVersion`.
 

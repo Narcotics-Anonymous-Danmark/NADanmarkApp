@@ -87,6 +87,10 @@ abstract final class SettingKeys {
   static const StorageKey firstDayOfWeek = StorageKey('firstday');
   static const StorageKey cleanTimeUnitOrder = StorageKey('cleanTimeUnitSort');
   static const StorageKey searchRadius = StorageKey('searchRange');
+  static const StorageKey cleantimeProfiles = StorageKey('cleantimeProfiles');
+  static const StorageKey activeCleantimeProfile = StorageKey(
+    'activeCleantimeProfile',
+  );
   static const StorageKey legacyMigrationCompleted = StorageKey(
     'legacyMigration.completed',
   );

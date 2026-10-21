@@ -20,9 +20,13 @@ dependencies:
     path: ../packages/adapters/adapter_legacy_store
   adapter_links:
     path: ../packages/adapters/adapter_links
+  adapter_notifications:
+    path: ../packages/adapters/adapter_notifications
   adapter_storage:
     path: ../packages/adapters/adapter_storage
   dio: 5.11.1
+  feature_cleantime:
+    path: ../packages/features/feature_cleantime
   feature_contact:
     path: ../packages/features/feature_contact
   feature_jft:

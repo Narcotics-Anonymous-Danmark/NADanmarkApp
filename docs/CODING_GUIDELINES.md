@@ -60,6 +60,12 @@ parameter can say what the value is. This applies to tests too: write one typed
 test per value type (or a sealed test-case type) instead of a heterogeneous
 `Object` list. Loosely typed data exists only in generated wire DTOs.
 
+**Never `dynamic`.** Not in collections (`List<dynamic>`), maps or patterns.
+Where untyped JSON has to be handled (wire converters, `WireJson`), the
+loosest type is `Object?`: `WireObject` is `Map<String, Object?>`, and lists
+are matched as `List<Object?>`. Generated `*.g.dart` code is the only
+exception.
+
 ```dart
 // bad
 List<(Object, Object)> copies() => [(const InPerson(), const InPerson())];
@@ -75,6 +81,14 @@ exported API.
 ## Control flow
 
 **Exhaustive `switch` expressions with pattern matching, no `_` and no `default`.**
+This applies everywhere, boundary and tests included, and to every pattern
+position. Name what is matched:
+- a sealed subtype or enum value (`Err()`, `NoAnniversary()`);
+- `Object()` (with `|| null` when nullable) for a genuinely open value;
+- `int()` or `String()` for the rest of a primitive switch;
+- `Record()` for the rest of a record switch.
+
+Never `_ =>`, `(_, x)`, `[_, ...]` or `final T _`.
 `na_lints/avoid_wildcard_switch`, `no_default_cases`.
 
 ```dart
@@ -82,6 +96,12 @@ final label = switch (venue) {
   InPerson(:final address) => address.city,
   Virtual(:final link) => link.host,
 };
+// bad
+_ => null,
+(Circle(), _) => 'circle',
+// good
+Object() || null => null,
+(Circle(), Colour()) => 'circle',
 ```
 
 **Collections are transformed functionally.** `map`, `where`, `fold`, `expand`,
@@ -118,7 +138,7 @@ final name = json['meeting_name'] as String;
 @JsonSerializable(createToJson: false)
 final class BmltMeetingDto {
   const BmltMeetingDto({this.meetingName});
-  factory BmltMeetingDto.fromJson(Map<String, dynamic> json) => _$BmltMeetingDtoFromJson(json);
+  factory BmltMeetingDto.fromJson(WireObject json) => _$BmltMeetingDtoFromJson(json);
   @JsonKey(name: 'meeting_name') final String? meetingName;
 }
 Outcome<Meeting, DecodeFailure> toMeeting(BmltMeetingDto dto) => ...;

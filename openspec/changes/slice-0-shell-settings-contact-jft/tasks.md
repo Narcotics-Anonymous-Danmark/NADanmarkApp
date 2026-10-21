@@ -14,6 +14,11 @@
   (municipalities, meeting list, formats popover from slice 1; nearby results,
   "Location not set" and error from slice 2), and check that "Meetings nearby"
   shows the `NSLocationWhenInUseUsageDescription` prompt with the legacy text
-  and searches after "Allow While Using App" and after "Don't Allow"
+  and searches after "Allow While Using App" and after "Don't Allow".
+  For slice 3: build iOS with `flutter_local_notifications` (the
+  `UNUserNotificationCenter` delegate in `AppDelegate.swift`), check that the
+  notification permission is asked on the first Home visit with an upcoming
+  anniversary, that a scheduled Cleanday notification is delivered, and capture
+  the iOS da/en screenshots for `docs/screenshots/cleantime/`
 - [ ] Patrol run on the Android emulator through `./bin/na test e2e`
 - [ ] Archive: fold into `openspec/specs/` once merged

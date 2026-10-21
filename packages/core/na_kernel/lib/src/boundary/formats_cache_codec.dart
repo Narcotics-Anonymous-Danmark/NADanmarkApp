@@ -46,7 +46,7 @@ final class FormatsCacheCodec {
         rows: _mapper.formatRowsOf(dtos: formats),
       ),
     ),
-    _ => const Err(
+    Record() => const Err(
       error: DecodeFailure(detail: 'formats cache: fetchedAt or formats'),
     ),
   };

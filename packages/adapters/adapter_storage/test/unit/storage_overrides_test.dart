@@ -12,7 +12,7 @@ import 'package:shared_preferences_platform_interface/shared_preferences_async_p
 
 final class _RefusingPlatform extends SharedPreferencesAsyncPlatform {
   @override
-  dynamic noSuchMethod(Invocation invocation) =>
+  Object? noSuchMethod(Invocation invocation) =>
       throw Exception('disk full: ${invocation.memberName}');
 }
 

@@ -1,6 +1,7 @@
 import 'package:meta/meta.dart';
 import 'package:na_kernel/boundary.dart';
 import 'package:na_kernel/na_kernel.dart';
+import 'package:na_l10n/na_l10n.dart';
 import 'package:na_ports/na_ports.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -74,6 +75,9 @@ final class LegacyMigration {
       LegacySettingsTranslator();
   static const LegacyMeetingFormatsTranslator _formatsTranslator =
       LegacyMeetingFormatsTranslator();
+  static const LegacyCleantimeTranslator _cleantimeTranslator =
+      LegacyCleantimeTranslator();
+  static const CleantimeProfilesCodec _profilesCodec = CleantimeProfilesCodec();
 
   Future<MigrationRun> runIfNeeded() async {
     switch (await store.read(key: SettingKeys.legacyMigrationCompleted)) {
@@ -91,12 +95,21 @@ final class LegacyMigration {
     };
     await _importSettings(translation: translation);
     final formats = await _importFormatsCache(read: read);
+    final cleantime = await _importCleantime(
+      read: read,
+      language: translation.settings.language,
+    );
     final marker = LegacyMigrationMarker(
       appVersion: appInfo.version,
       completedAt: clock.now(),
       importedKeys:
-          KeyCount(translation.importedKeys.length) + formats.imported,
-      skippedKeys: KeyCount(translation.skippedKeys.length) + formats.skipped,
+          KeyCount(translation.importedKeys.length) +
+          formats.imported +
+          cleantime.imported,
+      skippedKeys:
+          KeyCount(translation.skippedKeys.length) +
+          formats.skipped +
+          cleantime.skipped,
     );
     await store.write(
       key: SettingKeys.legacyMigrationCompleted,
@@ -140,6 +153,45 @@ final class LegacyMigration {
       case SkipFormatsCache():
         return (imported: const KeyCount(0), skipped: const KeyCount(1));
     }
+  }
+
+  Future<({KeyCount imported, KeyCount skipped})> _importCleantime({
+    required LegacyStoreRead read,
+    required Language language,
+  }) async {
+    final dump = switch (read) {
+      LegacyStoreFound(:final dump) => dump,
+      LegacyStoreAbsent() ||
+      LegacyStoreUnreadable() => const LegacyStoreDumpDto(),
+    };
+    final l10n = lookupAppLocalizations(language.locale);
+    final translation = _cleantimeTranslator.translate(
+      dump: dump,
+      unnamed: (index) =>
+          ProfileName(l10n.cleantimeDefaultProfileName(index.position + 1)),
+    );
+    switch (translation.import) {
+      case ImportCleantime(:final profiles):
+        switch (await store.read(key: SettingKeys.cleantimeProfiles)) {
+          case StoredString():
+            break;
+          case NothingStored():
+            await store.write(
+              key: SettingKeys.cleantimeProfiles,
+              value: _profilesCodec.encodeProfiles(profiles: profiles.entries),
+            );
+            await store.write(
+              key: SettingKeys.activeCleantimeProfile,
+              value: _profilesCodec.encodeActive(index: profiles.active),
+            );
+        }
+      case SkipCleantime():
+        break;
+    }
+    return (
+      imported: KeyCount(translation.importedKeys.length),
+      skipped: KeyCount(translation.skippedKeys.length),
+    );
   }
 
   Future<void> _importSettings({

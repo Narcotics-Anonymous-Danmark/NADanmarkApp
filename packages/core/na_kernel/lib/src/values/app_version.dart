@@ -23,7 +23,7 @@ final class AppVersion {
 
   String get tag => switch (build) {
     1 => semantic,
-    _ => '$semantic-b$build',
+    int() => '$semantic-b$build',
   };
 
   @override

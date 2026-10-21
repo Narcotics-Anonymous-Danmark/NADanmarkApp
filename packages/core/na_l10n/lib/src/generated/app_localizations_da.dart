@@ -690,4 +690,55 @@ class AppLocalizationsDa extends AppLocalizations {
   String nearbyRadiusValue(int km) {
     return 'Søgeradius: $km km';
   }
+
+  @override
+  String cleantimeDefaultProfileName(int position) {
+    return 'Profil $position';
+  }
+
+  @override
+  String get cleantimeSelectProfile => 'Vælg profil';
+
+  @override
+  String get cleantimeAddProfile => 'Tilføj profil';
+
+  @override
+  String get cleantimeDeleteProfile => 'Slet profil';
+
+  @override
+  String cleantimeKeyTag(String anniversary) {
+    return 'Nøglering for $anniversary';
+  }
+
+  @override
+  String cleantimeHomeBreakdown(String years, String months, String days) {
+    return '$years, $months, $days';
+  }
+
+  @override
+  String cleantimeCardPosition(int position, int count) {
+    return 'Kort $position af $count';
+  }
+
+  @override
+  String get datePickerDay => 'Dag';
+
+  @override
+  String get datePickerMonth => 'Måned';
+
+  @override
+  String get datePickerYear => 'År';
+
+  @override
+  String notificationCleandayTitle(String name) {
+    return 'Mærkedag - $name';
+  }
+
+  @override
+  String notificationCleandayBody(String anniversary) {
+    return 'Tillykke med $anniversary';
+  }
+
+  @override
+  String get notificationChannelCleanday => 'Mærkedag';
 }

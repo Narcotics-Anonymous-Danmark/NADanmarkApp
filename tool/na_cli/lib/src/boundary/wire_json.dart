@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:json_annotation/json_annotation.dart';
 
-typedef WireObject = Map<String, dynamic>;
+typedef WireObject = Map<String, Object?>;
 
 sealed class WireRead<T> {
   const WireRead();
@@ -27,7 +27,7 @@ final class LenientText implements JsonConverter<String?, Object?> {
   String? fromJson(final Object? json) => switch (json) {
     final String text => text,
     final num number => number.toString(),
-    _ => null,
+    Object() || null => null,
   };
 
   @override
@@ -40,7 +40,7 @@ final class LenientFlag implements JsonConverter<bool?, Object?> {
   @override
   bool? fromJson(final Object? json) => switch (json) {
     final bool flag => flag,
-    _ => null,
+    Object() || null => null,
   };
 
   @override
@@ -67,7 +67,7 @@ final class WireJson {
     required final String text,
     required final T Function(WireObject json) fromJson,
   }) => switch (_parse(text: text)) {
-    WireDecoded<Object?>(value: final List<dynamic> items) => WireDecoded(
+    WireDecoded<Object?>(value: final List<Object?> items) => WireDecoded(
       value: List<T>.unmodifiable(
         items
             .whereType<WireObject>()

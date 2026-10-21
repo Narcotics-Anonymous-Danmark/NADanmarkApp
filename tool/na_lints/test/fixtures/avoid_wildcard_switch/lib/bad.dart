@@ -31,3 +31,22 @@ void describe({required final Shape shape}) {
       return;
   }
 }
+
+String sizeName({required final int size}) => switch (size) {
+  0 => 'none',
+  // expect_lint: avoid_wildcard_switch
+  _ => 'some',
+};
+
+String pairName({required final (Shape, Colour) pair}) => switch (pair) {
+  // expect_lint: avoid_wildcard_switch
+  (Circle(), _) => 'circle',
+  (Square(), Colour.red) => 'red square',
+  (Square(), Colour.green) => 'green square',
+};
+
+String typedName({required final Shape shape}) => switch (shape) {
+  // expect_lint: avoid_wildcard_switch
+  final Circle _ => 'circle',
+  Square() => 'square',
+};
