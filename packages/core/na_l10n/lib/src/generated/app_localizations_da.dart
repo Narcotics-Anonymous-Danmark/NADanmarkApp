@@ -741,4 +741,27 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get notificationChannelCleanday => 'Mærkedag';
+
+  @override
+  String get playerSeek => 'Afspilningsposition';
+
+  @override
+  String get playerLoading => 'Indlæser';
+
+  @override
+  String get playerUnknownTime => 'Ukendt varighed';
+
+  @override
+  String audiobookCover(String title) {
+    return 'Forside af $title';
+  }
+
+  @override
+  String get readingsSelect => 'Vælg venligst';
+
+  @override
+  String get audiobooksLoadFailed => 'Bogen kunne ikke indlæses.';
+
+  @override
+  String get readingsLoadFailed => 'Oplæsningerne kunne ikke indlæses.';
 }

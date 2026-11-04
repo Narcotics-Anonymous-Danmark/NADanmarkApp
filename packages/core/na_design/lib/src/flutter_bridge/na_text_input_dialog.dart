@@ -36,7 +36,7 @@ Future<NaTextEntry> showNaTextInputDialog({
   builder: (dialogContext) => NaTextInputSheet(
     title: title,
     placeholder: placeholder,
-    initialText: initialText,
+    controller: TextEditingController(text: initialText.value),
     cancelLabel: cancelLabel,
     confirmLabel: confirmLabel,
     onDone: (entry) => Navigator.of(dialogContext).pop(entry),
@@ -47,7 +47,7 @@ final class NaTextInputSheet extends StatefulWidget {
   const NaTextInputSheet({
     required this.title,
     required this.placeholder,
-    required this.initialText,
+    required this.controller,
     required this.cancelLabel,
     required this.confirmLabel,
     required this.onDone,
@@ -56,7 +56,7 @@ final class NaTextInputSheet extends StatefulWidget {
 
   final NaLabel title;
   final NaLabel placeholder;
-  final NaInputText initialText;
+  final TextEditingController controller;
   final NaLabel cancelLabel;
   final NaLabel confirmLabel;
   final ValueChanged<NaTextEntry> onDone;
@@ -66,10 +66,9 @@ final class NaTextInputSheet extends StatefulWidget {
 }
 
 final class _NaTextInputSheetState extends State<NaTextInputSheet> {
-  late final TextEditingController _controller = TextEditingController(
-    text: widget.initialText.value,
-  );
   final FocusNode _focus = FocusNode();
+
+  TextEditingController get _controller => widget.controller;
 
   NaAvailability get _confirm => _controller.text.trim().isEmpty
       ? NaAvailability.disabled

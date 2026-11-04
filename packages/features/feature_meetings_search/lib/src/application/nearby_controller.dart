@@ -53,14 +53,44 @@ final class SearchFailed extends NearbyResults {
 }
 
 @immutable
+sealed class NearbyRadius {
+  const NearbyRadius();
+}
+
+final class RadiusPending extends NearbyRadius {
+  const RadiusPending();
+
+  @override
+  int get hashCode => (RadiusPending).hashCode;
+
+  @override
+  bool operator ==(Object other) => other is RadiusPending;
+}
+
+final class RadiusChosen extends NearbyRadius {
+  const RadiusChosen({required this.radius});
+
+  final Km radius;
+
+  @override
+  int get hashCode => Object.hash(RadiusChosen, radius);
+
+  @override
+  bool operator ==(Object other) =>
+      other is RadiusChosen && other.radius == radius;
+}
+
+@immutable
 final class NearbyState {
   const NearbyState({required this.radius, required this.results});
 
-  final Km radius;
+  final NearbyRadius radius;
   final NearbyResults results;
 
-  NearbyState withRadius({required Km radius}) =>
-      NearbyState(radius: radius, results: results);
+  NearbyState withRadius({required Km radius}) => NearbyState(
+    radius: RadiusChosen(radius: radius),
+    results: results,
+  );
 
   NearbyState withResults({required NearbyResults results}) =>
       NearbyState(radius: radius, results: results);
@@ -75,24 +105,34 @@ final class NearbyState {
       other.results == results;
 }
 
+final Provider<Debouncer> nearbySliderDebouncerProvider = Provider.autoDispose(
+  (ref) {
+    final debouncer = ref
+        .read(schedulerProvider)
+        .debounce(window: NearbyMeetingsController.sliderDebounce);
+    ref.onDispose(debouncer.dispose);
+    return debouncer;
+  },
+);
+
 final class NearbyMeetingsController extends Notifier<NearbyState> {
   static const Duration grantedTimeout = Duration(seconds: 10);
   static const Duration promptTimeout = Duration(seconds: 45);
   static const Duration sliderDebounce = Duration(milliseconds: 500);
 
-  late Debouncer _debouncer;
   SearchOrigin _best = const DefaultPosition();
   LocateSlot _locating = const NoLocate();
-  SearchTicket _searchTicket = const SearchTicket(0);
+  _Search _search = const _NoSearch();
   final Set<BusySpan> _searchSpans = {};
 
   @override
   NearbyState build() {
-    _debouncer = ref.read(schedulerProvider).debounce(window: sliderDebounce);
-    ref.onDispose(_release);
+    ref
+      ..watch(nearbySliderDebouncerProvider)
+      ..onDispose(_release);
     unawaited(Future.microtask(_start));
     return const NearbyState(
-      radius: Km.searchRadiusFallback,
+      radius: RadiusPending(),
       results: AwaitingFirstResult(),
     );
   }
@@ -137,12 +177,12 @@ final class NearbyMeetingsController extends Notifier<NearbyState> {
 
   void changeRadius({required Km radius}) {
     state = state.withRadius(radius: radius);
-    _debouncer(action: () => unawaited(_search()));
+    _debouncer(action: () => unawaited(_searchNow()));
   }
 
   Future<void> retry() {
     state = state.withResults(results: const AwaitingFirstResult());
-    return _search();
+    return _searchNow();
   }
 
   BusyTracker get _tracker => BusyTracker(bus: ref.read(eventBusProvider));
@@ -171,7 +211,7 @@ final class NearbyMeetingsController extends Notifier<NearbyState> {
           case LocatePhase.waiting:
             _settle(run: run);
           case LocatePhase.timedOut:
-            unawaited(_search());
+            unawaited(_searchNow());
           case LocatePhase.finished:
             break;
         }
@@ -187,12 +227,12 @@ final class NearbyMeetingsController extends Notifier<NearbyState> {
 
   void _settle({required LocateRun run}) {
     run.finish();
-    unawaited(_search());
+    unawaited(_searchNow());
   }
 
   void _timedOut({required LocateRun run}) {
     run.timeOut();
-    unawaited(_search());
+    unawaited(_searchNow());
   }
 
   RunFreshness _freshnessOf({required LocateRun run}) =>
@@ -200,17 +240,26 @@ final class NearbyMeetingsController extends Notifier<NearbyState> {
       ? RunFreshness.current
       : RunFreshness.stale;
 
-  Future<void> _search() async {
-    _searchTicket = _searchTicket.next;
-    final ticket = _searchTicket;
+  Future<void> _searchNow() async {
+    switch (state.radius) {
+      case RadiusChosen(:final radius):
+        await _searchWith(radius: radius);
+      case RadiusPending():
+        return;
+    }
+  }
+
+  Future<void> _searchWith({required Km radius}) async {
+    final ticket = _SearchRun();
+    _search = ticket;
     final origin = _best;
     final span = _tracker.begin(activity: BusyActivity.findingMeetings);
     _searchSpans.add(span);
     try {
       final outcome = await ref
           .read(meetingSearchPortProvider)
-          .nearbyMeetings(centre: origin.point, radius: state.radius);
-      if (!ref.mounted || ticket != _searchTicket) {
+          .nearbyMeetings(centre: origin.point, radius: radius);
+      if (!ref.mounted || !identical(ticket, _search)) {
         return;
       }
       state = state.withResults(
@@ -225,8 +274,9 @@ final class NearbyMeetingsController extends Notifier<NearbyState> {
     }
   }
 
+  Debouncer get _debouncer => ref.read(nearbySliderDebouncerProvider);
+
   void _release() {
-    _debouncer.dispose();
     _locating.finish();
     for (final span in List.of(_searchSpans)) {
       span.end();
@@ -235,8 +285,16 @@ final class NearbyMeetingsController extends Notifier<NearbyState> {
   }
 }
 
-extension type const SearchTicket(int value) {
-  SearchTicket get next => SearchTicket(value + 1);
+sealed class _Search {
+  const _Search();
+}
+
+final class _NoSearch extends _Search {
+  const _NoSearch();
+}
+
+final class _SearchRun extends _Search {
+  _SearchRun();
 }
 
 enum LocatePhase { waiting, timedOut, finished }

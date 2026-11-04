@@ -84,8 +84,8 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<Object?>> localizationsDelegates =
-      <LocalizationsDelegate<Object?>>[
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
         delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
@@ -1453,6 +1453,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cleanday'**
   String get notificationChannelCleanday;
+
+  /// Accessible label of the docked player seek slider
+  ///
+  /// In en, this message translates to:
+  /// **'Playback position'**
+  String get playerSeek;
+
+  /// Accessible label of the docked player spinner
+  ///
+  /// In en, this message translates to:
+  /// **'Loading'**
+  String get playerLoading;
+
+  /// Read instead of --:-- while the length is unknown
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown duration'**
+  String get playerUnknownTime;
+
+  /// Accessible label of a book cover
+  ///
+  /// In en, this message translates to:
+  /// **'Cover of {title}'**
+  String audiobookCover(String title);
+
+  /// Label of the group readings selector
+  ///
+  /// In en, this message translates to:
+  /// **'Please select'**
+  String get readingsSelect;
+
+  /// Shown when a bundled book cannot be read
+  ///
+  /// In en, this message translates to:
+  /// **'The book could not be loaded.'**
+  String get audiobooksLoadFailed;
+
+  /// Shown when the bundled readings cannot be read
+  ///
+  /// In en, this message translates to:
+  /// **'The readings could not be loaded.'**
+  String get readingsLoadFailed;
 }
 
 class _AppLocalizationsDelegate

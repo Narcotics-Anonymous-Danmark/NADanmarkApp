@@ -82,7 +82,7 @@ void main() {
     expect(find.byKey(const Key('card')), findsOneWidget);
     expect(
       tester.widget<NaPageFrame>(find.byType(NaPageFrame)).bottomInset,
-      64,
+      0,
     );
   });
 

@@ -31,4 +31,11 @@ abstract final class NaIcons {
   static const IconData edit = PhosphorIconsRegular.pencilSimple;
   static const IconData trash = PhosphorIconsRegular.trash;
   static const IconData addPlain = PhosphorIconsRegular.plus;
+  static const IconData pause = PhosphorIconsRegular.pauseCircle;
+  static const IconData playFilled = PhosphorIconsFill.playCircle;
+  static const IconData pauseFilled = PhosphorIconsFill.pauseCircle;
+  static const IconData rewind = PhosphorIconsRegular.rewind;
+  static const IconData fastForward = PhosphorIconsRegular.fastForward;
+  static const IconData skipBack = PhosphorIconsRegular.skipBack;
+  static const IconData skipForward = PhosphorIconsRegular.skipForward;
 }

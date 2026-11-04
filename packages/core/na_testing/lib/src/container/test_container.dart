@@ -5,8 +5,11 @@ import 'package:na_testing/src/builders/time_builders.dart';
 import 'package:na_testing/src/events/recording_event_bus.dart';
 import 'package:na_testing/src/jft/jft_mimic.dart';
 import 'package:na_testing/src/legacy/legacy_store_mimic.dart';
+import 'package:na_testing/src/library/library_mimics.dart';
 import 'package:na_testing/src/links/external_links_mimic.dart';
 import 'package:na_testing/src/location/geolocation_mimic.dart';
+import 'package:na_testing/src/media/audio_engine_mimic.dart';
+import 'package:na_testing/src/media/media_session_mimic.dart';
 import 'package:na_testing/src/meetings/meeting_port_mimics.dart';
 import 'package:na_testing/src/notifications/notifications_mimic.dart';
 import 'package:na_testing/src/settings/settings_store_mimic.dart';
@@ -34,6 +37,10 @@ final class TestContainer {
     required this.meetingFormats,
     required this.geolocation,
     required this.notifications,
+    required this.engine,
+    required this.session,
+    required this.audiobooks,
+    required this.readings,
   });
 
   factory TestContainer.build({
@@ -79,6 +86,14 @@ final class TestContainer {
       prompt: NotificationPrompt.grant,
       behaviour: ScheduleBehaviour.accept,
     );
+    final engine = AudioEngineMimic(
+      time: testTime,
+      start: EngineStart.whenPlayed,
+      reportedLength: const UnknownLength(),
+    );
+    final session = MediaSessionMimic();
+    final audiobooks = AudiobooksMimic.synthetic();
+    final readings = ReadingsMimic.synthetic();
     final container = ProviderContainer(
       overrides: [
         clockProvider.overrideWithValue(FakeClock(time: testTime)),
@@ -95,6 +110,10 @@ final class TestContainer {
         appInfoProvider.overrideWithValue(info),
         geolocationPortProvider.overrideWithValue(geolocation),
         notificationsPortProvider.overrideWithValue(notifications),
+        audioEnginePortProvider.overrideWithValue(engine),
+        mediaSessionPortProvider.overrideWithValue(session),
+        audiobooksPortProvider.overrideWithValue(audiobooks),
+        readingsPortProvider.overrideWithValue(readings),
         ...switch (meetingPorts) {
           MeetingPortBinding.portMimics => [
             meetingSearchPortProvider.overrideWithValue(meetingSearch),
@@ -118,6 +137,10 @@ final class TestContainer {
       meetingFormats: meetingFormats,
       geolocation: geolocation,
       notifications: notifications,
+      engine: engine,
+      session: session,
+      audiobooks: audiobooks,
+      readings: readings,
     );
   }
 
@@ -133,11 +156,17 @@ final class TestContainer {
   final MeetingFormatsMimic meetingFormats;
   final GeolocationMimic geolocation;
   final NotificationsMimic notifications;
+  final AudioEngineMimic engine;
+  final MediaSessionMimic session;
+  final AudiobooksMimic audiobooks;
+  final ReadingsMimic readings;
 
   T read<T>(ProviderListenable<T> provider) => container.read(provider);
 
   Future<void> dispose() async {
     container.dispose();
     await events.dispose();
+    await engine.dispose();
+    await session.dispose();
   }
 }

@@ -13,20 +13,16 @@ import '../support/run_cli.dart';
 import '../support/simple_mimics.dart';
 
 void main() {
-  late ConsoleMimic console;
-  late FileSystemMimic files;
-
-  setUp(() {
-    console = ConsoleMimic();
-    files = FileSystemMimic(
-      files: {
-        '$testRoot/tool/toolchain.env': 'ANDROID_AVD_NAME=na_avd\n',
-        '/repo/env/dev.json': jsonEncode({'GOOGLE_MAPS_API_KEY': 'dev-key'}),
-      },
-    );
-  });
+  FileSystemMimic seededFiles() => FileSystemMimic(
+    files: {
+      '$testRoot/tool/toolchain.env': 'ANDROID_AVD_NAME=na_avd\n',
+      '/repo/env/dev.json': jsonEncode({'GOOGLE_MAPS_API_KEY': 'dev-key'}),
+    },
+  );
 
   test('emulator start boots the AVD and waits for boot', () async {
+    final console = ConsoleMimic();
+    final files = seededFiles();
     final runner = ProcessRunnerMimic(
       responses: [
         whenRunSequence(
@@ -66,6 +62,8 @@ void main() {
   test(
     'run picks the physical device, writes Secrets.xcconfig, passes args',
     () async {
+      final console = ConsoleMimic();
+      final files = seededFiles();
       final runner = ProcessRunnerMimic(
         responses: [
           whenRun(
@@ -99,6 +97,8 @@ void main() {
   );
 
   test('run --device fails when only emulators exist', () async {
+    final console = ConsoleMimic();
+    final files = seededFiles();
     final runner = ProcessRunnerMimic(
       responses: [
         whenRun(
@@ -116,6 +116,8 @@ void main() {
   });
 
   test('emulator stop kills adb emulators', () async {
+    final console = ConsoleMimic();
+    final files = seededFiles();
     final runner = ProcessRunnerMimic();
     await runCli(
       context: aContext(files: files, console: console, processes: runner),

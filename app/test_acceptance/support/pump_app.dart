@@ -1,3 +1,4 @@
+import 'package:adapter_assets/adapter_assets.dart';
 import 'package:adapter_bmlt/adapter_bmlt.dart';
 import 'package:adapter_jft/adapter_jft.dart';
 import 'package:dio/dio.dart';
@@ -28,6 +29,10 @@ final class AppHarness {
   GeolocationMimic get geolocation => container.geolocation;
 
   NotificationsMimic get notifications => container.notifications;
+
+  AudioEngineMimic get engine => container.engine;
+
+  MediaSessionMimic get session => container.session;
 
   TestTime get time => container.time;
 
@@ -90,6 +95,7 @@ Future<AppHarness> pumpApp({
       .then(
         (loaded) => loaded ?? const Err(error: UnavailableFailure(what: 'jft')),
       );
+  await loadBundledLibrary(tester: tester, harness: harness);
   await AppStartup(container: harness.container).run();
   await tester.pumpWidget(
     UncontrolledProviderScope(
@@ -106,6 +112,31 @@ Future<AppHarness> pumpApp({
       await pumpFrames(tester);
   }
   return AppHarness(container: harness, systemPops: systemPops);
+}
+
+Future<void> loadBundledLibrary({
+  required WidgetTester tester,
+  required TestContainer harness,
+}) async {
+  final bundle = RepoAssetBundle.locate();
+  final books = AssetAudiobooks(bundle: bundle);
+  for (final book in AudiobookId.values) {
+    harness.audiobooks.serve(
+      book: book,
+      outcome: await tester
+          .runAsync(() => books.load(book: book))
+          .then(
+            (loaded) =>
+                loaded ?? Err(error: UnavailableFailure(what: book.name)),
+          ),
+    );
+  }
+  harness.readings.outcome = await tester
+      .runAsync(() => AssetReadings(bundle: bundle).load())
+      .then(
+        (loaded) =>
+            loaded ?? const Err(error: UnavailableFailure(what: 'readings')),
+      );
 }
 
 Future<void> pumpFrames(WidgetTester tester) async {

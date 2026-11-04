@@ -742,4 +742,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationChannelCleanday => 'Cleanday';
+
+  @override
+  String get playerSeek => 'Playback position';
+
+  @override
+  String get playerLoading => 'Loading';
+
+  @override
+  String get playerUnknownTime => 'Unknown duration';
+
+  @override
+  String audiobookCover(String title) {
+    return 'Cover of $title';
+  }
+
+  @override
+  String get readingsSelect => 'Please select';
+
+  @override
+  String get audiobooksLoadFailed => 'The book could not be loaded.';
+
+  @override
+  String get readingsLoadFailed => 'The readings could not be loaded.';
 }

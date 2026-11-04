@@ -44,6 +44,7 @@ LegacyStoreDumpDto _$LegacyStoreDumpDtoFromJson(Map<String, dynamic> json) =>
             'activeProfile',
             (v) => const LenientText().fromJson(v),
           ),
+          mediaResume: $checkedConvert('mediaResume', (v) => _resumePoints(v)),
         );
         return val;
       },
@@ -63,6 +64,7 @@ Map<String, dynamic> _$LegacyStoreDumpDtoToJson(
       ?.map((e) => e.toJson())
       .toList(),
   'activeProfile': ?const LenientText().toJson(instance.activeProfile),
+  'mediaResume': ?_resumePointsJson(instance.mediaResume),
 };
 
 LegacyCleanDateProfileDto _$LegacyCleanDateProfileDtoFromJson(

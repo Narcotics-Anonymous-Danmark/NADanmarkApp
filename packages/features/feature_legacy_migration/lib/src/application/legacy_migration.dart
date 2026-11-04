@@ -78,6 +78,9 @@ final class LegacyMigration {
   static const LegacyCleantimeTranslator _cleantimeTranslator =
       LegacyCleantimeTranslator();
   static const CleantimeProfilesCodec _profilesCodec = CleantimeProfilesCodec();
+  static const LegacyResumeTranslator _resumeTranslator =
+      LegacyResumeTranslator();
+  static const ResumeCodec _resumeCodec = ResumeCodec();
 
   Future<MigrationRun> runIfNeeded() async {
     switch (await store.read(key: SettingKeys.legacyMigrationCompleted)) {
@@ -99,17 +102,20 @@ final class LegacyMigration {
       read: read,
       language: translation.settings.language,
     );
+    final resume = await _importResumePoints(read: read);
     final marker = LegacyMigrationMarker(
       appVersion: appInfo.version,
       completedAt: clock.now(),
       importedKeys:
           KeyCount(translation.importedKeys.length) +
           formats.imported +
-          cleantime.imported,
+          cleantime.imported +
+          resume.imported,
       skippedKeys:
           KeyCount(translation.skippedKeys.length) +
           formats.skipped +
-          cleantime.skipped,
+          cleantime.skipped +
+          resume.skipped,
     );
     await store.write(
       key: SettingKeys.legacyMigrationCompleted,
@@ -192,6 +198,50 @@ final class LegacyMigration {
       imported: KeyCount(translation.importedKeys.length),
       skipped: KeyCount(translation.skippedKeys.length),
     );
+  }
+
+  Future<({KeyCount imported, KeyCount skipped})> _importResumePoints({
+    required LegacyStoreRead read,
+  }) async {
+    final translation = _resumeTranslator.translate(
+      dump: switch (read) {
+        LegacyStoreFound(:final dump) => dump,
+        LegacyStoreAbsent() ||
+        LegacyStoreUnreadable() => const LegacyStoreDumpDto(),
+      },
+      importedAt: clock.now(),
+    );
+    for (final entry in translation.entries) {
+      await _writeIfAbsent(
+        key: entry.key,
+        value: _resumeCodec.encodePoint(point: entry.point),
+      );
+    }
+    for (final kind in PlaylistKind.values) {
+      final index = translation.indexOf(kind: kind);
+      if (index.points.isNotEmpty) {
+        await _writeIfAbsent(
+          key: kind.indexKey,
+          value: _resumeCodec.encodeIndex(index: index),
+        );
+      }
+    }
+    return (
+      imported: KeyCount(translation.importedKeys.length),
+      skipped: KeyCount(translation.skippedKeys.length),
+    );
+  }
+
+  Future<void> _writeIfAbsent({
+    required StorageKey key,
+    required String value,
+  }) async {
+    switch (await store.read(key: key)) {
+      case StoredString():
+        return;
+      case NothingStored():
+        await store.write(key: key, value: value);
+    }
   }
 
   Future<void> _importSettings({

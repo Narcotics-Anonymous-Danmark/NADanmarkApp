@@ -13,7 +13,7 @@ same PR as the change it describes.
 | 1 | meetings-search core: BMLT adapter, formats, meeting list/card, `/listfull` | Full list by municipality with all card rules |
 | 2 | meetings-search nearby: geolocation, radius search, `/location-search` | Nearby search with timeouts and slider |
 | 3 | cleantime | Profiles, breakdowns, key tags, notifications, home cards |
-| 4 | media-player, audiobooks, readings | Global player, 3 books, resume points, GRC page |
+| 4 | media-player, audiobooks, readings | Global player, 3 books, resume points, GRC page. Implemented in `openspec/changes/slice-4-media-player` |
 | 5 | speaks | Catalog normalisation, search, filters, continue listening |
 | 6 | events, home | Calendar feed, events page, home assembled from slices 0/3/6 |
 | 7 | meetings-map | Map, auto radius, clusters, places search, details modal |
@@ -60,9 +60,9 @@ scenarios: `openspec/specs/legacy-migration/spec.md`.
 | `cleanDateProfiles` | `[{name, cleandate: ISO with offset}]` | `cleantimeProfiles` (`List<CleantimeProfile>`, `cleanDate` as `yyyy-MM-dd`) | keep entries with a leading valid date; calendar date in the stored offset; blank names become "Profil <n>" / "Profile <n>" |
 | `activeProfile` | `"0"`, `"1"`, … or a number | `activeCleantimeProfile` (`ProfileIndex`) | parse, clamp to range, else 0; only with imported profiles |
 | `meeting_formats_v1` | `{fetchedAt, formats}` | `MeetingFormatsCache` | copy when non-empty |
-| `mediaResume.book.<id>` | `{trackId, trackIndex, position, duration?, updatedAt}` | `ResumePoint` under the same key | copy when numeric |
+| `mediaResume.book.<id>` | `{trackId, trackIndex, position, duration?, updatedAt}` | `ResumePoint` under the same key, stored as JSON text | copy when `trackIndex` and `position` are numbers; never overwrite; each key counts as imported or skipped |
 | `mediaResume.speak.<url>` | same | same key | same |
-| `mediaResume.index.book` / `.speak` | `{id: point}` | same key | rebuilt from imported points |
+| `mediaResume.index.book` / `.speak` | `{id: point}` | same key, JSON text | rebuilt from imported points, never read, not counted |
 | — | — | `legacyMigration.completed` | written once after import |
 
 ## Translation keys
@@ -164,9 +164,9 @@ collapse into one ICU plural key. Values shown are the legacy strings.
 | `STEP_WORKING_GUIDES` | Vejledninger i Trinarbejde | The NA Step Working Guides | `bookStepWorkingGuides` | ported |
 | `SPEAKS` | Speaks | Speaks | `pageSpeaks` | ported |
 | `JFT` | Dagens tekst | Just for today | `pageJustForToday` | ported |
-| `AUDIOBOOKS` | Lydbøger | Audiobooks | `pageAudiobooks` | ported |
+| `AUDIOBOOKS` | Lydbøger | Audiobooks | `audiobooks` | ported |
 | `NACC` | Cleantimeberegner | Cleantime calculator | `nacc` | ported |
-| `GRC` | Gruppeoplæsninger | Group readings | `pageGroupReadings` | ported |
+| `GRC` | Gruppeoplæsninger | Group readings | `grc` | ported |
 | `COMING_SOON` | Kommer snart. | *(missing)* | — | dropped (unused, da only) |
 | `COMING_SOON_BODY` | Vi arbejder på det .. | *(missing)* | — | dropped (unused, da only) |
 | `MONDAY_IS_FIRST_DAY_OF_WEEK` | true | *(missing)* | — | dropped (boolean, not a string) |
@@ -264,11 +264,15 @@ or new states). Slice 0 added: `languageDanish`, `languageEnglish`,
 `cleantimeKeyTag`, `cleantimeHomeBreakdown`, `cleantimeCardPosition`,
 `datePickerDay`, `datePickerMonth`, `datePickerYear`,
 `notificationCleandayTitle`, `notificationCleandayBody`,
-`notificationChannelCleanday`. Planned for later slices: `contactMeetingListChangesTitle`, `contactMeetingListServant`,
+`notificationChannelCleanday`. Slice 4 added: `playerSeek`, `playerLoading`,
+`playerUnknownTime`, `audiobookCover`, `audiobooksLoadFailed`,
+`readingsLoadFailed`. The legacy hard-coded "Vælg venligst" placeholder of the
+Group readings selector is dropped: the selector shows only the chosen title.
+Planned for later slices: `contactMeetingListChangesTitle`, `contactMeetingListServant`,
 `contactNaOnlineTitle`, `contactAboutTitle`, `contactBuildType`,
 `contactVersion`, `contactFinePrintTitle`, `contactFinePrintBody`,
 `contactNotApprovedTitle`, `contactNotApprovedBody`, `contactImportedSettings`,
-`readingsSelectPlaceholder`, `eventsLoadError`,
+`eventsLoadError`,
 `eventsRetry`, `loadingEvents`, `mapUnavailable`, `jftCopyright`,
 `menuVersion`.
 
@@ -276,8 +280,8 @@ or new states). Slice 0 added: `languageDanish`, `languageEnglish`,
 
 | Legacy | Flutter |
 |---|---|
-| `cordova-plugin-media` (AVPlayer / MediaPlayer) | `just_audio` |
-| `cordova-plugin-music-controls2` | `audio_service` |
+| `cordova-plugin-media` (AVPlayer / MediaPlayer) | `just_audio` + `audio_session` (`adapter_audio`) |
+| `cordova-plugin-music-controls2` | `audio_service` (`adapter_audio`; covers copied to the cache directory with `path_provider`) |
 | `na-cast` (local plugin, Cast sender SDK) | `na_cast` Flutter plugin, same Kotlin/Swift over MethodChannel/EventChannel |
 | `na-airplay-picker` (local plugin) | `na_airplay_picker` Flutter plugin, `UiKitView` around `AVRoutePickerView` |
 | `cordova-plugin-googlemaps-2` (map, clusters, `LocationService`, `Geocoder`, `Spherical`) | `google_maps_flutter` + clustering in `feature_meetings_map`, `geolocator`, `geocoding`, kernel haversine |

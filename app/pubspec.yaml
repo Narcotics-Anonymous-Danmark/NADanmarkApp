@@ -8,6 +8,10 @@ environment:
 resolution: workspace
 
 dependencies:
+  adapter_assets:
+    path: ../packages/adapters/adapter_assets
+  adapter_audio:
+    path: ../packages/adapters/adapter_audio
   adapter_bmlt:
     path: ../packages/adapters/adapter_bmlt
   adapter_clock:
@@ -25,6 +29,8 @@ dependencies:
   adapter_storage:
     path: ../packages/adapters/adapter_storage
   dio: 5.11.1
+  feature_audiobooks:
+    path: ../packages/features/feature_audiobooks
   feature_cleantime:
     path: ../packages/features/feature_cleantime
   feature_contact:
@@ -33,10 +39,14 @@ dependencies:
     path: ../packages/features/feature_jft
   feature_legacy_migration:
     path: ../packages/features/feature_legacy_migration
+  feature_media_player:
+    path: ../packages/features/feature_media_player
   feature_meetings:
     path: ../packages/features/feature_meetings
   feature_meetings_search:
     path: ../packages/features/feature_meetings_search
+  feature_readings:
+    path: ../packages/features/feature_readings
   feature_settings:
     path: ../packages/features/feature_settings
   feature_shell:

@@ -21,6 +21,9 @@ workspace:
   - packages/features/feature_meetings
   - packages/features/feature_meetings_search
   - packages/features/feature_cleantime
+  - packages/features/feature_media_player
+  - packages/features/feature_audiobooks
+  - packages/features/feature_readings
   - packages/adapters/adapter_bmlt
   - packages/adapters/adapter_geolocation
   - packages/adapters/adapter_clock
@@ -29,6 +32,8 @@ workspace:
   - packages/adapters/adapter_links
   - packages/adapters/adapter_legacy_store
   - packages/adapters/adapter_notifications
+  - packages/adapters/adapter_assets
+  - packages/adapters/adapter_audio
 
 dev_dependencies:
   coverage: 1.15.1

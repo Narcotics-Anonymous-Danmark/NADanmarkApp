@@ -11,10 +11,6 @@ import '../support/run_cli.dart';
 import '../support/simple_mimics.dart';
 
 void main() {
-  late ConsoleMimic console;
-
-  setUp(() => console = ConsoleMimic());
-
   FileSystemMimic files({
     final int instances = 128,
     final int watches = 65536,
@@ -41,6 +37,7 @@ void main() {
   test(
     'bootstrap --dry-run only runs checks and prints [run]/[skip]',
     () async {
+      final console = ConsoleMimic();
       final runner = ProcessRunnerMimic(
         responses: [whenRun(match: 'bash -c find', stdout: '10\n')],
       );
@@ -71,6 +68,7 @@ void main() {
   test(
     'bootstrap warns about exhausted inotify limits and continues',
     () async {
+      final console = ConsoleMimic();
       final runner = ProcessRunnerMimic(
         responses: [whenRun(match: 'bash -c find', stdout: '120\n')],
       );
@@ -86,6 +84,7 @@ void main() {
   );
 
   test('doctor reports the inotify blocker in the table and exits 1', () async {
+    final console = ConsoleMimic();
     final runner = ProcessRunnerMimic(
       responses: [
         whenRun(match: 'bash -c find', stdout: '120\n'),
@@ -103,6 +102,7 @@ void main() {
   });
 
   test('a healthy linux host only misses the always-run steps', () async {
+    final console = ConsoleMimic();
     final runner = ProcessRunnerMimic(
       responses: [
         whenRun(match: 'bash -c find', stdout: '10\n'),
@@ -156,6 +156,7 @@ void main() {
   test(
     'doctor lists the pinned Flutter and JDK as missing when they differ',
     () async {
+      final console = ConsoleMimic();
       final runner = ProcessRunnerMimic(
         responses: [
           whenRun(match: 'bash -c find', stdout: '10\n'),
@@ -178,6 +179,7 @@ void main() {
   );
 
   test('cmdline-tools is needed until cmdline-tools/latest exists', () async {
+    final console = ConsoleMimic();
     final fs = files(instances: 1024, watches: 1048576)
       ..writeText(
         path: const FilePath(

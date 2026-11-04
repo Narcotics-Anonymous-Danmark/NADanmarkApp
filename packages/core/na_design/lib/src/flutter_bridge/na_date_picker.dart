@@ -51,6 +51,10 @@ Future<NaDateChoice> showNaDatePicker({
   barrierLabel: cancelLabel,
   dismissed: const NaDateCancelled(),
   builder: (dialogContext) => NaDatePicker(
+    wheels: NaDateWheels.at(
+      date: NaDatePicker.clampDate(date: initial, first: first, last: last),
+      first: first,
+    ),
     initial: initial,
     first: first,
     last: last,
@@ -81,8 +85,26 @@ extension type const NaYearNumber(int value) {}
 
 extension type const NaWheelIndex(int value) {}
 
+final class NaDateWheels {
+  NaDateWheels.at({required LocalDate date, required LocalDate first})
+    : days = FixedExtentScrollController(initialItem: date.day - 1),
+      months = FixedExtentScrollController(initialItem: date.month - 1),
+      years = FixedExtentScrollController(initialItem: date.year - first.year);
+
+  final FixedExtentScrollController days;
+  final FixedExtentScrollController months;
+  final FixedExtentScrollController years;
+
+  void dispose() {
+    days.dispose();
+    months.dispose();
+    years.dispose();
+  }
+}
+
 final class NaDatePicker extends StatefulWidget {
   const NaDatePicker({
+    required this.wheels,
     required this.initial,
     required this.first,
     required this.last,
@@ -97,6 +119,7 @@ final class NaDatePicker extends StatefulWidget {
   static const double wheelHeight = itemExtent * 5;
   static const NaDayNumber longestMonth = NaDayNumber(31);
 
+  final NaDateWheels wheels;
   final LocalDate initial;
   final LocalDate first;
   final LocalDate last;
@@ -105,31 +128,59 @@ final class NaDatePicker extends StatefulWidget {
   final NaLabel confirmLabel;
   final ValueChanged<NaDateChoice> onDone;
 
+  static LocalDate clampDate({
+    required LocalDate date,
+    required LocalDate first,
+    required LocalDate last,
+  }) => switch (date.compareTo(other: first)) {
+    Comparison.before => first,
+    Comparison.same || Comparison.after => switch (date.compareTo(
+      other: last,
+    )) {
+      Comparison.after => last,
+      Comparison.before || Comparison.same => date,
+    },
+  };
+
   @override
   State<NaDatePicker> createState() => _NaDatePickerState();
 }
 
 final class _NaDatePickerState extends State<NaDatePicker> {
-  late NaDayNumber _day = NaDayNumber(_clamped(date: widget.initial).day);
-  late NaMonthNumber _month = NaMonthNumber(
-    _clamped(date: widget.initial).month,
-  );
-  late NaYearNumber _year = NaYearNumber(_clamped(date: widget.initial).year);
-  late final FixedExtentScrollController _days = FixedExtentScrollController(
-    initialItem: _day.index.value,
-  );
-  late final FixedExtentScrollController _months = FixedExtentScrollController(
-    initialItem: _month.index.value,
-  );
-  late final FixedExtentScrollController _years = FixedExtentScrollController(
-    initialItem: _yearIndex(year: _year).value,
-  );
+  _DateDraft _draft = const _AtInitial();
+
+  LocalDate get _start => _clamped(date: widget.initial);
+
+  NaDayNumber get _day => switch (_draft) {
+    _AtInitial() => NaDayNumber(_start.day),
+    _Turned(:final day) => day,
+  };
+
+  NaMonthNumber get _month => switch (_draft) {
+    _AtInitial() => NaMonthNumber(_start.month),
+    _Turned(:final month) => month,
+  };
+
+  NaYearNumber get _year => switch (_draft) {
+    _AtInitial() => NaYearNumber(_start.year),
+    _Turned(:final year) => year,
+  };
+
+  FixedExtentScrollController get _days => widget.wheels.days;
+
+  FixedExtentScrollController get _months => widget.wheels.months;
+
+  FixedExtentScrollController get _years => widget.wheels.years;
+
+  void _turn({
+    required NaDayNumber day,
+    required NaMonthNumber month,
+    required NaYearNumber year,
+  }) => setState(() => _draft = _Turned(day: day, month: month, year: year));
 
   @override
   void dispose() {
-    _days.dispose();
-    _months.dispose();
-    _years.dispose();
+    widget.wheels.dispose();
     super.dispose();
   }
 
@@ -150,16 +201,11 @@ final class _NaDatePickerState extends State<NaDatePicker> {
     ),
   );
 
-  LocalDate _clamped({required LocalDate date}) =>
-      switch (date.compareTo(other: widget.first)) {
-        Comparison.before => widget.first,
-        Comparison.same || Comparison.after => switch (date.compareTo(
-          other: widget.last,
-        )) {
-          Comparison.after => widget.last,
-          Comparison.before || Comparison.same => date,
-        },
-      };
+  LocalDate _clamped({required LocalDate date}) => NaDatePicker.clampDate(
+    date: date,
+    first: widget.first,
+    last: widget.last,
+  );
 
   static NaDayNumber _lastDayOf({
     required NaYearNumber year,
@@ -302,8 +348,10 @@ final class _NaDatePickerState extends State<NaDatePicker> {
                               ),
                             ),
                           ),
-                          onSelected: (index) => setState(
-                            () => _day = NaDayNumber(index.value + 1),
+                          onSelected: (index) => _turn(
+                            day: NaDayNumber(index.value + 1),
+                            month: _month,
+                            year: _year,
                           ),
                           onStep: (step) =>
                               _step(wheel: _Wheel.day, step: step),
@@ -329,8 +377,10 @@ final class _NaDatePickerState extends State<NaDatePicker> {
                               ),
                             ),
                           ),
-                          onSelected: (index) => setState(
-                            () => _month = NaMonthNumber(index.value + 1),
+                          onSelected: (index) => _turn(
+                            day: _day,
+                            month: NaMonthNumber(index.value + 1),
+                            year: _year,
                           ),
                           onStep: (step) =>
                               _step(wheel: _Wheel.month, step: step),
@@ -357,10 +407,10 @@ final class _NaDatePickerState extends State<NaDatePicker> {
                               availability: NaAvailability.enabled,
                             ),
                           ),
-                          onSelected: (index) => setState(
-                            () => _year = NaYearNumber(
-                              widget.first.year + index.value,
-                            ),
+                          onSelected: (index) => _turn(
+                            day: _day,
+                            month: _month,
+                            year: NaYearNumber(widget.first.year + index.value),
                           ),
                           onStep: (step) =>
                               _step(wheel: _Wheel.year, step: step),
@@ -483,4 +533,20 @@ final class NaDateWheel extends StatelessWidget {
       ),
     );
   }
+}
+
+sealed class _DateDraft {
+  const _DateDraft();
+}
+
+final class _AtInitial extends _DateDraft {
+  const _AtInitial();
+}
+
+final class _Turned extends _DateDraft {
+  const _Turned({required this.day, required this.month, required this.year});
+
+  final NaDayNumber day;
+  final NaMonthNumber month;
+  final NaYearNumber year;
 }

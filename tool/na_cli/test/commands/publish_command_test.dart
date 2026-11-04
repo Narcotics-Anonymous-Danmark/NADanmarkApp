@@ -20,21 +20,15 @@ const String upload =
     'https://androidpublisher.googleapis.com/upload/androidpublisher/v3';
 
 void main() {
-  late ConsoleMimic console;
-  late FileSystemMimic files;
-
-  setUp(() {
-    console = ConsoleMimic();
-    files = FileSystemMimic(
-      files: {
-        appPubspecPath: aPubspec(name: 'na_app', version: '2.0.0+1120000001'),
-        '/repo/dist/app.aab': 'BUNDLE',
-        '/repo/NOTES.md':
-            'x\n<!-- release-notes:start -->\nFixed things\n'
-            '<!-- release-notes:end -->\n',
-      },
-    );
-  });
+  FileSystemMimic seededFiles() => FileSystemMimic(
+    files: {
+      appPubspecPath: aPubspec(name: 'na_app', version: '2.0.0+1120000001'),
+      '/repo/dist/app.aab': 'BUNDLE',
+      '/repo/NOTES.md':
+          'x\n<!-- release-notes:start -->\nFixed things\n'
+          '<!-- release-notes:end -->\n',
+    },
+  );
 
   Map<String, String> environment({final String notesLanguage = 'da-DK'}) => {
     'CI': 'true',
@@ -49,6 +43,8 @@ void main() {
       HttpReply(status: const HttpStatus(200), body: body);
 
   test('refuses to publish outside CI without --yes', () async {
+    final console = ConsoleMimic();
+    final files = seededFiles();
     final code = await runCli(
       context: aContext(files: files, console: console),
       arguments: ['publish', 'play', '--aab', 'dist/app.aab'],
@@ -57,6 +53,8 @@ void main() {
   });
 
   test('play uploads through the edits API and commits', () async {
+    final console = ConsoleMimic();
+    final files = seededFiles();
     final http = HttpTransportMimic(
       replies: [
         ok('{"access_token":"tok"}'),
@@ -110,6 +108,8 @@ void main() {
   });
 
   test('play deletes the edit when the track update fails', () async {
+    final console = ConsoleMimic();
+    final files = seededFiles();
     final http = HttpTransportMimic(
       replies: [
         ok('{"access_token":"tok"}'),
@@ -134,6 +134,7 @@ void main() {
   });
 
   test('play stops on a token or edit response it cannot use', () async {
+    final files = seededFiles();
     for (final replies in [
       [ok('{"token":"x"}')],
       [ok('[]')],

@@ -5,6 +5,7 @@ import 'package:feature_settings/feature_settings.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:na_kernel/na_kernel.dart';
 import 'package:na_testing/na_testing.dart';
+import 'package:riverpod/misc.dart';
 
 void main() {
   test(
@@ -12,7 +13,14 @@ void main() {
     () async {
       final harness = TestContainer.build(storedValues: {'language': 'en'});
       addTearDown(harness.dispose);
-      expect(harness.read(currentLanguageProvider), Language.danish);
+      expect(
+        harness.read(settingsControllerProvider),
+        const SettingsNotLoaded(),
+      );
+      expect(
+        () => harness.read(currentLanguageProvider),
+        throwsA(isA<ProviderException>()),
+      );
       await harness.read(settingsControllerProvider.notifier).load();
       expect(harness.read(currentLanguageProvider), Language.english);
       expect(harness.storage.snapshot['firstday'], 'mo');
@@ -51,18 +59,37 @@ void main() {
   });
 
   test(
-    'a storage failure is surfaced as Failed and defaults stay in use',
+    'a storage failure is surfaced and the stored values stay in use',
     () async {
-      final harness = TestContainer.build();
+      final harness = TestContainer.build(storedValues: {'language': 'en'});
       addTearDown(harness.dispose);
       harness.storage.behaviour = WriteBehaviour.fail;
       final controller = harness.read(settingsControllerProvider.notifier);
       await controller.load();
-      expect(harness.read(settingsControllerProvider), isA<Failed<Settings>>());
-      expect(harness.read(currentSettingsProvider), Settings.defaults);
-      expect(controller.current, Settings.defaults);
+      expect(harness.read(settingsControllerProvider), isA<SettingsUnsaved>());
+      expect(harness.read(currentLanguageProvider), Language.english);
+      await controller.changeLanguage(language: Language.danish);
+      expect(controller.current.language, Language.english);
     },
   );
+
+  test('settings compare by state', () {
+    expect(const SettingsNotLoaded(), const SettingsNotLoaded());
+    expect(
+      const SettingsReady(settings: Settings.defaults),
+      const SettingsReady(settings: Settings.defaults),
+    );
+    expect(
+      const SettingsUnsaved(
+        settings: Settings.defaults,
+        failure: StorageFailure(detail: 'x'),
+      ).hashCode,
+      const SettingsUnsaved(
+        settings: Settings.defaults,
+        failure: StorageFailure(detail: 'x'),
+      ).hashCode,
+    );
+  });
 
   test('the radius draft tracks a drag and clears on release', () {
     final harness = TestContainer.build();

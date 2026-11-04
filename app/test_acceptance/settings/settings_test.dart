@@ -1,9 +1,11 @@
 @Tags(['acceptance'])
 library;
 
+import 'package:feature_settings/feature_settings.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:na_design/na_design.dart';
+import 'package:na_testing/na_testing.dart';
 
 import '../support/pump_app.dart';
 
@@ -132,6 +134,32 @@ void main() {
       addTearDown(app.dispose);
       expect(tester.widget<NaSlider>(find.byKey(slider)).value, 15);
       expect(app.storage.snapshot['searchRange'], '15');
+    });
+
+    testWidgets('A failed write keeps the settings in use', (tester) async {
+      final app = await pumpApp(
+        tester: tester,
+        initialLocation: '/settings',
+        container: realJftContainer(storedValues: {'language': 'en'}),
+      );
+      addTearDown(app.dispose);
+      app.storage.behaviour = WriteBehaviour.fail;
+      await chooseOption(tester: tester, row: language, option: 'Danish');
+      expect(pageText('Settings'), findsOneWidget);
+      expect(tester.widget<NaListRow>(find.byKey(language)).value, 'English');
+      expect(
+        app.container.read(settingsControllerProvider),
+        isA<SettingsUnsaved>(),
+      );
+    });
+
+    testWidgets('Settings are loaded before use', (tester) async {
+      final app = await pumpApp(tester: tester, initialLocation: '/settings');
+      addTearDown(app.dispose);
+      expect(
+        app.container.read(settingsControllerProvider),
+        isA<SettingsReady>(),
+      );
     });
   });
 }

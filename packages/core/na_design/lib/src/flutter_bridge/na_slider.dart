@@ -28,19 +28,18 @@ final class _NaSliderState extends State<NaSlider> {
   static const double thumbRadius = 12;
   static const double height = 48;
 
-  int _value = 0;
+  _SliderDraft _draft = const _WidgetValue();
 
-  @override
-  void initState() {
-    super.initState();
-    _value = widget.value;
-  }
+  int get _value => switch (_draft) {
+    _WidgetValue() => widget.value,
+    _LocalValue(:final value) => value,
+  };
 
   @override
   void didUpdateWidget(NaSlider oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.value != widget.value) {
-      _value = widget.value;
+      _draft = const _WidgetValue();
     }
   }
 
@@ -54,7 +53,7 @@ final class _NaSliderState extends State<NaSlider> {
     if (next == _value) {
       return;
     }
-    setState(() => _value = next);
+    setState(() => _draft = _LocalValue(value: next));
     widget.onChanged(next);
   }
 
@@ -110,6 +109,20 @@ final class _NaSliderState extends State<NaSlider> {
       ),
     );
   }
+}
+
+sealed class _SliderDraft {
+  const _SliderDraft();
+}
+
+final class _WidgetValue extends _SliderDraft {
+  const _WidgetValue();
+}
+
+final class _LocalValue extends _SliderDraft {
+  const _LocalValue({required this.value});
+
+  final int value;
 }
 
 final class _SliderPainter extends CustomPainter {

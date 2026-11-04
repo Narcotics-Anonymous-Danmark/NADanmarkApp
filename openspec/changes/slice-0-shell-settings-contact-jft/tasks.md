@@ -19,6 +19,12 @@
   `UNUserNotificationCenter` delegate in `AppDelegate.swift`), check that the
   notification permission is asked on the first Home visit with an upcoming
   anniversary, that a scheduled Cleanday notification is delivered, and capture
-  the iOS da/en screenshots for `docs/screenshots/cleantime/`
+  the iOS da/en screenshots for `docs/screenshots/cleantime/`.
+  For slice 4: build iOS with `just_audio` and `audio_service` (the `audio`
+  background mode in `Info.plist`), play a chapter of Basic Text, lock the
+  screen and check that it keeps playing, that the lock-screen controls show
+  the chapter, "Basis Tekst" and the cover, and that pause, ±15/30 and next
+  work from there; capture the iOS da/en screenshots for
+  `docs/screenshots/audiobooks/` and `docs/screenshots/readings/`
 - [ ] Patrol run on the Android emulator through `./bin/na test e2e`
 - [ ] Archive: fold into `openspec/specs/` once merged

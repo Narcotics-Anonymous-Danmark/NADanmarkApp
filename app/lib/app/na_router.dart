@@ -1,14 +1,17 @@
+import 'package:feature_audiobooks/feature_audiobooks.dart';
 import 'package:feature_cleantime/feature_cleantime.dart';
 import 'package:feature_contact/feature_contact.dart';
 import 'package:feature_jft/feature_jft.dart';
 import 'package:feature_meetings/feature_meetings.dart';
 import 'package:feature_meetings_search/feature_meetings_search.dart';
+import 'package:feature_readings/feature_readings.dart';
 import 'package:feature_settings/feature_settings.dart';
 import 'package:feature_shell/feature_shell.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:na_app/app/na_page.dart';
+import 'package:na_kernel/na_kernel.dart';
 import 'package:na_l10n/na_l10n.dart';
 
 const String homePath = '/home';
@@ -117,11 +120,13 @@ final class DestinationPage extends StatelessWidget {
         MenuDestination.about => const ContactBody(),
         MenuDestination.nearby => const NearbyMeetingsPageBody(),
         MenuDestination.cleantime => const CleantimeBody(),
+        MenuDestination.audiobooks => AudiobooksBody(
+          onOpen: (book) => context.go(book.route.path.value),
+        ),
+        MenuDestination.groupReadings => const ReadingsBody(),
         MenuDestination.map ||
         MenuDestination.events ||
-        MenuDestination.audiobooks ||
-        MenuDestination.speaks ||
-        MenuDestination.groupReadings => const SizedBox.shrink(),
+        MenuDestination.speaks => const SizedBox.shrink(),
       },
     );
   }
@@ -148,8 +153,24 @@ final class BookPage extends StatelessWidget {
     title: book.label(l10n: AppLocalizations.of(context)),
     back: BackTo(parent: MenuDestination.audiobooks.path),
     footer: const NoFooter(),
-    body: const SizedBox.shrink(),
+    body: BookBody(book: book.book),
   );
+}
+
+extension AudiobookRoute on AudiobookId {
+  BookRoute get route => switch (this) {
+    AudiobookId.basicText => BookRoute.basicText,
+    AudiobookId.howAndWhy => BookRoute.howAndWhy,
+    AudiobookId.stepWorkingGuides => BookRoute.stepWorkingGuides,
+  };
+}
+
+extension RoutedAudiobook on BookRoute {
+  AudiobookId get book => switch (this) {
+    BookRoute.basicText => AudiobookId.basicText,
+    BookRoute.howAndWhy => AudiobookId.howAndWhy,
+    BookRoute.stepWorkingGuides => AudiobookId.stepWorkingGuides,
+  };
 }
 
 final class MunicipalityMeetingsPage extends ConsumerWidget {

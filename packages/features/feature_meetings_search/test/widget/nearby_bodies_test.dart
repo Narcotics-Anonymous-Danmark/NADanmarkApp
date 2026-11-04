@@ -158,7 +158,10 @@ void main() {
       await tester.pump();
       expect(tester.widget<NaSlider>(slider).value, 50);
       expect(find.text('Søgeradius: 50 km'), findsOneWidget);
-      expect(harness.read(nearbyMeetingsProvider).radius, const Km(50));
+      expect(
+        harness.read(nearbyMeetingsProvider).radius,
+        const RadiusChosen(radius: Km(50)),
+      );
       harness.time.advance(by: NearbyMeetingsController.sliderDebounce);
       await tester.pumpAndSettle();
       expect(
