@@ -3,6 +3,7 @@ import 'package:na_lints/src/rules/avoid_bool_type.dart';
 import 'package:na_lints/src/rules/avoid_build_helper_methods.dart';
 import 'package:na_lints/src/rules/avoid_comments.dart';
 import 'package:na_lints/src/rules/avoid_default_parameter_values.dart';
+import 'package:na_lints/src/rules/avoid_late.dart';
 import 'package:na_lints/src/rules/avoid_material_cupertino_import.dart';
 import 'package:na_lints/src/rules/avoid_non_null_assertion.dart';
 import 'package:na_lints/src/rules/avoid_nullable_types.dart';
@@ -23,6 +24,7 @@ const List<LintRule> naLintRules = [
   NoDirectDateTimeNowOrTimer(),
   PreferNamedParameters(),
   AvoidDefaultParameterValues(),
+  AvoidLate(),
 ];
 
 final class NaLintsPlugin extends PluginBase {

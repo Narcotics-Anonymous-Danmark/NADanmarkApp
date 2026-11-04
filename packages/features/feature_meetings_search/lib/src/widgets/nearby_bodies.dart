@@ -84,11 +84,7 @@ final class NearbyFooter extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final theme = NaTheme.of(context);
     final controller = ref.read(nearbyMeetingsProvider.notifier);
-    final radius = ref.watch(
-      nearbyMeetingsProvider.select((state) => state.radius),
-    );
     return NaFooterBar(
       children: [
         NaButton(
@@ -96,6 +92,30 @@ final class NearbyFooter extends ConsumerWidget {
           label: l10n.locationsearch,
           onPressed: () => unawaited(controller.locate()),
         ),
+        ...switch (ref.watch(
+          nearbyMeetingsProvider.select((state) => state.radius),
+        )) {
+          RadiusPending() => const <Widget>[],
+          RadiusChosen(:final radius) => [NearbyRadiusControl(radius: radius)],
+        },
+      ],
+    );
+  }
+}
+
+final class NearbyRadiusControl extends ConsumerWidget {
+  const NearbyRadiusControl({required this.radius, super.key});
+
+  final Km radius;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final theme = NaTheme.of(context);
+    final controller = ref.read(nearbyMeetingsProvider.notifier);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
         Text(
           l10n.nearbyRadiusValue(radius.value),
           key: const Key('nearby-radius-value'),

@@ -11,12 +11,9 @@ import '../support/run_cli.dart';
 import '../support/simple_mimics.dart';
 
 void main() {
-  late ConsoleMimic console;
-
-  setUp(() => console = ConsoleMimic());
-
   Future<int> run(
     final List<String> args, {
+    required final ConsoleMimic console,
     final FileSystemMimic? files,
     final ProcessRunnerMimic? processes,
   }) async => (await runCli(
@@ -25,34 +22,45 @@ void main() {
   )).value;
 
   test('commit-msg accepts a literal message', () async {
-    expect(await run(['commit-msg', 'feat(cli): hello']), 0);
+    final console = ConsoleMimic();
+    expect(await run(console: console, ['commit-msg', 'feat(cli): hello']), 0);
     expect(console.outLines.single, 'commit message ok: feat(cli): hello');
   });
 
   test('commit-msg reads the file lefthook passes', () async {
+    final console = ConsoleMimic();
     final files = FileSystemMimic(
       files: {'/repo/.git/COMMIT_EDITMSG': 'oops\n'},
     );
-    expect(await run(['commit-msg', '.git/COMMIT_EDITMSG'], files: files), 1);
+    expect(
+      await run(console: console, [
+        'commit-msg',
+        '.git/COMMIT_EDITMSG',
+      ], files: files),
+      1,
+    );
     expect(console.errLines.single, contains('not a conventional commit'));
   });
 
   test('commit-msg without an argument is a usage error', () async {
-    expect(await run(['commit-msg']), 64);
+    final console = ConsoleMimic();
+    expect(await run(console: console, ['commit-msg']), 64);
   });
 
   test('arb reports divergence', () async {
+    final console = ConsoleMimic();
     final files = FileSystemMimic(
       files: {
         '/repo/packages/core/na_l10n/lib/l10n/app_en.arb': '{"a":"A","b":"B"}',
         '/repo/packages/core/na_l10n/lib/l10n/app_da.arb': '{"a":"A"}',
       },
     );
-    expect(await run(['arb'], files: files), 1);
+    expect(await run(console: console, ['arb'], files: files), 1);
     expect(console.errLines, ['arb: missing in app_da.arb: b']);
   });
 
   test('deps walks the workspace members', () async {
+    final console = ConsoleMimic();
     final files = FileSystemMimic(
       files: {
         '/repo/pubspec.yaml': aRootPubspec(
@@ -69,20 +77,22 @@ void main() {
         '/repo/packages/adapters/adapter_x/pubspec.lock': '',
       },
     );
-    expect(await run(['deps'], files: files), 1);
+    expect(await run(console: console, ['deps'], files: files), 1);
     expect(console.errLines.single, contains('may not depend on na_design'));
     expect(console.errLines.single, contains('has its own pubspec.lock'));
   });
 
   test('format --check delegates to dart format', () async {
+    final console = ConsoleMimic();
     final processes = ProcessRunnerMimic();
-    expect(await run(['format'], processes: processes), 0);
+    expect(await run(console: console, ['format'], processes: processes), 0);
     expect(processes.passedThroughDisplays, [
       'dart format --line-length=80 --set-exit-if-changed --output=none .',
     ]);
   });
 
   test('unknown check is a usage error', () async {
-    expect(await run(['nope']), 64);
+    final console = ConsoleMimic();
+    expect(await run(console: console, ['nope']), 64);
   });
 }

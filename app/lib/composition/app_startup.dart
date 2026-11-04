@@ -1,6 +1,7 @@
 import 'package:feature_cleantime/feature_cleantime.dart';
 import 'package:feature_jft/feature_jft.dart';
 import 'package:feature_legacy_migration/feature_legacy_migration.dart';
+import 'package:feature_media_player/feature_media_player.dart';
 import 'package:feature_settings/feature_settings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,6 +14,8 @@ final class AppStartup {
     await container.read(legacyMigrationProvider).runIfNeeded();
     await container.read(settingsControllerProvider.notifier).load();
     await container.read(jftControllerProvider.notifier).load();
-    container.read(anniversaryLanguageListenerProvider);
+    container
+      ..read(anniversaryLanguageListenerProvider)
+      ..read(playerLifecycleProvider);
   }
 }

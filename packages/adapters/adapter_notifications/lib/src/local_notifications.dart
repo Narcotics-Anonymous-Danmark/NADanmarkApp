@@ -52,7 +52,14 @@ final class LocalNotifications implements NotificationsPort {
   final NotificationTarget _target;
   PermissionPrompt _prompt = PermissionPrompt.notShown;
 
-  late final Future<void> _initialised = switch (_target) {
+  _Initialisation _initialisation = const _NotStarted();
+
+  Future<void> get _initialised => switch (_initialisation) {
+    _Started(:final done) => done,
+    _NotStarted() => (_initialisation = _Started(done: _initialise())).done,
+  };
+
+  Future<void> _initialise() => switch (_target) {
     AndroidTarget(:final plugin) => plugin.initialize(
       settings: AndroidInitializationSettings(androidIcon.resource),
     ),
@@ -174,4 +181,18 @@ final class LocalNotifications implements NotificationsPort {
     ),
     UnsupportedTarget() => Future<void>.value(),
   };
+}
+
+sealed class _Initialisation {
+  const _Initialisation();
+}
+
+final class _NotStarted extends _Initialisation {
+  const _NotStarted();
+}
+
+final class _Started extends _Initialisation {
+  const _Started({required this.done});
+
+  final Future<void> done;
 }

@@ -19,20 +19,13 @@ Widget anApp({required Widget home}) => NaApp(
 void main() {
   group('NaApp', () {
     testWidgets('renders the routed home under the theme', (tester) async {
-      late Color primary;
-      await tester.pumpWidget(
-        anApp(
-          home: Builder(
-            builder: (context) {
-              primary = NaTheme.of(context).colors.primary;
-              return const Text('home');
-            },
-          ),
-        ),
-      );
+      await tester.pumpWidget(anApp(home: const Text('home')));
       await tester.pumpAndSettle();
       expect(find.text('home'), findsOneWidget);
-      expect(primary, NaColors.light.primary);
+      expect(
+        NaTheme.of(tester.element(find.text('home'))).colors.primary,
+        NaColors.light.primary,
+      );
     });
 
     testWidgets('applies the body text style by default', (tester) async {

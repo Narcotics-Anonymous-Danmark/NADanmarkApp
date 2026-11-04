@@ -13,28 +13,22 @@ import '../support/run_cli.dart';
 import '../support/simple_mimics.dart';
 
 void main() {
-  late FileSystemMimic files;
-  late ConsoleMimic console;
-
   const secrets = {
     'ANDROID_KEYSTORE_BASE64': 'a2V5c3RvcmU=',
     'ANDROID_KEYSTORE_PASSWORD': 'store-pw',
     'ANDROID_KEY_PASSWORD': 'key-pw',
   };
 
-  setUp(() {
-    files = FileSystemMimic(
-      files: {
-        appPubspecPath: aPubspec(name: 'na_app', version: '2.0.0+1120000001'),
-        '/repo/env/release.json': jsonEncode({
-          'NA_API_BASIC_AUTH': 'u:p',
-          'GOOGLE_MAPS_API_KEY': 'maps-key',
-        }),
-        '/repo/app/build/app/outputs/bundle/release/app-release.aab': 'AAB',
-      },
-    );
-    console = ConsoleMimic();
-  });
+  FileSystemMimic seededFiles() => FileSystemMimic(
+    files: {
+      appPubspecPath: aPubspec(name: 'na_app', version: '2.0.0+1120000001'),
+      '/repo/env/release.json': jsonEncode({
+        'NA_API_BASIC_AUTH': 'u:p',
+        'GOOGLE_MAPS_API_KEY': 'maps-key',
+      }),
+      '/repo/app/build/app/outputs/bundle/release/app-release.aab': 'AAB',
+    },
+  );
 
   ProcessRunnerMimic processes({final String jarsigner = 'jar verified.'}) =>
       ProcessRunnerMimic(
@@ -51,6 +45,8 @@ void main() {
 
   Future<int> run(
     final List<String> args, {
+    required final FileSystemMimic files,
+    required final ConsoleMimic console,
     required final ProcessRunnerMimic runner,
     final Map<String, String> environment = secrets,
   }) async => (await runCli(
@@ -64,6 +60,8 @@ void main() {
   )).value;
 
   test('check lists every blocker and exits 1', () async {
+    final files = seededFiles();
+    final console = ConsoleMimic();
     final runner = ProcessRunnerMimic(
       responses: [
         whenRun(match: 'git status --porcelain', stdout: ' M file'),
@@ -71,7 +69,13 @@ void main() {
       ],
     );
     expect(
-      await run(['check', 'android'], runner: runner, environment: const {}),
+      await run(
+        files: files,
+        console: console,
+        ['check', 'android'],
+        runner: runner,
+        environment: const {},
+      ),
       1,
     );
     final message = console.errLines.single;
@@ -81,8 +85,16 @@ void main() {
   });
 
   test('android --dry-run prints the plan without building', () async {
+    final files = seededFiles();
+    final console = ConsoleMimic();
     final runner = processes();
-    expect(await run(['android', '--dry-run'], runner: runner), 0);
+    expect(
+      await run(files: files, console: console, [
+        'android',
+        '--dry-run',
+      ], runner: runner),
+      0,
+    );
     expect(runner.passedThrough, isEmpty);
     expect(
       console.outLines.last,
@@ -99,8 +111,17 @@ void main() {
   });
 
   test('android builds, verifies, copies and cleans up', () async {
+    final console = ConsoleMimic();
+    final files = seededFiles();
     final runner = processes();
-    expect(await run(['android', '--output', 'out'], runner: runner), 0);
+    expect(
+      await run(files: files, console: console, [
+        'android',
+        '--output',
+        'out',
+      ], runner: runner),
+      0,
+    );
     final build = runner.passedThrough.single;
     expect(build.workingDirectory.value, '/repo/app');
     expect(build.environment, {
@@ -123,17 +144,26 @@ void main() {
   test(
     'a failed jarsigner verification fails the release and still cleans up',
     () async {
+      final files = seededFiles();
+      final console = ConsoleMimic();
       final runner = processes(jarsigner: 'jar is unsigned.');
-      expect(await run(['android'], runner: runner), 1);
+      expect(
+        await run(files: files, console: console, ['android'], runner: runner),
+        1,
+      );
       expect(console.errLines.single, contains('jar verified'));
       expect(files.deleted, contains('/repo/.na-release'));
     },
   );
 
   test('ANDROID_KEY_ALIAS overrides the conventional alias', () async {
+    final files = seededFiles();
+    final console = ConsoleMimic();
     final runner = processes();
     expect(
       await run(
+        files: files,
+        console: console,
         ['android'],
         runner: runner,
         environment: {...secrets, 'ANDROID_KEY_ALIAS': 'other'},

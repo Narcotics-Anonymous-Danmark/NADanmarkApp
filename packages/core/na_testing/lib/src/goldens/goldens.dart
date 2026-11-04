@@ -18,6 +18,14 @@ Future<void> loadNaFonts() async {
     family: 'packages/phosphor_flutter/PhosphorRegular',
     file: phosphor,
   );
+  await _register(
+    family: 'packages/phosphor_flutter/PhosphorFill',
+    file: File.fromUri(
+      _packageRoot(
+        name: 'phosphor_flutter',
+      ).resolve('lib/fonts/Phosphor-Fill.ttf'),
+    ),
+  );
 }
 
 Uri _packageRoot({required String name}) {

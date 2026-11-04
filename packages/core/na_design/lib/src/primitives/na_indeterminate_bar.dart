@@ -1,43 +1,28 @@
 import 'package:flutter/widgets.dart';
 import 'package:na_design/src/theme/na_theme.dart';
 
-final class NaIndeterminateBar extends StatefulWidget {
+final class NaIndeterminateBar extends StatelessWidget {
   const NaIndeterminateBar({required this.statusText, super.key});
 
   final String statusText;
 
   static const double height = 4;
-
-  @override
-  State<NaIndeterminateBar> createState() => _NaIndeterminateBarState();
-}
-
-final class _NaIndeterminateBarState extends State<NaIndeterminateBar>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 1200),
-  )..repeat();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  static const Duration sweep = Duration(milliseconds: 1200);
 
   @override
   Widget build(BuildContext context) {
     final theme = NaTheme.of(context);
     return Semantics(
       liveRegion: true,
-      label: widget.statusText,
+      label: statusText,
       child: SizedBox(
-        height: NaIndeterminateBar.height,
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) => CustomPaint(
+        height: height,
+        child: RepeatingAnimationBuilder<double>(
+          animatable: Tween(begin: 0, end: 1),
+          duration: sweep,
+          builder: (context, value, child) => CustomPaint(
             painter: _BarPainter(
-              progress: _controller.value,
+              progress: value,
               color: theme.colors.secondary,
               background: theme.colors.surface,
             ),

@@ -90,12 +90,19 @@ final class NaMultiOptionSheet<T> extends StatefulWidget {
 }
 
 final class _NaMultiOptionSheetState<T> extends State<NaMultiOptionSheet<T>> {
-  late Set<T> _checked = Set.of(widget.selected);
+  _CheckedDraft<T> _draft = _AsSelected<T>();
+
+  Set<T> get _checked => switch (_draft) {
+    _AsSelected<T>() => widget.selected,
+    _Toggled<T>(:final checked) => checked,
+  };
 
   void _toggle(T value) => setState(
-    () => _checked = _checked.contains(value)
-        ? (Set.of(_checked)..remove(value))
-        : (Set.of(_checked)..add(value)),
+    () => _draft = _Toggled<T>(
+      checked: _checked.contains(value)
+          ? (Set.of(_checked)..remove(value))
+          : (Set.of(_checked)..add(value)),
+    ),
   );
 
   @override
@@ -215,4 +222,18 @@ final class NaDialogTextButton extends StatelessWidget {
       ),
     );
   }
+}
+
+sealed class _CheckedDraft<T> {
+  const _CheckedDraft();
+}
+
+final class _AsSelected<T> extends _CheckedDraft<T> {
+  const _AsSelected();
+}
+
+final class _Toggled<T> extends _CheckedDraft<T> {
+  const _Toggled({required this.checked});
+
+  final Set<T> checked;
 }

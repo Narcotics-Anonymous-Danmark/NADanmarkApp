@@ -12,28 +12,24 @@ import '../support/run_cli.dart';
 import '../support/simple_mimics.dart';
 
 void main() {
-  late FileSystemMimic files;
-  late ConsoleMimic console;
-
-  setUp(() {
-    files = FileSystemMimic(
-      files: {
-        '/repo/pubspec.yaml': aRootPubspec(
-          members: const ['packages/core/na_kernel'],
-        ),
-        '/repo/packages/core/na_kernel/pubspec.yaml': aPubspec(),
-        '/repo/coverage.yaml': aCoverageYaml(packages: const {'na_kernel': 90}),
-        '/repo/coverage/na_kernel.unit.lcov.info': aLcovFile(
-          hits: {1: 1, 2: 1, 3: 0, 4: 1},
-        ),
-        '/repo/coverage/na_kernel.widget.lcov.info': aLcovFile(hits: {3: 2}),
-      },
-    );
-    console = ConsoleMimic();
-  });
+  FileSystemMimic seededFiles() => FileSystemMimic(
+    files: {
+      '/repo/pubspec.yaml': aRootPubspec(
+        members: const ['packages/core/na_kernel'],
+      ),
+      '/repo/packages/core/na_kernel/pubspec.yaml': aPubspec(),
+      '/repo/coverage.yaml': aCoverageYaml(packages: const {'na_kernel': 90}),
+      '/repo/coverage/na_kernel.unit.lcov.info': aLcovFile(
+        hits: {1: 1, 2: 1, 3: 0, 4: 1},
+      ),
+      '/repo/coverage/na_kernel.widget.lcov.info': aLcovFile(hits: {3: 2}),
+    },
+  );
 
   Future<int> run(
     final List<String> args, {
+    required final FileSystemMimic files,
+    required final ConsoleMimic console,
     final Map<String, String> env = const {},
   }) async => (await runCli(
     context: aContext(files: files, console: console, environment: env),
@@ -43,8 +39,15 @@ void main() {
   test(
     '--merge writes merged.lcov.info with repo-relative paths and summary.md',
     () async {
+      final console = ConsoleMimic();
+      final files = seededFiles();
       expect(
-        await run(['--merge'], env: {'GITHUB_STEP_SUMMARY': '/gh/summary'}),
+        await run(
+          files: files,
+          console: console,
+          ['--merge'],
+          env: {'GITHUB_STEP_SUMMARY': '/gh/summary'},
+        ),
         0,
       );
       expect(
@@ -61,16 +64,20 @@ void main() {
   );
 
   test('--check fails with a table of offenders', () async {
+    final files = seededFiles();
+    final console = ConsoleMimic();
     files.writeText(
       path: const FilePath('/repo/coverage/na_kernel.widget.lcov.info'),
       text: aLcovFile(hits: {3: 0}),
     );
-    expect(await run(['--check']), 1);
+    expect(await run(files: files, console: console, ['--check']), 1);
     expect(console.errLines.single, contains('na_kernel'));
     expect(console.errLines.single, contains('75.0%'));
   });
 
   test('--html warns when genhtml is missing', () async {
+    final files = seededFiles();
+    final console = ConsoleMimic();
     final context = aContext(
       files: files,
       console: console,

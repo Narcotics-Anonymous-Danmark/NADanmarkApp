@@ -21,6 +21,34 @@ final class NaRangeValues {
 
 enum _Thumb { lower, upper }
 
+sealed class _ValuesDraft {
+  const _ValuesDraft();
+}
+
+final class _WidgetValues extends _ValuesDraft {
+  const _WidgetValues();
+}
+
+final class _LocalValues extends _ValuesDraft {
+  const _LocalValues({required this.values});
+
+  final NaRangeValues values;
+}
+
+sealed class _Grip {
+  const _Grip();
+}
+
+final class _NoGrip extends _Grip {
+  const _NoGrip();
+}
+
+final class _Gripping extends _Grip {
+  const _Gripping({required this.thumb});
+
+  final _Thumb thumb;
+}
+
 final class NaRangeSlider extends StatefulWidget {
   const NaRangeSlider({
     required this.values,
@@ -49,14 +77,19 @@ final class NaRangeSlider extends StatefulWidget {
 final class _NaRangeSliderState extends State<NaRangeSlider> {
   static const double trackHeight = 4;
 
-  late NaRangeValues _values = widget.values;
-  _Thumb _active = _Thumb.lower;
+  _ValuesDraft _draft = const _WidgetValues();
+  _Grip _grip = const _NoGrip();
+
+  NaRangeValues get _values => switch (_draft) {
+    _WidgetValues() => widget.values,
+    _LocalValues(:final values) => values,
+  };
 
   @override
   void didUpdateWidget(NaRangeSlider oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.values != widget.values) {
-      _values = widget.values;
+      _draft = const _WidgetValues();
     }
   }
 
@@ -89,14 +122,26 @@ final class _NaRangeSliderState extends State<NaRangeSlider> {
     if (next == _values) {
       return;
     }
-    setState(() => _values = next);
+    setState(() => _draft = _LocalValues(values: next));
     widget.onChanged(next);
   }
 
   void _startAt({required double dx, required double width}) {
     final value = _valueAt(dx: dx, width: width);
-    _active = _nearest(value: value);
-    _move(thumb: _active, to: value);
+    final thumb = _nearest(value: value);
+    _grip = _Gripping(thumb: thumb);
+    _move(thumb: thumb, to: value);
+  }
+
+  void _dragTo({required double dx, required double width}) {
+    final value = _valueAt(dx: dx, width: width);
+    _move(
+      thumb: switch (_grip) {
+        _Gripping(:final thumb) => thumb,
+        _NoGrip() => _nearest(value: value),
+      },
+      to: value,
+    );
   }
 
   @override
@@ -113,10 +158,8 @@ final class _NaRangeSliderState extends State<NaRangeSlider> {
           excludeFromSemantics: true,
           onHorizontalDragStart: (details) =>
               _startAt(dx: details.localPosition.dx, width: width),
-          onHorizontalDragUpdate: (details) => _move(
-            thumb: _active,
-            to: _valueAt(dx: details.localPosition.dx, width: width),
-          ),
+          onHorizontalDragUpdate: (details) =>
+              _dragTo(dx: details.localPosition.dx, width: width),
           onTapUp: (details) =>
               _startAt(dx: details.localPosition.dx, width: width),
           child: SizedBox(

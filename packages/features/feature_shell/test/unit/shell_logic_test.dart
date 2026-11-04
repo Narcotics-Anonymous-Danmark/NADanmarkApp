@@ -3,6 +3,7 @@ library;
 
 import 'dart:async';
 
+import 'package:feature_media_player/feature_media_player.dart';
 import 'package:feature_shell/feature_shell.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -205,6 +206,25 @@ void main() {
         64,
       );
     });
+  });
+
+  test('the player docks while it is active', () async {
+    final harness = TestContainer.build();
+    addTearDown(harness.dispose);
+    expect(harness.read(dockedPlayerProvider), isA<NoPlayer>());
+    await harness
+        .read(mediaPlayerProvider.notifier)
+        .play(playlist: aBookPlaylist(), request: const ContinueListening());
+    expect(
+      harness.read(dockedPlayerProvider),
+      isA<PlayerDocked>().having(
+        (docked) => docked.height,
+        'height',
+        DockedPlayerBar.height,
+      ),
+    );
+    await harness.read(mediaPlayerProvider.notifier).stop();
+    expect(harness.read(dockedPlayerProvider), isA<NoPlayer>());
   });
 
   test('loading states hash by value and book routes have labels', () {

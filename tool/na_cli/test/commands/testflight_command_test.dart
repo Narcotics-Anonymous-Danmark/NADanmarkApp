@@ -16,9 +16,6 @@ import '../support/simple_mimics.dart';
 import '../support/test_keys.dart';
 
 void main() {
-  late ConsoleMimic console;
-  late FileSystemMimic files;
-
   final environment = {
     'GITHUB_ACTIONS': 'true',
     'APP_STORE_CONNECT_KEY_ID': 'KEY1',
@@ -26,21 +23,20 @@ void main() {
     'APP_STORE_CONNECT_PRIVATE_KEY': ecPkcs8Pem.replaceAll('\n', r'\n'),
   };
 
-  setUp(() {
-    console = ConsoleMimic();
-    files = FileSystemMimic(
-      files: {
-        appPubspecPath: aPubspec(name: 'na_app', version: '2.0.0+1120000001'),
-        '/repo/dist/app.ipa': 'IPA',
-        '/repo/notes.txt': 'What to test',
-      },
-    );
-  });
+  FileSystemMimic seededFiles() => FileSystemMimic(
+    files: {
+      appPubspecPath: aPubspec(name: 'na_app', version: '2.0.0+1120000001'),
+      '/repo/dist/app.ipa': 'IPA',
+      '/repo/notes.txt': 'What to test',
+    },
+  );
 
   HttpReply ok(final Object body) =>
       HttpReply(status: const HttpStatus(200), body: jsonEncode(body));
 
   test('uploads with altool, waits for VALID and posts what to test', () async {
+    final console = ConsoleMimic();
+    final files = seededFiles();
     final http = HttpTransportMimic(
       replies: [
         ok({
@@ -130,6 +126,8 @@ void main() {
   });
 
   test('falls back to iTMSTransporter and honours --no-wait', () async {
+    final console = ConsoleMimic();
+    final files = seededFiles();
     final runner = ProcessRunnerMimic(
       responses: [whenRun(match: 'xcrun altool', exitCode: 1)],
     );
@@ -161,6 +159,8 @@ void main() {
   });
 
   test('an unreadable App Store Connect response fails', () async {
+    final console = ConsoleMimic();
+    final files = seededFiles();
     final code = await runCli(
       context: aContext(
         files: files,
@@ -177,6 +177,8 @@ void main() {
   });
 
   test('an INVALID build fails', () async {
+    final console = ConsoleMimic();
+    final files = seededFiles();
     final http = HttpTransportMimic(
       replies: [
         ok({
@@ -208,6 +210,8 @@ void main() {
   });
 
   test('times out when the build never becomes valid', () async {
+    final console = ConsoleMimic();
+    final files = seededFiles();
     final http = HttpTransportMimic(
       replies: [
         ok({

@@ -54,6 +54,44 @@ final class NaListRow extends StatelessWidget {
   }
 }
 
+final class NaSelectRow extends StatelessWidget {
+  const NaSelectRow({required this.value, required this.onTap, super.key});
+
+  final String value;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = NaTheme.of(context);
+    return Semantics(
+      button: true,
+      label: value,
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: NaListBlock(
+          child: Row(
+            children: [
+              Expanded(
+                child: ExcludeSemantics(
+                  child: Text(
+                    value,
+                    style: theme.typography.body.copyWith(
+                      color: theme.colors.primary,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: Space.xs),
+              Icon(NaIcons.caret, size: 16, color: theme.colors.inkMuted),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 final class NaListBlock extends StatelessWidget {
   const NaListBlock({required this.child, super.key});
 

@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 import 'package:na_kernel/src/boundary/bmlt_wire.dart';
+import 'package:na_kernel/src/boundary/resume_codec.dart';
 import 'package:na_kernel/src/boundary/wire_json.dart';
 import 'package:na_kernel/src/results/outcome.dart';
 
@@ -24,10 +25,14 @@ final class LegacyStoreDumpDto {
     this.meetingFormatsV1,
     this.cleanDateProfiles,
     this.activeProfile,
+    this.mediaResume,
   });
 
   factory LegacyStoreDumpDto.fromJson(WireObject json) =>
-      _$LegacyStoreDumpDtoFromJson(json);
+      _$LegacyStoreDumpDtoFromJson({
+        ...json,
+        'mediaResume': _resumeEntriesOf(json: json),
+      });
 
   final String? language;
   final String? firstday;
@@ -39,6 +44,8 @@ final class LegacyStoreDumpDto {
   @JsonKey(fromJson: _cleanDateProfiles)
   final List<LegacyCleanDateProfileDto>? cleanDateProfiles;
   final String? activeProfile;
+  @JsonKey(fromJson: _resumePoints, toJson: _resumePointsJson)
+  final Map<String, ResumePointDto?>? mediaResume;
 
   WireObject toJson() => _$LegacyStoreDumpDtoToJson(this);
 
@@ -71,6 +78,36 @@ FormatsCacheDto? _formatsCache(Object? json) => switch (json) {
   },
   Object() || null => null,
 };
+
+const List<String> legacyResumePrefixes = [
+  'mediaResume.book.',
+  'mediaResume.speak.',
+];
+
+WireObject? _resumeEntriesOf({required WireObject json}) =>
+    switch (Map<String, Object?>.fromEntries(
+      json.entries.where(
+        (entry) => legacyResumePrefixes.any(entry.key.startsWith),
+      ),
+    )) {
+      final WireObject entries when entries.isEmpty => null,
+      final WireObject entries => entries,
+    };
+
+Map<String, ResumePointDto?>? _resumePoints(Object? json) => switch (json) {
+  final WireObject entries => Map.unmodifiable(
+    entries.map((key, value) => MapEntry(key, resumePointDtoOf(value))),
+  ),
+  Object() || null => null,
+};
+
+WireObject? _resumePointsJson(Map<String, ResumePointDto?>? points) =>
+    switch (points) {
+      final Map<String, ResumePointDto?> entries => Map.unmodifiable(
+        entries.map((key, value) => MapEntry(key, value?.toJson())),
+      ),
+      null => null,
+    };
 
 List<LegacyCleanDateProfileDto>? _cleanDateProfiles(Object? json) =>
     switch (json) {

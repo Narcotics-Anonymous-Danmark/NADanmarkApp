@@ -243,4 +243,95 @@ void main() {
       expect(harness.storage.snapshot['meetingFormatsCache'], 'already here');
     });
   });
+
+  group('resume points', () {
+    const speak = 'https://x.dk/a.mp3';
+
+    test('points and both indexes are imported and counted', () async {
+      final harness = TestContainer.build(
+        legacyStore: LegacyStoreFound(
+          dump: aLegacyResumeDump(
+            entries: {
+              'mediaResume.book.basic-text': const ResumeCodec().dtoOf(
+                point: aResumePoint(),
+              ),
+              'mediaResume.speak.$speak': const ResumeCodec().dtoOf(
+                point: aResumePoint(trackIndex: const TrackIndex(0)),
+              ),
+              'mediaResume.book.how-and-why': const ResumePointDto(
+                position: 5,
+              ),
+            },
+          ),
+        ),
+      );
+      addTearDown(harness.dispose);
+      final run = await harness.read(legacyMigrationProvider).runIfNeeded();
+      expect(
+        run,
+        isA<MigrationRan>()
+            .having((ran) => ran.importedKeys, 'imported', const KeyCount(2))
+            .having((ran) => ran.skippedKeys, 'skipped', const KeyCount(1)),
+      );
+      final snapshot = harness.storage.snapshot;
+      expect(
+        snapshot['mediaResume.book.basic-text'],
+        const ResumeCodec().encodePoint(point: aResumePoint()),
+      );
+      expect(snapshot.containsKey('mediaResume.speak.$speak'), isTrue);
+      expect(snapshot.containsKey('mediaResume.book.how-and-why'), isFalse);
+      expect(
+        const ResumeCodec()
+            .decodeIndex(
+              text: snapshot['mediaResume.index.book'] ?? '',
+              fallbackTime: anInstant(),
+            )
+            .points
+            .keys,
+        [const PlaylistId('basic-text')],
+      );
+      expect(
+        const ResumeCodec()
+            .decodeIndex(
+              text: snapshot['mediaResume.index.speak'] ?? '',
+              fallbackTime: anInstant(),
+            )
+            .points
+            .keys,
+        [const PlaylistId(speak)],
+      );
+    });
+
+    test('existing points are never overwritten', () async {
+      final existing = aStoredResumePoint(
+        point: aResumePoint(position: const Duration(seconds: 9)),
+      );
+      final harness = TestContainer.build(
+        storedValues: existing,
+        legacyStore: LegacyStoreFound(dump: aLegacyResumeDump()),
+      );
+      addTearDown(harness.dispose);
+      await harness.read(legacyMigrationProvider).runIfNeeded();
+      expect(
+        harness.storage.snapshot['mediaResume.book.basic-text'],
+        existing['mediaResume.book.basic-text'],
+      );
+      expect(
+        harness.storage.snapshot['mediaResume.index.book'],
+        existing['mediaResume.index.book'],
+      );
+    });
+
+    test('no legacy store imports no points', () async {
+      final harness = TestContainer.build();
+      addTearDown(harness.dispose);
+      await harness.read(legacyMigrationProvider).runIfNeeded();
+      expect(
+        harness.storage.snapshot.keys.where(
+          (key) => key.startsWith('mediaResume.'),
+        ),
+        isEmpty,
+      );
+    });
+  });
 }

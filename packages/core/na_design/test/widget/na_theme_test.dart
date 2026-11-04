@@ -19,10 +19,10 @@ Widget aThemedProbe({required void Function(NaThemeData data) onBuild}) =>
 void main() {
   group('NaTheme', () {
     testWidgets('exposes the light tokens to descendants', (tester) async {
-      late NaThemeData seen;
-      await tester.pumpWidget(aThemedProbe(onBuild: (data) => seen = data));
-      expect(seen.colors.primary, const Color(0xFF0A61AD));
-      expect(seen.typography.body.fontFamily, 'packages/na_design/Plex');
+      final seen = <NaThemeData>[];
+      await tester.pumpWidget(aThemedProbe(onBuild: seen.add));
+      expect(seen.last.colors.primary, const Color(0xFF0A61AD));
+      expect(seen.last.typography.body.fontFamily, 'packages/na_design/Plex');
     });
 
     testWidgets('fails loudly when missing', (tester) async {

@@ -80,7 +80,7 @@ void main() {
         delivery: locatedAt(aarhus),
       );
       await open(harness);
-      expect(stateOf(harness).radius, const Km(20));
+      expect(stateOf(harness).radius, const RadiusChosen(radius: Km(20)));
       expect(queries(harness), [query(at: aarhus, radius: const Km(20))]);
     });
 
@@ -90,7 +90,7 @@ void main() {
       controller.changeRadius(radius: const Km(25));
       await advance(harness, const Duration(milliseconds: 300));
       controller.changeRadius(radius: const Km(30));
-      expect(stateOf(harness).radius, const Km(30));
+      expect(stateOf(harness).radius, const RadiusChosen(radius: Km(30)));
       await advance(harness, const Duration(milliseconds: 499));
       expect(queries(harness), hasLength(1));
       await advance(harness, const Duration(milliseconds: 1));
@@ -131,7 +131,7 @@ void main() {
       subscription.close();
       await flush();
       await open(harness);
-      expect(stateOf(harness).radius, const Km(15));
+      expect(stateOf(harness).radius, const RadiusChosen(radius: Km(15)));
     });
   });
 
@@ -433,21 +433,27 @@ void main() {
         const AwaitingFirstResult().hashCode,
       );
       const state = NearbyState(
-        radius: Km(15),
+        radius: RadiusChosen(radius: Km(15)),
         results: AwaitingFirstResult(),
       );
       expect(
         state,
-        const NearbyState(radius: Km(15), results: AwaitingFirstResult()),
+        const NearbyState(
+          radius: RadiusChosen(radius: Km(15)),
+          results: AwaitingFirstResult(),
+        ),
       );
       expect(
         state.hashCode,
         const NearbyState(
-          radius: Km(15),
+          radius: RadiusChosen(radius: Km(15)),
           results: AwaitingFirstResult(),
         ).hashCode,
       );
-      expect(state.withRadius(radius: const Km(20)).radius, const Km(20));
+      expect(
+        state.withRadius(radius: const Km(20)).radius,
+        const RadiusChosen(radius: Km(20)),
+      );
     });
   });
 }

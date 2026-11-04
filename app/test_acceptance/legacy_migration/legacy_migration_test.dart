@@ -43,6 +43,14 @@ Future<AppHarness> pumpMigratedProfiles({
   ),
 );
 
+const WireObject legacyBookPoint = {
+  'trackId': 'u4',
+  'trackIndex': 4,
+  'position': 120,
+  'duration': 600,
+  'updatedAt': '2026-05-01T10:00:00.000Z',
+};
+
 void main() {
   group('Requirement: Run once, before first render', () {
     testWidgets('Marker prevents a second run', (tester) async {
@@ -323,6 +331,102 @@ void main() {
         find.text('Imported settings from the previous version'),
         findsOneWidget,
       );
+    });
+  });
+
+  group('Requirement: Resume point import', () {
+    const speak = 'https://x.dk/a.mp3';
+
+    Future<AppHarness> pumpResumeDump({
+      required WidgetTester tester,
+      required WireObject dump,
+      String location = '/home',
+    }) async {
+      final app = await pumpApp(
+        tester: tester,
+        initialLocation: location,
+        container: realJftContainer(
+          legacyStore: LegacyStoreFound(
+            dump: LegacyStoreDumpDto.fromJson(dump),
+          ),
+        ),
+      );
+      addTearDown(app.dispose);
+      return app;
+    }
+
+    ResumeIndex indexIn(AppHarness app, PlaylistKind kind) =>
+        const ResumeCodec().decodeIndex(
+          text: app.storage.snapshot[kind.indexKey.name] ?? '',
+          fallbackTime: app.time.now,
+        );
+
+    testWidgets('Resume points and index', (tester) async {
+      final app = await pumpResumeDump(
+        tester: tester,
+        location: '/basic-text',
+        dump: {
+          'language': 'en',
+          'mediaResume.book.basic-text': legacyBookPoint,
+          'mediaResume.speak.$speak': {
+            'trackId': speak,
+            'trackIndex': 0,
+            'position': 250,
+            'updatedAt': '2026-05-02T10:00:00.000Z',
+          },
+        },
+      );
+      expect(
+        app.storage.snapshot.containsKey('mediaResume.book.basic-text'),
+        isTrue,
+      );
+      expect(
+        app.storage.snapshot.containsKey('mediaResume.speak.$speak'),
+        isTrue,
+      );
+      expect(indexIn(app, PlaylistKind.book).points.keys, [
+        const PlaylistId('basic-text'),
+      ]);
+      expect(indexIn(app, PlaylistKind.speak).points.keys, [
+        const PlaylistId(speak),
+      ]);
+      expect(pageText('Continue listening'), findsOneWidget);
+      expect(find.byKey(const Key('book-continue-4')), findsOneWidget);
+    });
+
+    testWidgets('Stale legacy index is not trusted', (tester) async {
+      final app = await pumpResumeDump(
+        tester: tester,
+        dump: {
+          'mediaResume.index.book': {'how-and-why': legacyBookPoint},
+        },
+      );
+      expect(
+        app.storage.snapshot.keys.where((key) => key.contains('how-and-why')),
+        isEmpty,
+      );
+      expect(indexIn(app, PlaylistKind.book).points, isEmpty);
+    });
+
+    testWidgets('Malformed points are skipped', (tester) async {
+      final app = await pumpResumeDump(
+        tester: tester,
+        dump: {
+          'language': 'en',
+          'mediaResume.book.how-and-why': {
+            'trackIndex': 'two',
+            'position': 5,
+          },
+        },
+      );
+      expect(
+        app.storage.snapshot.containsKey('mediaResume.book.how-and-why'),
+        isFalse,
+      );
+      expect(app.storage.snapshot['language'], 'en');
+      final event = app.events.recordedOf<LegacyMigrationCompleted>().single;
+      expect(event.importedKeys, const KeyCount(1));
+      expect(event.skippedKeys, const KeyCount(1));
     });
   });
 }

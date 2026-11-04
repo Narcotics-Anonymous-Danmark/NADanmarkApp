@@ -12,10 +12,6 @@ import '../support/run_cli.dart';
 import '../support/simple_mimics.dart';
 
 void main() {
-  late ConsoleMimic console;
-
-  setUp(() => console = ConsoleMimic());
-
   FileSystemMimic workspace() => FileSystemMimic(
     files: {
       '/repo/pubspec.yaml': aRootPubspec(
@@ -41,6 +37,7 @@ void main() {
   test(
     'test unit widget runs each member with the right tool and summarises',
     () async {
+      final console = ConsoleMimic();
       final runner = ProcessRunnerMimic(
         responses: [
           whenRun(
@@ -70,6 +67,7 @@ void main() {
   );
 
   test('suites with no matching tags are skipped, not failed', () async {
+    final console = ConsoleMimic();
     final runner = ProcessRunnerMimic(
       responses: [
         whenRun(match: 'dart test --tags unit', exitCode: 79),
@@ -93,6 +91,7 @@ void main() {
   });
 
   test('dart coverage starts from an empty raw directory', () async {
+    final console = ConsoleMimic();
     final files = workspace();
     await runCli(
       context: aContext(
@@ -106,6 +105,7 @@ void main() {
   });
 
   test('without coverage nothing is deleted', () async {
+    final console = ConsoleMimic();
     final files = workspace();
     await runCli(
       context: aContext(
@@ -119,6 +119,7 @@ void main() {
   });
 
   test('a skipped dart suite does not run format_coverage', () async {
+    final console = ConsoleMimic();
     final runner = ProcessRunnerMimic(
       responses: [whenRun(match: 'dart test --tags unit', exitCode: 79)],
     );
@@ -137,6 +138,7 @@ void main() {
   });
 
   test('acceptance and e2e run in app/ and collect patrol coverage', () async {
+    final console = ConsoleMimic();
     final files = workspace()
       ..writeText(
         path: const FilePath('/repo/app/coverage/patrol_lcov.info'),
@@ -174,6 +176,7 @@ void main() {
   });
 
   test('--file, --name and --update-goldens reach the runner', () async {
+    final console = ConsoleMimic();
     final runner = ProcessRunnerMimic();
     final code = await runCli(
       context: aContext(
@@ -202,6 +205,7 @@ void main() {
   });
 
   test('acceptance honours --name and --update-goldens', () async {
+    final console = ConsoleMimic();
     final runner = ProcessRunnerMimic();
     await runCli(
       context: aContext(
@@ -217,6 +221,7 @@ void main() {
   });
 
   test('e2e --develop runs patrol develop with the target', () async {
+    final console = ConsoleMimic();
     final runner = ProcessRunnerMimic();
     await runCli(
       context: aContext(
@@ -240,6 +245,7 @@ void main() {
   test(
     'gen all runs pub get then gen-l10n and fails on untranslated messages',
     () async {
+      final console = ConsoleMimic();
       final files = workspace()
         ..writeText(
           path: const FilePath('/repo/packages/core/na_l10n/untranslated.json'),
@@ -267,6 +273,7 @@ void main() {
   test(
     'gen json runs build_runner only where it is a dev dependency',
     () async {
+      final console = ConsoleMimic();
       final runner = ProcessRunnerMimic();
       final code = await runCli(
         context: aContext(

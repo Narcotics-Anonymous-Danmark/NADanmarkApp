@@ -1,18 +1,68 @@
+import 'package:meta/meta.dart';
 import 'package:na_kernel/na_kernel.dart';
 import 'package:na_ports/na_ports.dart';
 import 'package:riverpod/riverpod.dart';
 
-final NotifierProvider<SettingsController, LoadResult<Settings>>
+@immutable
+sealed class SettingsState {
+  const SettingsState();
+
+  Settings get inUse => switch (this) {
+    SettingsReady(:final settings) ||
+    SettingsUnsaved(:final settings) => settings,
+    SettingsNotLoaded() => throw StateError(
+      'Settings were read before SettingsController.load() ran.',
+    ),
+  };
+}
+
+final class SettingsNotLoaded extends SettingsState {
+  const SettingsNotLoaded();
+
+  @override
+  int get hashCode => (SettingsNotLoaded).hashCode;
+
+  @override
+  bool operator ==(Object other) => other is SettingsNotLoaded;
+}
+
+final class SettingsReady extends SettingsState {
+  const SettingsReady({required this.settings});
+
+  final Settings settings;
+
+  @override
+  int get hashCode => Object.hash(SettingsReady, settings);
+
+  @override
+  bool operator ==(Object other) =>
+      other is SettingsReady && other.settings == settings;
+}
+
+final class SettingsUnsaved extends SettingsState {
+  const SettingsUnsaved({required this.settings, required this.failure});
+
+  final Settings settings;
+  final StorageFailure failure;
+
+  @override
+  int get hashCode => Object.hash(settings, failure);
+
+  @override
+  bool operator ==(Object other) =>
+      other is SettingsUnsaved &&
+      other.settings == settings &&
+      other.failure == failure;
+}
+
+final NotifierProvider<SettingsController, SettingsState>
 settingsControllerProvider = NotifierProvider(SettingsController.new);
 
-final class SettingsController extends Notifier<LoadResult<Settings>> {
+final class SettingsController extends Notifier<SettingsState> {
   @override
-  LoadResult<Settings> build() => const Loading();
+  SettingsState build() => const SettingsNotLoaded();
 
-  Settings get current => switch (state) {
-    Loaded(:final value) => value,
-    Loading() || Failed() => Settings.defaults,
-  };
+  Settings get current => state.inUse;
 
   Future<void> load() async {
     final port = ref.read(settingsPortProvider);
@@ -48,10 +98,10 @@ final class SettingsController extends Notifier<LoadResult<Settings>> {
     final port = ref.read(settingsPortProvider);
     switch (await port.write(settings: next)) {
       case Ok():
-        state = Loaded(value: next);
+        state = SettingsReady(settings: next);
         _announce(next: next, previous: previous);
       case Err(:final error):
-        state = Failed(failure: error);
+        state = SettingsUnsaved(settings: previous, failure: error);
     }
   }
 

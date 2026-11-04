@@ -8,6 +8,8 @@ environment:
 resolution: workspace
 
 dependencies:
+  feature_media_player:
+    path: ../feature_media_player
   flutter:
     sdk: flutter
   flutter_riverpod: 3.3.2

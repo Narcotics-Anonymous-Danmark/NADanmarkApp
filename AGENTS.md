@@ -40,6 +40,7 @@ app is the behavioural reference; `openspec/specs/` is the contract.
 
 - No comments. No nullable types. No `!`. No `bool` declarations. No `_` or `default` in any pattern (`Object()`, `int()`, `Record()` for the rest).
 - Absence is a sealed class with a domain name, never `Option<T>`.
+- Never `late`. No placeholder or option-as-default field values: a not-yet-known value is its own sealed state.
 - `extension type const` for every domain value (ids, keys, URLs, names, texts, codes, measures); no bare primitives in domain classes.
 - No vague types (`Object`, `List<(Object, Object)>`) anywhere, tests included; never `dynamic` (wire conversion uses `Object?` at most).
 - JSON only through `json_serializable`: lenient, all-nullable wire DTOs in generated `part` files (`./bin/na gen json`), validated and mapped to domain types right away.

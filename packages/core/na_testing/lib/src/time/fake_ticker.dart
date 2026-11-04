@@ -10,21 +10,41 @@ final class FakeTicker implements Ticker {
 
   @override
   Stream<Instant> every({required Duration period}) {
-    late final StreamController<Instant> controller;
-    late final ScheduledHandle handle;
-    controller = StreamController<Instant>(
-      onListen: () {
-        handle = time.schedule(
-          delay: period,
-          action: () => controller.add(time.now),
-          repeat: Repeat.periodic,
+    final controller = StreamController<Instant>();
+    _Ticks ticks = const _NotListened();
+    controller
+      ..onListen = () {
+        ticks = _Ticking(
+          handle: time.schedule(
+            delay: period,
+            action: () => controller.add(time.now),
+            repeat: Repeat.periodic,
+          ),
         );
-      },
-      onCancel: () {
-        handle.cancel();
+      }
+      ..onCancel = () {
+        switch (ticks) {
+          case _Ticking(:final handle):
+            handle.cancel();
+          case _NotListened():
+            break;
+        }
         return controller.close();
-      },
-    );
+      };
     return controller.stream;
   }
+}
+
+sealed class _Ticks {
+  const _Ticks();
+}
+
+final class _NotListened extends _Ticks {
+  const _NotListened();
+}
+
+final class _Ticking extends _Ticks {
+  const _Ticking({required this.handle});
+
+  final ScheduledHandle handle;
 }

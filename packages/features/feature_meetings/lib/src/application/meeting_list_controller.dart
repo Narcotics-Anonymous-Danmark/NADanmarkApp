@@ -118,19 +118,25 @@ final Provider<Weekday> todayProvider = Provider(
   (ref) => ref.watch(clockProvider).today().weekday,
 );
 
+final ProviderFamily<Debouncer, MeetingListKey> hourFilterDebouncerProvider =
+    Provider.autoDispose.family((ref, key) {
+      final debouncer = ref
+          .read(schedulerProvider)
+          .debounce(window: MeetingListView.hourFilterDelay);
+      ref.onDispose(debouncer.dispose);
+      return debouncer;
+    });
+
 final class MeetingListController extends Notifier<MeetingListView> {
   MeetingListController(this.key);
 
   final MeetingListKey key;
 
-  late Debouncer _hourFilter;
+  Debouncer get _hourFilter => ref.read(hourFilterDebouncerProvider(key));
 
   @override
   MeetingListView build() {
-    _hourFilter = ref
-        .read(schedulerProvider)
-        .debounce(window: MeetingListView.hourFilterDelay);
-    ref.onDispose(_hourFilter.dispose);
+    ref.watch(hourFilterDebouncerProvider(key));
     unawaited(ref.read(meetingFormatsProvider.notifier).ensureLoaded());
     return MeetingListView.initial;
   }

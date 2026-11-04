@@ -1,3 +1,5 @@
+import 'package:adapter_assets/adapter_assets.dart';
+import 'package:adapter_audio/adapter_audio.dart';
 import 'package:adapter_bmlt/adapter_bmlt.dart';
 import 'package:adapter_clock/adapter_clock.dart';
 import 'package:adapter_geolocation/adapter_geolocation.dart';
@@ -31,6 +33,8 @@ Future<List<Override>> platformOverrides() async => [
   ...clockOverrides(zone: TimeZoneId.copenhagen),
   ...storageOverrides(preferences: SharedPreferencesAsync()),
   ...jftOverrides(bundle: rootBundle),
+  ...assetsOverrides(bundle: rootBundle),
+  ...await startAudio(bundle: rootBundle),
   ...linksOverrides(),
   ...geolocationOverrides(platform: GeolocatorPlatform.instance),
   ...notificationsOverrides(

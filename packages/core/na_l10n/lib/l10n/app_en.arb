@@ -1042,5 +1042,34 @@
   "notificationChannelCleanday": "Cleanday",
   "@notificationChannelCleanday": {
     "description": "Android notification channel for anniversaries"
+  },
+  "playerSeek": "Playback position",
+  "@playerSeek": {
+    "description": "Accessible label of the docked player seek slider"
+  },
+  "playerLoading": "Loading",
+  "@playerLoading": {
+    "description": "Accessible label of the docked player spinner"
+  },
+  "playerUnknownTime": "Unknown duration",
+  "@playerUnknownTime": {
+    "description": "Read instead of --:-- while the length is unknown"
+  },
+  "audiobookCover": "Cover of {title}",
+  "@audiobookCover": {
+    "description": "Accessible label of a book cover",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "audiobooksLoadFailed": "The book could not be loaded.",
+  "@audiobooksLoadFailed": {
+    "description": "Shown when a bundled book cannot be read"
+  },
+  "readingsLoadFailed": "The readings could not be loaded.",
+  "@readingsLoadFailed": {
+    "description": "Shown when the bundled readings cannot be read"
   }
 }

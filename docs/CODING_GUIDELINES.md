@@ -54,6 +54,40 @@ The one exception is a value type whose components are themselves the meaning:
 plain `int` components inside that single type, because wrapping each part adds
 nothing; everything that holds such a value uses the value type.
 
+**Never `late`.** Not for fields, locals or top-levels, and not in tests or
+tools. Initialise at the declaration or in the constructor's initialiser
+list, pass controllers and dependencies in through constructors, read
+Riverpod ports through getters over `ref`, and model a phase where the value
+does not exist yet as a sealed state. `na_lints/avoid_late`.
+
+```dart
+// bad
+late AudioEnginePort _engine;
+late final TextEditingController _controller = TextEditingController(text: widget.text);
+// good
+AudioEnginePort get _engine => ref.read(audioEnginePortProvider);
+const NaTextInputSheet({required this.controller}); // created by showNaTextInputDialog
+```
+
+**Explicit initial states, never placeholder defaults.** Every object is well
+formed from construction. A field never starts on a placeholder (`0`, `''`,
+`Duration.zero`, an epoch `Instant`) or on one of the real options chosen as a
+default; when the value is not known yet, that phase is its own state, so a
+missed initialisation shows up as a case to handle instead of silently using
+a default. Identity objects replace counters that start at zero. Empty
+collections and a lifecycle's genuine first state are real values.
+
+```dart
+// bad
+Instant _lastSave = Instant(DateTime.utc(1970));
+int _value = 0; // set in initState
+// good
+sealed class LastSave {}
+final class NeverSaved extends LastSave {}
+final class SavedAt extends LastSave { SavedAt({required this.at}); final Instant at; }
+LastSave _lastSave = NeverSaved();
+```
+
 **No vague types.** Never `Object`, `Object?`, `dynamic`, `List<(Object, Object)>`
 or `Map<String, Object?>` where a precise type, a sealed hierarchy or a type
 parameter can say what the value is. This applies to tests too: write one typed

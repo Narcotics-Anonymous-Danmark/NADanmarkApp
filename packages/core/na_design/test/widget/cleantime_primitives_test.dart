@@ -187,7 +187,7 @@ void main() {
         NaTextInputSheet(
           title: const NaLabel('Omdøb profil'),
           placeholder: const NaLabel('Anna'),
-          initialText: const NaInputText('Anna'),
+          controller: TextEditingController(text: 'Anna'),
           cancelLabel: const NaLabel('Afbryd'),
           confirmLabel: const NaLabel('Omdøb'),
           onDone: (entry) {},
@@ -336,6 +336,7 @@ void main() {
       await pumpFramed(
         tester,
         NaDatePicker(
+          wheels: NaDateWheels.at(date: today, first: first),
           initial: today,
           first: first,
           last: today,

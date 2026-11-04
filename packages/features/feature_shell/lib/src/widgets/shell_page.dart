@@ -1,4 +1,3 @@
-import 'package:feature_shell/src/application/docked_player.dart';
 import 'package:feature_shell/src/application/menu_controller.dart';
 import 'package:feature_shell/src/application/menu_destination.dart';
 import 'package:flutter/widgets.dart';
@@ -52,7 +51,6 @@ final class ShellPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final dock = ref.watch(dockedPlayerProvider);
     return NaPageFrame(
       header: NaHeaderBar(
         leading: NaIconButton(
@@ -79,7 +77,7 @@ final class ShellPage extends ConsumerWidget {
         NoFooter() => const SizedBox.shrink(),
         FooterContent(:final child) => child,
       },
-      bottomInset: dock.height,
+      bottomInset: 0,
     );
   }
 }
