@@ -1071,5 +1071,9 @@
   "readingsLoadFailed": "Oplæsningerne kunne ikke indlæses.",
   "@readingsLoadFailed": {
     "description": "Shown when the bundled readings cannot be read"
+  },
+  "speakClearSearch": "Ryd søgning",
+  "@speakClearSearch": {
+    "description": "Speaks: label of the button that empties the search field"
   }
 }

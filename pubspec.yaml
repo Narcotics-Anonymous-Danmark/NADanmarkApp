@@ -34,6 +34,8 @@ workspace:
   - packages/adapters/adapter_notifications
   - packages/adapters/adapter_assets
   - packages/adapters/adapter_audio
+  - packages/adapters/adapter_wordpress
+  - packages/features/feature_speaks
 
 dev_dependencies:
   coverage: 1.15.1

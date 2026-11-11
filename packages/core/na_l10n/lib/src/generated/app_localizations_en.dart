@@ -758,11 +758,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get readingsSelect => 'Please select';
-
-  @override
   String get audiobooksLoadFailed => 'The book could not be loaded.';
 
   @override
   String get readingsLoadFailed => 'The readings could not be loaded.';
+
+  @override
+  String get speakClearSearch => 'Clear search';
 }

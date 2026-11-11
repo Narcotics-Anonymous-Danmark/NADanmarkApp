@@ -129,6 +129,34 @@ void main() {
     await expectAccessible(tester);
   });
 
+  testWidgets('a speak shows the engine length and can be scrubbed', (
+    tester,
+  ) async {
+    final harness = await pumpBar(
+      tester: tester,
+      length: KnownLength(duration: 600.seconds),
+    );
+    await startPlaying(
+      tester: tester,
+      harness: harness,
+      playlist: aSpeakPlaylist(),
+    );
+    await tester.pumpAndSettle();
+    expect(textOf(tester, const Key('na-scrubber-length')), '10:00');
+    final track = tester.getRect(find.byKey(const Key('na-scrubber-track')));
+    final gesture = await tester.startGesture(
+      Offset(track.left + 8, track.center.dy),
+    );
+    await gesture.moveTo(
+      Offset(track.left + 8 + (track.width - 16) / 2, track.center.dy),
+    );
+    await gesture.up();
+    await tester.runAsync(flush);
+    await tester.pump();
+    expect(harness.engine.seeks, [300.seconds]);
+    expect(textOf(tester, const Key('na-scrubber-position')), '5:00');
+  });
+
   testWidgets('drag preview then commit', (tester) async {
     final harness = await pumpBar(
       tester: tester,

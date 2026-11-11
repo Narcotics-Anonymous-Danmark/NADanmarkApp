@@ -10,4 +10,5 @@ export 'src/boundary/legacy_wire.dart';
 export 'src/boundary/migration_marker_codec.dart';
 export 'src/boundary/nullable_bridge.dart';
 export 'src/boundary/resume_codec.dart';
+export 'src/boundary/speaks_wire.dart';
 export 'src/boundary/wire_json.dart';

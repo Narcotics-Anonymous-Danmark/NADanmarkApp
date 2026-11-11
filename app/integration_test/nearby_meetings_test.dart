@@ -22,7 +22,10 @@ Future<void> startApp(PatrolTester $) async {
     final built = ProviderContainer(
       overrides: [
         ...await platformOverrides(),
-        ...networkOverrides(dio: Dio()..httpClientAdapter = BmltServerMimic()),
+        ...networkOverrides(
+          bmlt: Dio()..httpClientAdapter = BmltServerMimic(),
+          wordpress: Dio()..httpClientAdapter = WordPressMimic(),
+        ),
       ],
     );
     await AppStartup(container: built).run();

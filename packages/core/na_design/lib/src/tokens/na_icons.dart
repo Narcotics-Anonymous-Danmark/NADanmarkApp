@@ -38,4 +38,5 @@ abstract final class NaIcons {
   static const IconData fastForward = PhosphorIconsRegular.fastForward;
   static const IconData skipBack = PhosphorIconsRegular.skipBack;
   static const IconData skipForward = PhosphorIconsRegular.skipForward;
+  static const IconData funnel = PhosphorIconsRegular.funnel;
 }

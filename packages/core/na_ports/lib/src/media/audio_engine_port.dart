@@ -66,7 +66,11 @@ final class EngineFailed extends EngineEvent {
 abstract interface class AudioEnginePort {
   Stream<EngineEvent> get events;
 
-  Future<LoadToken> load({required EngineItem item, required Duration startAt});
+  Future<void> load({
+    required EngineItem item,
+    required Duration startAt,
+    required LoadToken token,
+  });
 
   Future<void> play();
 

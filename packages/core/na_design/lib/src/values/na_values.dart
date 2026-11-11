@@ -7,3 +7,5 @@ enum NaTone { neutral, success, primary, danger }
 enum NaAvailability { enabled, disabled }
 
 enum NaBackdrop { surface, primary }
+
+enum NaActivity { busy, idle }

@@ -28,6 +28,8 @@ dependencies:
     path: ../packages/adapters/adapter_notifications
   adapter_storage:
     path: ../packages/adapters/adapter_storage
+  adapter_wordpress:
+    path: ../packages/adapters/adapter_wordpress
   dio: 5.11.1
   feature_audiobooks:
     path: ../packages/features/feature_audiobooks
@@ -51,6 +53,8 @@ dependencies:
     path: ../packages/features/feature_settings
   feature_shell:
     path: ../packages/features/feature_shell
+  feature_speaks:
+    path: ../packages/features/feature_speaks
   flutter:
     sdk: flutter
   flutter_localizations:

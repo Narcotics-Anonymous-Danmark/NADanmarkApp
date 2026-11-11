@@ -203,7 +203,8 @@ void main() {
 
   test('a loaded item starts at its position, runs once and reports', () async {
     final setup = engineSetup();
-    final token = await setup.engine.load(item: item, startAt: 120.s);
+    final token = LoadToken();
+    await setup.engine.load(item: item, startAt: 120.s, token: token);
     expect(setup.platform.player.loads.single.initialPosition, 120.s);
     await setup.engine.play();
     await settle();
@@ -229,11 +230,35 @@ void main() {
     expect(setup.events.last, isA<EngineEnded>());
   });
 
+  test('the length known while loading carries the caller token', () async {
+    final setup = engineSetup();
+    final token = LoadToken();
+    final loading = setup.engine.load(
+      item: item,
+      startAt: Duration.zero,
+      token: token,
+    );
+    await settle();
+    expect(
+      setup.events.whereType<EngineLength>().single,
+      isA<EngineLength>()
+          .having((event) => event.token, 'token', token)
+          .having((event) => event.length, 'length', 300.s),
+    );
+    await loading;
+    expect(setup.events.whereType<EngineRunning>(), isEmpty);
+  });
+
   test('a refused load fails with its token', () async {
     final setup = engineSetup();
-    await setup.engine.load(item: item, startAt: Duration.zero);
+    await setup.engine.load(
+      item: item,
+      startAt: Duration.zero,
+      token: LoadToken(),
+    );
     setup.platform.player.answer = LoadAnswer.refuse;
-    final token = await setup.engine.load(item: item, startAt: Duration.zero);
+    final token = LoadToken();
+    await setup.engine.load(item: item, startAt: Duration.zero, token: token);
     await settle();
     expect(
       setup.events.whereType<EngineFailed>().single,
@@ -247,7 +272,11 @@ void main() {
 
   test('a playback error fails the item', () async {
     final setup = engineSetup();
-    await setup.engine.load(item: item, startAt: Duration.zero);
+    await setup.engine.load(
+      item: item,
+      startAt: Duration.zero,
+      token: LoadToken(),
+    );
     await setup.engine.play();
     await settle();
     setup.platform.player.emit(
@@ -264,7 +293,11 @@ void main() {
 
   test('a released item reports nothing more', () async {
     final setup = engineSetup();
-    await setup.engine.load(item: item, startAt: Duration.zero);
+    await setup.engine.load(
+      item: item,
+      startAt: Duration.zero,
+      token: LoadToken(),
+    );
     await setup.engine.play();
     await settle();
     await setup.engine.release();

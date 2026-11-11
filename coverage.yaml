@@ -14,6 +14,7 @@ package_minimum_percent:
   adapter_jft: 90
   adapter_links: 90
   adapter_legacy_store: 90
+  adapter_wordpress: 90
   na_app: 70
 
 feature_default_minimum_percent: 95

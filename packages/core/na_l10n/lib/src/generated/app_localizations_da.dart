@@ -757,11 +757,11 @@ class AppLocalizationsDa extends AppLocalizations {
   }
 
   @override
-  String get readingsSelect => 'Vælg venligst';
-
-  @override
   String get audiobooksLoadFailed => 'Bogen kunne ikke indlæses.';
 
   @override
   String get readingsLoadFailed => 'Oplæsningerne kunne ikke indlæses.';
+
+  @override
+  String get speakClearSearch => 'Ryd søgning';
 }

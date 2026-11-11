@@ -31,14 +31,26 @@ engineWith({
 
 void main() {
   group('AudioEngineMimic', () {
-    test('a played item runs, reports its length and ticks', () async {
+    test('like just_audio it reports the length while loading', () async {
       final setup = engineWith(length: KnownLength(duration: 3.seconds));
-      final token = await setup.engine.load(item: item, startAt: 1.seconds);
+      final token = LoadToken();
+      final loading = setup.engine.load(
+        item: item,
+        startAt: 1.seconds,
+        token: token,
+      );
+      expect(
+        setup.events.single,
+        isA<EngineLength>()
+            .having((event) => event.token, 'token', token)
+            .having((event) => event.length, 'length', 3.seconds),
+      );
+      await loading;
       await setup.engine.play();
       setup.time.advance(by: 1.seconds);
       expect(setup.events.map((event) => event.runtimeType), [
-        EngineRunning,
         EngineLength,
+        EngineRunning,
         EnginePosition,
       ]);
       expect(setup.events.every((event) => event.token == token), isTrue);
@@ -50,7 +62,11 @@ void main() {
 
     test('an item on cue waits until it is run', () async {
       final setup = engineWith(start: EngineStart.onCue);
-      await setup.engine.load(item: item, startAt: Duration.zero);
+      await setup.engine.load(
+        item: item,
+        startAt: Duration.zero,
+        token: LoadToken(),
+      );
       await setup.engine.play();
       setup.time.advance(by: 5.seconds);
       expect(setup.events, isEmpty);
@@ -60,7 +76,11 @@ void main() {
 
     test('pause, seek, release and failure are recorded', () async {
       final setup = engineWith();
-      await setup.engine.load(item: item, startAt: Duration.zero);
+      await setup.engine.load(
+        item: item,
+        startAt: Duration.zero,
+        token: LoadToken(),
+      );
       await setup.engine.play();
       await setup.engine.pause();
       setup.time.advance(by: 3.seconds);

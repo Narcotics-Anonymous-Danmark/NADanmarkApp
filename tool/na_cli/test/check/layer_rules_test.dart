@@ -34,7 +34,7 @@ void main() {
 
   test('a compliant workspace has no violations', () {
     final manifests = [
-      manifest(name: 'na_kernel', deps: ['meta', 'collection']),
+      manifest(name: 'na_kernel', deps: ['meta', 'collection', 'unorm_dart']),
       manifest(name: 'na_ports', deps: ['na_kernel', 'flutter_riverpod']),
       manifest(
         name: 'na_design',
