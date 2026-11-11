@@ -77,25 +77,30 @@ final class AudioEngineMimic implements AudioEnginePort {
   Stream<EngineEvent> get events => _events.stream;
 
   @override
-  Future<LoadToken> load({
+  Future<void> load({
     required EngineItem item,
     required Duration startAt,
+    required LoadToken token,
   }) async {
     _stopTicking();
-    final token = LoadToken();
     _item = _Loaded(token: token, position: startAt, started: _Started.no);
     playback = EnginePlayback.paused;
     loads = List.unmodifiable([
       ...loads,
       EngineLoad(item: item, startAt: startAt, token: token),
     ]);
+    switch (reportedLength) {
+      case KnownLength(:final duration):
+        _events.add(EngineLength(token: token, length: duration));
+      case UnknownLength():
+        break;
+    }
     switch (gate) {
       case LoadGate.held:
         await _held.future;
       case LoadGate.open:
         break;
     }
-    return token;
   }
 
   void openLoads() {
@@ -146,12 +151,6 @@ final class AudioEngineMimic implements AudioEnginePort {
     final loaded = _loaded;
     _item = loaded.running();
     _events.add(EngineRunning(token: loaded.token));
-    switch (reportedLength) {
-      case KnownLength(:final duration):
-        _events.add(EngineLength(token: loaded.token, length: duration));
-      case UnknownLength():
-        break;
-    }
     _startTicking();
   }
 

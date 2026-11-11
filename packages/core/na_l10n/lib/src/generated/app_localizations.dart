@@ -1478,12 +1478,6 @@ abstract class AppLocalizations {
   /// **'Cover of {title}'**
   String audiobookCover(String title);
 
-  /// Label of the group readings selector
-  ///
-  /// In en, this message translates to:
-  /// **'Please select'**
-  String get readingsSelect;
-
   /// Shown when a bundled book cannot be read
   ///
   /// In en, this message translates to:
@@ -1495,6 +1489,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The readings could not be loaded.'**
   String get readingsLoadFailed;
+
+  /// Speaks: label of the button that empties the search field
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get speakClearSearch;
 }
 
 class _AppLocalizationsDelegate

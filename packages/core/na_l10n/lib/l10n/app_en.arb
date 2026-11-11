@@ -1071,5 +1071,9 @@
   "readingsLoadFailed": "The readings could not be loaded.",
   "@readingsLoadFailed": {
     "description": "Shown when the bundled readings cannot be read"
+  },
+  "speakClearSearch": "Clear search",
+  "@speakClearSearch": {
+    "description": "Speaks: label of the button that empties the search field"
   }
 }

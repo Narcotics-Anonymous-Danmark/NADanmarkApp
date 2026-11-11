@@ -123,6 +123,37 @@ void main() {
       expect(harness.active.length, KnownLength(duration: 491.seconds));
     });
 
+    test(
+      'a speak without a label takes the length reported while loading',
+      () async {
+        final harness = playerHarness();
+        harness.engine.reportedLength = KnownLength(duration: 600.seconds);
+        await harness.start(playlist: aSpeakPlaylist());
+        expect(harness.active.length, KnownLength(duration: 600.seconds));
+        expect(
+          harness.session.shown.last.length,
+          KnownLength(duration: 600.seconds),
+        );
+      },
+    );
+
+    test(
+      'a speak can be scrubbed once the engine reported its length',
+      () async {
+        final harness = playerHarness();
+        harness.engine.reportedLength = KnownLength(duration: 600.seconds);
+        await harness.start(playlist: aSpeakPlaylist());
+        await harness.player.seekTo(position: 250.seconds);
+        await flush();
+        expect(harness.engine.seeks, [250.seconds]);
+        expect(harness.active.position, 250.seconds);
+        expect(
+          harness.storedPosition(kind: PlaylistKind.speak, id: aSpeakUrl),
+          250.seconds,
+        );
+      },
+    );
+
     test('the label length is used until the engine knows better', () async {
       final harness = playerHarness(start: EngineStart.onCue);
       await harness.start();

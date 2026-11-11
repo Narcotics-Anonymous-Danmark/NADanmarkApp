@@ -1,6 +1,7 @@
 import 'package:adapter_assets/adapter_assets.dart';
 import 'package:adapter_bmlt/adapter_bmlt.dart';
 import 'package:adapter_jft/adapter_jft.dart';
+import 'package:adapter_wordpress/adapter_wordpress.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -46,22 +47,35 @@ const testBmltEndpoints = BmltEndpoints(
   tomato: BmltBaseUrl('https://tomato.test/main_server/client_interface/json/'),
 );
 
+const testWordPressEndpoints = WordPressEndpoints(
+  base: WordPressBaseUrl('https://wordpress.test'),
+  credentials: BasicAuth(credentials: BasicCredentials('test:test')),
+);
+
 TestContainer realJftContainer({
   Map<String, String> storedValues = const {},
   LegacyStoreRead legacyStore = const LegacyStoreAbsent(),
   AppInfo appInfo = testAppInfo,
   TestTime? time,
   BmltServerMimic? bmlt,
+  WordPressMimic? wordpress,
 }) => TestContainer.buildAt(
   time: time ?? TestTime.copenhagen(startAt: anInstant()),
   storedValues: storedValues,
   legacyStore: legacyStore,
   appInfo: appInfo,
   meetingPorts: MeetingPortBinding.supplied,
-  extra: bmltOverrides(
-    dio: Dio()..httpClientAdapter = bmlt ?? BmltServerMimic(),
-    endpoints: testBmltEndpoints,
-  ),
+  speaksFeed: SpeaksFeedBinding.supplied,
+  extra: [
+    ...bmltOverrides(
+      dio: Dio()..httpClientAdapter = bmlt ?? BmltServerMimic(),
+      endpoints: testBmltEndpoints,
+    ),
+    ...wordpressOverrides(
+      dio: Dio()..httpClientAdapter = wordpress ?? WordPressMimic(),
+      endpoints: testWordPressEndpoints,
+    ),
+  ],
 );
 
 enum AppSettle { idle, frames }

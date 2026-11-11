@@ -7,6 +7,7 @@ import 'package:feature_meetings_search/feature_meetings_search.dart';
 import 'package:feature_readings/feature_readings.dart';
 import 'package:feature_settings/feature_settings.dart';
 import 'package:feature_shell/feature_shell.dart';
+import 'package:feature_speaks/feature_speaks.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -124,9 +125,9 @@ final class DestinationPage extends StatelessWidget {
           onOpen: (book) => context.go(book.route.path.value),
         ),
         MenuDestination.groupReadings => const ReadingsBody(),
+        MenuDestination.speaks => const SpeaksBody(),
         MenuDestination.map ||
-        MenuDestination.events ||
-        MenuDestination.speaks => const SizedBox.shrink(),
+        MenuDestination.events => const SizedBox.shrink(),
       },
     );
   }

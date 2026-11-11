@@ -26,6 +26,7 @@ void main() {
       mediaSessionPortProvider: 'MediaSessionPort',
       audiobooksPortProvider: 'AudiobooksPort',
       readingsPortProvider: 'ReadingsPort',
+      speaksFeedPortProvider: 'SpeaksFeedPort',
     };
     for (final entry in expectations.entries) {
       expect(

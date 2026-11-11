@@ -32,11 +32,11 @@ final class JustAudioEngine implements AudioEnginePort {
   Stream<EngineEvent> get events => _events.stream;
 
   @override
-  Future<LoadToken> load({
+  Future<void> load({
     required EngineItem item,
     required Duration startAt,
+    required LoadToken token,
   }) async {
-    final token = LoadToken();
     _item = _LiveItem(token: token, phase: _Phase.waiting);
     try {
       await player.setAudioSource(
@@ -44,13 +44,12 @@ final class JustAudioEngine implements AudioEnginePort {
         initialPosition: startAt,
       );
     } on PlayerInterruptedException {
-      return token;
+      return;
     } on PlayerException catch (error) {
       _failLoad(token: token, detail: '${error.code}: ${error.message}');
     } on PlatformException catch (error) {
       _failLoad(token: token, detail: '${error.code}: ${error.message}');
     }
-    return token;
   }
 
   @override

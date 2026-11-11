@@ -13,6 +13,7 @@ import 'package:na_testing/src/media/media_session_mimic.dart';
 import 'package:na_testing/src/meetings/meeting_port_mimics.dart';
 import 'package:na_testing/src/notifications/notifications_mimic.dart';
 import 'package:na_testing/src/settings/settings_store_mimic.dart';
+import 'package:na_testing/src/speaks/speaks_feed_mimic.dart';
 import 'package:na_testing/src/storage/key_value_store_mimic.dart';
 import 'package:na_testing/src/time/fake_clock.dart';
 import 'package:na_testing/src/time/fake_scheduler.dart';
@@ -22,6 +23,8 @@ import 'package:riverpod/misc.dart';
 import 'package:riverpod/riverpod.dart';
 
 enum MeetingPortBinding { portMimics, supplied }
+
+enum SpeaksFeedBinding { portMimic, supplied }
 
 final class TestContainer {
   TestContainer._({
@@ -41,11 +44,13 @@ final class TestContainer {
     required this.session,
     required this.audiobooks,
     required this.readings,
+    required this.speaksFeed,
   });
 
   factory TestContainer.build({
     List<Override> extra = const [],
     MeetingPortBinding meetingPorts = MeetingPortBinding.portMimics,
+    SpeaksFeedBinding speaksFeed = SpeaksFeedBinding.portMimic,
     Map<String, String> storedValues = const {},
     LegacyStoreRead legacyStore = const LegacyStoreAbsent(),
     AppInfo appInfo = testAppInfo,
@@ -53,6 +58,7 @@ final class TestContainer {
     time: TestTime.copenhagen(startAt: anInstant()),
     extra: extra,
     meetingPorts: meetingPorts,
+    speaksFeed: speaksFeed,
     storedValues: storedValues,
     legacyStore: legacyStore,
     appInfo: appInfo,
@@ -62,6 +68,7 @@ final class TestContainer {
     required TestTime time,
     List<Override> extra = const [],
     MeetingPortBinding meetingPorts = MeetingPortBinding.portMimics,
+    SpeaksFeedBinding speaksFeed = SpeaksFeedBinding.portMimic,
     Map<String, String> storedValues = const {},
     LegacyStoreRead legacyStore = const LegacyStoreAbsent(),
     AppInfo appInfo = testAppInfo,
@@ -94,6 +101,7 @@ final class TestContainer {
     final session = MediaSessionMimic();
     final audiobooks = AudiobooksMimic.synthetic();
     final readings = ReadingsMimic.synthetic();
+    final speaks = SpeaksFeedMimic.sample();
     final container = ProviderContainer(
       overrides: [
         clockProvider.overrideWithValue(FakeClock(time: testTime)),
@@ -121,6 +129,12 @@ final class TestContainer {
           ],
           MeetingPortBinding.supplied => const <Override>[],
         },
+        ...switch (speaksFeed) {
+          SpeaksFeedBinding.portMimic => [
+            speaksFeedPortProvider.overrideWithValue(speaks),
+          ],
+          SpeaksFeedBinding.supplied => const <Override>[],
+        },
         ...extra,
       ],
     );
@@ -141,6 +155,7 @@ final class TestContainer {
       session: session,
       audiobooks: audiobooks,
       readings: readings,
+      speaksFeed: speaks,
     );
   }
 
@@ -160,6 +175,7 @@ final class TestContainer {
   final MediaSessionMimic session;
   final AudiobooksMimic audiobooks;
   final ReadingsMimic readings;
+  final SpeaksFeedMimic speaksFeed;
 
   T read<T>(ProviderListenable<T> provider) => container.read(provider);
 

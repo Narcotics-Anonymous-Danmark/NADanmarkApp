@@ -64,7 +64,13 @@ final class LayerRules {
   }) => switch (layer) {
     PackageLayer.kernel => _only(
       dep: dep,
-      allowed: const {'meta', 'collection', 'intl', 'json_annotation'},
+      allowed: const {
+        'meta',
+        'collection',
+        'intl',
+        'json_annotation',
+        'unorm_dart',
+      },
     ),
     PackageLayer.ports => _only(
       dep: dep,

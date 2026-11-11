@@ -14,7 +14,7 @@ same PR as the change it describes.
 | 2 | meetings-search nearby: geolocation, radius search, `/location-search` | Nearby search with timeouts and slider |
 | 3 | cleantime | Profiles, breakdowns, key tags, notifications, home cards |
 | 4 | media-player, audiobooks, readings | Global player, 3 books, resume points, GRC page. Implemented in `openspec/changes/slice-4-media-player` |
-| 5 | speaks | Catalog normalisation, search, filters, continue listening |
+| 5 | speaks | Catalog normalisation, search, filters, continue listening. Implemented in `openspec/changes/slice-5-speaks` |
 | 6 | events, home | Calendar feed, events page, home assembled from slices 0/3/6 |
 | 7 | meetings-map | Map, auto radius, clusters, places search, details modal |
 | 8 | parity release | legacy-migration, localisation parity, first store release 2.0.0 |
@@ -162,7 +162,7 @@ collapse into one ICU plural key. Values shown are the legacy strings.
 | `BASIC_TEXT` | Basis Tekst | Basic Text | `bookBasicText` | ported |
 | `HOW_AND_WHY` | Det Virker: Hvordan og Hvorfor | It Works: How and Why | `bookHowAndWhy` | ported |
 | `STEP_WORKING_GUIDES` | Vejledninger i Trinarbejde | The NA Step Working Guides | `bookStepWorkingGuides` | ported |
-| `SPEAKS` | Speaks | Speaks | `pageSpeaks` | ported |
+| `SPEAKS` | Speaks | Speaks | `speaks` | ported |
 | `JFT` | Dagens tekst | Just for today | `pageJustForToday` | ported |
 | `AUDIOBOOKS` | Lydbøger | Audiobooks | `audiobooks` | ported |
 | `NACC` | Cleantimeberegner | Cleantime calculator | `nacc` | ported |
@@ -171,10 +171,10 @@ collapse into one ICU plural key. Values shown are the legacy strings.
 | `COMING_SOON_BODY` | Vi arbejder på det .. | *(missing)* | — | dropped (unused, da only) |
 | `MONDAY_IS_FIRST_DAY_OF_WEEK` | true | *(missing)* | — | dropped (boolean, not a string) |
 | `LANGUAGE(S)` | Sprog | *(missing)* | — | dropped (da only, unused) |
-| `CONVENTION` | Konvent | Convention | `speakConvention` | ported (was hard-coded in template) |
-| `OPENING_SPEAKER` | Åbningsspeak | Opening speak | `speakKindOpening` | ported |
-| `MAIN_SPEAKER` | Hovedspeak | Main speak | `speakKindMain` | ported |
-| `CLOSING_SPEAKER` | Afslutningsspeak | Closing speak | `speakKindClosing` | ported |
+| `CONVENTION` | Konvent | Convention | — | dropped (the convention is the section header) |
+| `OPENING_SPEAKER` | Åbningsspeak | Opening speak | `openingSpeaker` | ported |
+| `MAIN_SPEAKER` | Hovedspeak | Main speak | `mainSpeaker` | ported |
+| `CLOSING_SPEAKER` | Afslutningsspeak | Closing speak | `closingSpeaker` | ported |
 | `STEPS` | Trin | *(missing)* | — | dropped (da only, unused) |
 | `TRADITIONS` | Traditioner | *(missing)* | — | dropped (da only, unused) |
 | `NA_HISTORY` | NA's historie | *(missing)* | — | dropped (da only, unused) |
@@ -268,6 +268,8 @@ or new states). Slice 0 added: `languageDanish`, `languageEnglish`,
 `playerUnknownTime`, `audiobookCover`, `audiobooksLoadFailed`,
 `readingsLoadFailed`. The legacy hard-coded "Vælg venligst" placeholder of the
 Group readings selector is dropped: the selector shows only the chosen title.
+Slice 5 added: `speakClearSearch` (the label of the search field's clear
+button; the legacy Ionic searchbar used its built-in "Cancel").
 Planned for later slices: `contactMeetingListChangesTitle`, `contactMeetingListServant`,
 `contactNaOnlineTitle`, `contactAboutTitle`, `contactBuildType`,
 `contactVersion`, `contactFinePrintTitle`, `contactFinePrintBody`,

@@ -184,7 +184,8 @@ final class MediaPlayer extends Notifier<PlayerState> {
   }) async {
     switch (playlist.trackAt(index: index)) {
       case FoundTrack(:final track):
-        final attempt = _Starting();
+        final token = LoadToken();
+        final attempt = _CurrentItem(token: token);
         _item = attempt;
         await _engine.release();
         state = PlayerActive(
@@ -194,14 +195,14 @@ final class MediaPlayer extends Notifier<PlayerState> {
           position: position,
           length: track.label.length,
         );
-        final token = await _engine.load(
+        await _engine.load(
           item: EngineItem(url: track.url, title: track.title),
           startAt: position,
+          token: token,
         );
         if (!identical(_item, attempt)) {
           return;
         }
-        _item = _ItemLoaded(token: token);
         await _engine.play();
         await savePlace();
         _askForNotificationsOnce();
@@ -228,11 +229,11 @@ final class MediaPlayer extends Notifier<PlayerState> {
 
   void _onEngine(EngineEvent event) {
     switch ((_item, state)) {
-      case (_ItemLoaded(:final token), final PlayerActive active)
+      case (_CurrentItem(:final token), final PlayerActive active)
           when token == event.token:
         unawaited(_handle(event: event, active: active));
       case (
-        _ItemLoaded() || _Starting() || _NothingLoaded(),
+        _CurrentItem() || _NothingLoaded(),
         PlayerActive() || PlayerIdle(),
       ):
         return;
@@ -385,12 +386,8 @@ sealed class _Item {
   const _Item();
 }
 
-final class _Starting extends _Item {
-  _Starting();
-}
-
-final class _ItemLoaded extends _Item {
-  const _ItemLoaded({required this.token});
+final class _CurrentItem extends _Item {
+  const _CurrentItem({required this.token});
 
   final LoadToken token;
 }
