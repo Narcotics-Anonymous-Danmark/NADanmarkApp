@@ -91,19 +91,8 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           emulator-boot-timeout: 600
-          script: |
-            set -uo pipefail
-            adb devices
-            attempt=1
-            until ./bin/na test e2e --device emulator-5554 --coverage; do
-              if [ "$attempt" -ge 2 ]; then
-                echo "::error::Patrol tests failed after $attempt attempts"
-                exit 1
-              fi
-              attempt=$((attempt + 1))
-              echo "::warning::Patrol tests failed, retrying (attempt $attempt of 2)"
-              adb shell am force-stop dk.nadanmark.app || true
-            done
+          # One line: the action runs each script line separately with sh.
+          script: bash .github/scripts/e2e-android.sh emulator-5554
 
       - name: Report in the run summary
         if: always()
