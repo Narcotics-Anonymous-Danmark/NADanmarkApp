@@ -5,6 +5,8 @@ enum LinkOpening { opened, refused }
 
 abstract interface class ExternalLinksPort {
   Future<LinkOpening> open({required Uri uri});
+
+  Future<LinkOpening> openInApp({required Uri uri});
 }
 
 final Provider<ExternalLinksPort> externalLinksPortProvider = unboundPort(

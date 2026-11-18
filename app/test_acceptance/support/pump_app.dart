@@ -59,13 +59,14 @@ TestContainer realJftContainer({
   TestTime? time,
   BmltServerMimic? bmlt,
   WordPressMimic? wordpress,
+  WordPressEndpoints wordpressEndpoints = testWordPressEndpoints,
 }) => TestContainer.buildAt(
   time: time ?? TestTime.copenhagen(startAt: anInstant()),
   storedValues: storedValues,
   legacyStore: legacyStore,
   appInfo: appInfo,
   meetingPorts: MeetingPortBinding.supplied,
-  speaksFeed: SpeaksFeedBinding.supplied,
+  wordpress: WordPressBinding.supplied,
   extra: [
     ...bmltOverrides(
       dio: Dio()..httpClientAdapter = bmlt ?? BmltServerMimic(),
@@ -73,7 +74,7 @@ TestContainer realJftContainer({
     ),
     ...wordpressOverrides(
       dio: Dio()..httpClientAdapter = wordpress ?? WordPressMimic(),
-      endpoints: testWordPressEndpoints,
+      endpoints: wordpressEndpoints,
     ),
   ],
 );

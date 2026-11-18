@@ -765,4 +765,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get speakClearSearch => 'Clear search';
+
+  @override
+  String get loadingEvents => 'Loading events…';
+
+  @override
+  String get eventsLoadError => 'Could not load the events';
+
+  @override
+  String get eventsLoadErrorBody =>
+      'Check your internet connection and try again.';
+
+  @override
+  String get eventsRetry => 'Try again';
+
+  @override
+  String get eventsNone => 'No upcoming events';
+
+  @override
+  String get eventsNoneBody => 'New events are announced on nadanmark.dk.';
+
+  @override
+  String eventCardPosition(int position, int count) {
+    return 'Event $position of $count';
+  }
 }

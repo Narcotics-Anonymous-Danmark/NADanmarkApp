@@ -1,5 +1,6 @@
 export 'src/boundary/bmlt_mapper.dart';
 export 'src/boundary/bmlt_wire.dart';
+export 'src/boundary/calendar_wire.dart';
 export 'src/boundary/cleantime_profiles_codec.dart';
 export 'src/boundary/formats_cache_codec.dart';
 export 'src/boundary/legacy_cleantime_translation.dart';

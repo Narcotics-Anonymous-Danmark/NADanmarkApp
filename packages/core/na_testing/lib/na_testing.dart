@@ -4,6 +4,8 @@ export 'src/builders/domain_builders.dart';
 export 'src/builders/gen.dart';
 export 'src/builders/test_values.dart';
 export 'src/builders/time_builders.dart';
+export 'src/calendar/event_builders.dart';
+export 'src/calendar/events_feed_mimic.dart';
 export 'src/cleantime/cleantime_builders.dart';
 export 'src/container/test_container.dart';
 export 'src/events/recording_event_bus.dart';

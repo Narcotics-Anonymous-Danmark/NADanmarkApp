@@ -36,6 +36,7 @@ workspace:
   - packages/adapters/adapter_audio
   - packages/adapters/adapter_wordpress
   - packages/features/feature_speaks
+  - packages/features/feature_events
 
 dev_dependencies:
   coverage: 1.15.1

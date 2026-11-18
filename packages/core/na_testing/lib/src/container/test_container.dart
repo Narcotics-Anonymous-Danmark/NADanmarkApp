@@ -2,6 +2,7 @@ import 'package:na_kernel/na_kernel.dart';
 import 'package:na_ports/na_ports.dart';
 import 'package:na_testing/src/builders/domain_builders.dart';
 import 'package:na_testing/src/builders/time_builders.dart';
+import 'package:na_testing/src/calendar/events_feed_mimic.dart';
 import 'package:na_testing/src/events/recording_event_bus.dart';
 import 'package:na_testing/src/jft/jft_mimic.dart';
 import 'package:na_testing/src/legacy/legacy_store_mimic.dart';
@@ -24,7 +25,7 @@ import 'package:riverpod/riverpod.dart';
 
 enum MeetingPortBinding { portMimics, supplied }
 
-enum SpeaksFeedBinding { portMimic, supplied }
+enum WordPressBinding { portMimics, supplied }
 
 final class TestContainer {
   TestContainer._({
@@ -45,12 +46,13 @@ final class TestContainer {
     required this.audiobooks,
     required this.readings,
     required this.speaksFeed,
+    required this.eventsFeed,
   });
 
   factory TestContainer.build({
     List<Override> extra = const [],
     MeetingPortBinding meetingPorts = MeetingPortBinding.portMimics,
-    SpeaksFeedBinding speaksFeed = SpeaksFeedBinding.portMimic,
+    WordPressBinding wordpress = WordPressBinding.portMimics,
     Map<String, String> storedValues = const {},
     LegacyStoreRead legacyStore = const LegacyStoreAbsent(),
     AppInfo appInfo = testAppInfo,
@@ -58,7 +60,7 @@ final class TestContainer {
     time: TestTime.copenhagen(startAt: anInstant()),
     extra: extra,
     meetingPorts: meetingPorts,
-    speaksFeed: speaksFeed,
+    wordpress: wordpress,
     storedValues: storedValues,
     legacyStore: legacyStore,
     appInfo: appInfo,
@@ -68,7 +70,7 @@ final class TestContainer {
     required TestTime time,
     List<Override> extra = const [],
     MeetingPortBinding meetingPorts = MeetingPortBinding.portMimics,
-    SpeaksFeedBinding speaksFeed = SpeaksFeedBinding.portMimic,
+    WordPressBinding wordpress = WordPressBinding.portMimics,
     Map<String, String> storedValues = const {},
     LegacyStoreRead legacyStore = const LegacyStoreAbsent(),
     AppInfo appInfo = testAppInfo,
@@ -102,6 +104,7 @@ final class TestContainer {
     final audiobooks = AudiobooksMimic.synthetic();
     final readings = ReadingsMimic.synthetic();
     final speaks = SpeaksFeedMimic.sample();
+    final calendar = EventsFeedMimic.sample();
     final container = ProviderContainer(
       overrides: [
         clockProvider.overrideWithValue(FakeClock(time: testTime)),
@@ -129,11 +132,12 @@ final class TestContainer {
           ],
           MeetingPortBinding.supplied => const <Override>[],
         },
-        ...switch (speaksFeed) {
-          SpeaksFeedBinding.portMimic => [
+        ...switch (wordpress) {
+          WordPressBinding.portMimics => [
             speaksFeedPortProvider.overrideWithValue(speaks),
+            eventsFeedPortProvider.overrideWithValue(calendar),
           ],
-          SpeaksFeedBinding.supplied => const <Override>[],
+          WordPressBinding.supplied => const <Override>[],
         },
         ...extra,
       ],
@@ -156,6 +160,7 @@ final class TestContainer {
       audiobooks: audiobooks,
       readings: readings,
       speaksFeed: speaks,
+      eventsFeed: calendar,
     );
   }
 
@@ -176,6 +181,7 @@ final class TestContainer {
   final AudiobooksMimic audiobooks;
   final ReadingsMimic readings;
   final SpeaksFeedMimic speaksFeed;
+  final EventsFeedMimic eventsFeed;
 
   T read<T>(ProviderListenable<T> provider) => container.read(provider);
 

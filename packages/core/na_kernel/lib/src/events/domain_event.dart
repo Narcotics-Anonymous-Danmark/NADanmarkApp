@@ -31,7 +31,7 @@ final class LegacyMigrationCompleted extends DomainEvent {
   final KeyCount skippedKeys;
 }
 
-enum BusyActivity { locating, findingMeetings }
+enum BusyActivity { locating, findingMeetings, loadingEvents }
 
 final class BusyStarted extends DomainEvent {
   const BusyStarted({required this.activity});

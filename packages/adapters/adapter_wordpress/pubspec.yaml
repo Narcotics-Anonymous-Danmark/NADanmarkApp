@@ -1,5 +1,5 @@
 name: adapter_wordpress
-description: SpeaksFeedPort adapter on the nadanmark.dk WordPress REST API.
+description: SpeaksFeedPort and EventsFeedPort adapters on the nadanmark.dk WordPress REST API.
 publish_to: none
 version: 0.0.0
 

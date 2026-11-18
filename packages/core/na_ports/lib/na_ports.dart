@@ -1,4 +1,5 @@
 export 'src/app_info/app_info_provider.dart';
+export 'src/calendar/events_feed_port.dart';
 export 'src/events/event_bus_provider.dart';
 export 'src/jft/jft_port.dart';
 export 'src/legacy/legacy_store_port.dart';

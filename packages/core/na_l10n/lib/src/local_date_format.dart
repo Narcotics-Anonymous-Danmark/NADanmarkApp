@@ -7,6 +7,7 @@ import 'package:na_kernel/na_kernel.dart';
 extension type const DatePattern(String skeleton) {
   static const DatePattern dayShortMonthYear = DatePattern('dd MMM yyyy');
   static const DatePattern dayMonthYear = DatePattern('dd. MMMM yyyy');
+  static const DatePattern dayDotShortMonthYear = DatePattern('dd. MMM yyyy');
 }
 
 extension type const FormattedDate(String text) {}
