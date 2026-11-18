@@ -9,8 +9,11 @@ pubspec.lock
 *.iml
 .idea/
 
-# Coverage
-coverage/
+# Coverage reports (package roots only: lib/src/coverage and test/coverage are source)
+/coverage/
+/app/coverage/
+/packages/*/*/coverage/
+/tool/*/coverage/
 
 # Secrets and generated config
 env/release.json
