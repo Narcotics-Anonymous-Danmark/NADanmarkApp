@@ -47,7 +47,7 @@ runs:
         set -euo pipefail
         read_pin() {
           local value
-          value=$(sed -n "s/^$1=//p" tool/toolchain.env | head -1)
+          value=$(sed -n "s/^$1=//p" tool/toolchain.env | tr -d '"' | head -1)
           if [ -z "$value" ]; then
             echo "::error file=tool/toolchain.env::$1 is not set"
             exit 1

@@ -63,8 +63,8 @@ jobs:
         id: simulator
         run: |
           set -euo pipefail
-          name=$(sed -n 's/^IOS_SIMULATOR_NAME=//p' tool/toolchain.env | head -1)
-          device_type=$(sed -n 's/^IOS_SIMULATOR_DEVICE_TYPE=//p' tool/toolchain.env | head -1)
+          name=$(sed -n 's/^IOS_SIMULATOR_NAME=//p' tool/toolchain.env | tr -d '"' | head -1)
+          device_type=$(sed -n 's/^IOS_SIMULATOR_DEVICE_TYPE=//p' tool/toolchain.env | tr -d '"' | head -1)
           if [ -z "$name" ] || [ -z "$device_type" ]; then
             echo "::error file=tool/toolchain.env::IOS_SIMULATOR_NAME and IOS_SIMULATOR_DEVICE_TYPE must be set"
             exit 1
