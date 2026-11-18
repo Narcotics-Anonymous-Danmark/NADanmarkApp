@@ -22,6 +22,18 @@ void main() {
     expect(launcher.modes, [PreferredLaunchMode.externalApplication]);
   });
 
+  test('opens a web page in the in-app browser view', () async {
+    final launcher = _LauncherMimic(answer: true);
+    UrlLauncherPlatform.instance = launcher;
+    final uri = Uri.parse('https://nadanmark.dk/event/x');
+    expect(
+      await const UrlLauncherLinks().openInApp(uri: uri),
+      LinkOpening.opened,
+    );
+    expect(launcher.launched, [uri.toString()]);
+    expect(launcher.modes, [PreferredLaunchMode.inAppBrowserView]);
+  });
+
   test('a refused launch and a platform error both read as refused', () async {
     UrlLauncherPlatform.instance = _LauncherMimic(answer: false);
     final uri = Uri.parse('https://na.org/');

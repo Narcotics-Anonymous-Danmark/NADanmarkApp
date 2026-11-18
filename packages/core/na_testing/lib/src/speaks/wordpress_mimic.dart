@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:na_kernel/boundary.dart';
 import 'package:na_kernel/na_kernel.dart';
+import 'package:na_testing/src/calendar/event_builders.dart';
 import 'package:na_testing/src/speaks/speak_builders.dart';
 
 extension type const MimicCredentials(String userAndPassword) {
@@ -12,6 +13,8 @@ extension type const MimicCredentials(String userAndPassword) {
 }
 
 extension type const HttpStatus(int code) {}
+
+extension type const MimicContentType(String value) {}
 
 const MimicCredentials testWordPressCredentials = MimicCredentials('test:test');
 
@@ -23,6 +26,12 @@ final class SpeakGroups extends WordPressReply {
   const SpeakGroups({required this.groups});
 
   final List<SpeakGroupDto> groups;
+}
+
+final class CalendarEvents extends WordPressReply {
+  const CalendarEvents({required this.events});
+
+  final List<CalendarEventDto> events;
 }
 
 final class WordPressEmptyObject extends WordPressReply {
@@ -55,10 +64,15 @@ final class WordPressHeld extends WordPressReply {
 enum Authorisation { accepted, rejected, missing }
 
 final class WordPressRequest {
-  const WordPressRequest({required this.uri, required this.authorisation});
+  const WordPressRequest({
+    required this.uri,
+    required this.authorisation,
+    required this.contentType,
+  });
 
   final Uri uri;
   final Authorisation authorisation;
+  final MimicContentType contentType;
 }
 
 final class WordPressMimic implements HttpClientAdapter {
@@ -66,13 +80,26 @@ final class WordPressMimic implements HttpClientAdapter {
     : _replies = {
         SpeakLanguage.danish: SpeakGroups(groups: sampleDanishSpeaks),
         SpeakLanguage.english: SpeakGroups(groups: sampleEnglishSpeaks),
-      };
+      },
+      calendar = CalendarEvents(events: sampleCalendar);
 
   static const String speaksPath = '/wp-json/wp/v2/speaks';
+  static const String calendarPath = '/wp-json/wp/v2/calendar';
 
   final MimicCredentials credentials;
   final Map<SpeakLanguage, WordPressReply> _replies;
+  WordPressReply calendar;
   final List<WordPressRequest> requests = [];
+
+  WordPressHeld holdCalendar() {
+    final held = WordPressHeld(then: calendar);
+    calendar = held;
+    return held;
+  }
+
+  List<WordPressRequest> get calendarRequests => List.unmodifiable(
+    requests.where((request) => request.uri.path == calendarPath),
+  );
 
   void serve({
     required SpeakLanguage language,
@@ -115,7 +142,21 @@ final class WordPressMimic implements HttpClientAdapter {
       String() => Authorisation.rejected,
       Object() || null => Authorisation.missing,
     };
-    requests.add(WordPressRequest(uri: uri, authorisation: authorisation));
+    requests.add(
+      WordPressRequest(
+        uri: uri,
+        authorisation: authorisation,
+        contentType: MimicContentType(options.contentType ?? ''),
+      ),
+    );
+    if (uri.path == calendarPath &&
+        uri.queryParameters['category-slug'] == EventCategory.recovery.slug) {
+      return _authorised(
+        authorisation: authorisation,
+        reply: calendar,
+        options: options,
+      );
+    }
     final language = SpeakLanguage.values.where(
       (language) =>
           uri.path == speaksPath &&
@@ -127,17 +168,26 @@ final class WordPressMimic implements HttpClientAdapter {
         status: const HttpStatus(404),
       );
     }
-    return switch (authorisation) {
-      Authorisation.accepted => _answer(
-        reply: _replies[language.first] ?? const WordPressEmptyObject(),
-        options: options,
-      ),
-      Authorisation.rejected || Authorisation.missing => _json(
+    return _authorised(
+      authorisation: authorisation,
+      reply: _replies[language.first] ?? const WordPressEmptyObject(),
+      options: options,
+    );
+  }
+
+  Future<ResponseBody> _authorised({
+    required Authorisation authorisation,
+    required WordPressReply reply,
+    required RequestOptions options,
+  }) => switch (authorisation) {
+    Authorisation.accepted => _answer(reply: reply, options: options),
+    Authorisation.rejected || Authorisation.missing => Future.value(
+      _json(
         body: '{"code":"rest_forbidden"}',
         status: const HttpStatus(401),
       ),
-    };
-  }
+    ),
+  };
 
   Future<ResponseBody> _answer({
     required WordPressReply reply,
@@ -147,6 +197,11 @@ final class WordPressMimic implements HttpClientAdapter {
       case SpeakGroups(:final groups):
         return _json(
           body: jsonEncode(groups.map((group) => group.toJson()).toList()),
+          status: const HttpStatus(200),
+        );
+      case CalendarEvents(:final events):
+        return _json(
+          body: jsonEncode(events.map((event) => event.toJson()).toList()),
           status: const HttpStatus(200),
         );
       case WordPressEmptyObject():

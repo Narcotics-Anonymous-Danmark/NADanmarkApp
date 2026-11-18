@@ -7,7 +7,6 @@ import 'package:na_kernel/src/meetings/meeting_values.dart';
 import 'package:na_kernel/src/meetings/municipality.dart';
 import 'package:na_kernel/src/results/failure.dart';
 import 'package:na_kernel/src/results/outcome.dart';
-import 'package:na_kernel/src/time/hour_of_day.dart';
 import 'package:na_kernel/src/time/local_time.dart';
 import 'package:na_kernel/src/time/weekday.dart';
 
@@ -215,17 +214,10 @@ final class BmltMapper {
   static Outcome<LocalTime, DecodeFailure> _time({
     required String text,
     required String context,
-  }) {
-    final parts = text.split(':');
-    final hour = int.tryParse(parts.first);
-    final minute = parts.length > 1 ? int.tryParse(parts[1]) : 0;
-    if (hour == null || minute == null || hour > 23 || minute > 59) {
-      return Err(error: DecodeFailure(detail: '$context: "$text"'));
-    }
-    return Ok(
-      value: LocalTime(hour: HourOfDay(hour), minute: MinuteOfHour(minute)),
-    );
-  }
+  }) => switch (LocalTime.parseClock(text: text)) {
+    Ok(:final value) => Ok(value: value),
+    Err() => Err(error: DecodeFailure(detail: '$context: "$text"')),
+  };
 
   static MeetingOrigin _origin({required BmltMeetingDto dto}) {
     if (!_text(value: dto.rootServerUri).contains('nadanmark.dk')) {

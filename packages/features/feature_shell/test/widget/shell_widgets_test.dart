@@ -110,40 +110,44 @@ void main() {
     );
   });
 
-  testWidgets('the locating activity shows the localised text', (
-    tester,
-  ) async {
-    final harness = TestContainer.build();
-    addTearDown(harness.dispose);
-    await pumpFeature(
-      tester: tester,
-      harness: harness,
-      child: NaShell(
-        location: MenuDestination.nearby.path,
-        child: const ShellPage(
-          title: 'Møder i nærheden',
-          back: NoBack(),
-          footer: NoFooter(),
-          body: SizedBox.shrink(),
+  for (final (activity, text) in const [
+    (BusyActivity.locating, NaLabel('Finder position …')),
+    (BusyActivity.findingMeetings, NaLabel('Finder møder …')),
+    (BusyActivity.loadingEvents, NaLabel('Henter arrangementer …')),
+  ]) {
+    testWidgets('the ${activity.name} activity shows the localised text', (
+      tester,
+    ) async {
+      final harness = TestContainer.build();
+      addTearDown(harness.dispose);
+      await pumpFeature(
+        tester: tester,
+        harness: harness,
+        child: NaShell(
+          location: MenuDestination.nearby.path,
+          child: const ShellPage(
+            title: 'Møder i nærheden',
+            back: NoBack(),
+            footer: NoFooter(),
+            body: SizedBox.shrink(),
+          ),
         ),
-      ),
-    );
-    final span = BusyTracker(
-      bus: harness.events,
-    ).begin(activity: BusyActivity.locating);
-    await tester.pump();
-    await tester.pump();
-    expect(
-      tester
-          .widget<NaIndeterminateBar>(
-            find.byKey(const Key('global-loading-bar')),
-          )
-          .statusText,
-      'Finder position …',
-    );
-    span.end();
-    await tester.pump();
-    await tester.pump();
-    expect(find.byKey(const Key('global-loading-bar')), findsNothing);
-  });
+      );
+      final span = BusyTracker(bus: harness.events).begin(activity: activity);
+      await tester.pump();
+      await tester.pump();
+      expect(
+        tester
+            .widget<NaIndeterminateBar>(
+              find.byKey(const Key('global-loading-bar')),
+            )
+            .statusText,
+        text.value,
+      );
+      span.end();
+      await tester.pump();
+      await tester.pump();
+      expect(find.byKey(const Key('global-loading-bar')), findsNothing);
+    });
+  }
 }

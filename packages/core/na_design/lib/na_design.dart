@@ -35,6 +35,7 @@ export 'src/primitives/na_skeleton_row.dart';
 export 'src/primitives/na_slider_with_ends.dart';
 export 'src/primitives/na_spinner.dart';
 export 'src/primitives/na_states.dart';
+export 'src/primitives/na_thumbnail.dart';
 export 'src/primitives/na_toggle_chip.dart';
 export 'src/primitives/na_toolbar_button.dart';
 export 'src/theme/na_theme.dart';

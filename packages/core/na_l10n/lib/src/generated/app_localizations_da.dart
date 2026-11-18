@@ -764,4 +764,29 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get speakClearSearch => 'Ryd søgning';
+
+  @override
+  String get loadingEvents => 'Henter arrangementer …';
+
+  @override
+  String get eventsLoadError => 'Kunne ikke hente arrangementer';
+
+  @override
+  String get eventsLoadErrorBody =>
+      'Tjek din internetforbindelse og prøv igen.';
+
+  @override
+  String get eventsRetry => 'Prøv igen';
+
+  @override
+  String get eventsNone => 'Ingen kommende arrangementer';
+
+  @override
+  String get eventsNoneBody =>
+      'Nye arrangementer bliver annonceret på nadanmark.dk.';
+
+  @override
+  String eventCardPosition(int position, int count) {
+    return 'Arrangement $position af $count';
+  }
 }

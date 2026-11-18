@@ -270,12 +270,15 @@ or new states). Slice 0 added: `languageDanish`, `languageEnglish`,
 Group readings selector is dropped: the selector shows only the chosen title.
 Slice 5 added: `speakClearSearch` (the label of the search field's clear
 button; the legacy Ionic searchbar used its built-in "Cancel").
+Slice 6 added: `loadingEvents` (the legacy hard-coded "Loading Events..."),
+`eventsLoadError`, `eventsLoadErrorBody`, `eventsRetry`, `eventsNone`,
+`eventsNoneBody` (the legacy page had no failure or empty state) and
+`eventCardPosition`.
 Planned for later slices: `contactMeetingListChangesTitle`, `contactMeetingListServant`,
 `contactNaOnlineTitle`, `contactAboutTitle`, `contactBuildType`,
 `contactVersion`, `contactFinePrintTitle`, `contactFinePrintBody`,
 `contactNotApprovedTitle`, `contactNotApprovedBody`, `contactImportedSettings`,
-`eventsLoadError`,
-`eventsRetry`, `loadingEvents`, `mapUnavailable`, `jftCopyright`,
+`mapUnavailable`, `jftCopyright`,
 `menuVersion`.
 
 ## Cordova plugins and libraries
@@ -291,7 +294,7 @@ Planned for later slices: `contactMeetingListChangesTitle`, `contactMeetingListS
 | `cordova-plugin-local-notification` | `flutter_local_notifications` |
 | `@ionic/storage` (localForage / IndexedDB) | `shared_preferences` behind `KeyValueStore`; `adapter_legacy_store` plugin for the one-time import |
 | `@ionic-native/in-app-browser` (`_system`, `tel:`, `mailto:`) | `url_launcher` |
-| `@ionic-native/in-app-browser` (in-app window for events) | `webview_flutter` in `NaModalPage` |
+| `@ionic-native/in-app-browser` (in-app window for events) | `url_launcher` `LaunchMode.inAppBrowserView` (Custom Tabs / `SFSafariViewController`) |
 | `@ionic-native/http` (CORS bypass) | not needed; `http` package |
 | `@ionic-native/base64` | not needed |
 | `cordova-plugin-device` | `package_info_plus` |

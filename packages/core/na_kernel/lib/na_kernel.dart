@@ -1,3 +1,4 @@
+export 'src/calendar/calendar_event.dart';
 export 'src/cleantime/anniversary.dart';
 export 'src/cleantime/clean_time.dart';
 export 'src/cleantime/cleantime_profiles.dart';

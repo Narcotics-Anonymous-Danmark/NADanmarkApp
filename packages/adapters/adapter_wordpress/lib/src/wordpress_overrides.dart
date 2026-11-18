@@ -1,3 +1,4 @@
+import 'package:adapter_wordpress/src/dio_events_feed.dart';
 import 'package:adapter_wordpress/src/dio_speaks_feed.dart';
 import 'package:adapter_wordpress/src/wordpress_endpoints.dart';
 import 'package:dio/dio.dart';
@@ -10,5 +11,8 @@ List<Override> wordpressOverrides({
 }) => [
   speaksFeedPortProvider.overrideWithValue(
     DioSpeaksFeed(dio: dio, endpoints: endpoints),
+  ),
+  eventsFeedPortProvider.overrideWithValue(
+    DioEventsFeed(dio: dio, endpoints: endpoints),
   ),
 ];

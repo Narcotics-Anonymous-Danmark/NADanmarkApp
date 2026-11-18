@@ -93,6 +93,8 @@ final class GlobalLoadingBar extends ConsumerWidget {
             ).locating,
             BusyStatus(activity: BusyActivity.findingMeetings) =>
               AppLocalizations.of(context).findingMtgs,
+            BusyStatus(activity: BusyActivity.loadingEvents) =>
+              AppLocalizations.of(context).loadingEvents,
           },
         ),
       };

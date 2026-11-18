@@ -1,6 +1,7 @@
 import 'package:feature_audiobooks/feature_audiobooks.dart';
 import 'package:feature_cleantime/feature_cleantime.dart';
 import 'package:feature_contact/feature_contact.dart';
+import 'package:feature_events/feature_events.dart';
 import 'package:feature_jft/feature_jft.dart';
 import 'package:feature_meetings/feature_meetings.dart';
 import 'package:feature_meetings_search/feature_meetings_search.dart';
@@ -110,6 +111,9 @@ final class DestinationPage extends StatelessWidget {
             JftPreviewCard(
               onTap: () => context.go(MenuDestination.justForToday.path.value),
             ),
+            EventsHomeCards(
+              onTap: () => context.go(MenuDestination.events.path.value),
+            ),
           ],
         ),
         MenuDestination.justForToday => const JftBody(),
@@ -126,8 +130,8 @@ final class DestinationPage extends StatelessWidget {
         ),
         MenuDestination.groupReadings => const ReadingsBody(),
         MenuDestination.speaks => const SpeaksBody(),
-        MenuDestination.map ||
-        MenuDestination.events => const SizedBox.shrink(),
+        MenuDestination.events => const EventsBody(),
+        MenuDestination.map => const SizedBox.shrink(),
       },
     );
   }

@@ -1075,5 +1075,41 @@
   "speakClearSearch": "Ryd søgning",
   "@speakClearSearch": {
     "description": "Speaks: label of the button that empties the search field"
+  },
+  "loadingEvents": "Henter arrangementer …",
+  "@loadingEvents": {
+    "description": "Events: loading bar text while the calendar is fetched"
+  },
+  "eventsLoadError": "Kunne ikke hente arrangementer",
+  "@eventsLoadError": {
+    "description": "Events: title when the calendar cannot be fetched"
+  },
+  "eventsLoadErrorBody": "Tjek din internetforbindelse og prøv igen.",
+  "@eventsLoadErrorBody": {
+    "description": "Events: body when the calendar cannot be fetched"
+  },
+  "eventsRetry": "Prøv igen",
+  "@eventsRetry": {
+    "description": "Events: button that fetches the calendar again"
+  },
+  "eventsNone": "Ingen kommende arrangementer",
+  "@eventsNone": {
+    "description": "Events: title when the calendar is empty"
+  },
+  "eventsNoneBody": "Nye arrangementer bliver annonceret på nadanmark.dk.",
+  "@eventsNoneBody": {
+    "description": "Events: body when the calendar is empty"
+  },
+  "eventCardPosition": "Arrangement {position} af {count}",
+  "@eventCardPosition": {
+    "description": "Accessible position of a home event card",
+    "placeholders": {
+      "position": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

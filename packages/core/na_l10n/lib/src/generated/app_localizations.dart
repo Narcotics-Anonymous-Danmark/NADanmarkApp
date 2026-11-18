@@ -1495,6 +1495,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Clear search'**
   String get speakClearSearch;
+
+  /// Events: loading bar text while the calendar is fetched
+  ///
+  /// In en, this message translates to:
+  /// **'Loading events…'**
+  String get loadingEvents;
+
+  /// Events: title when the calendar cannot be fetched
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the events'**
+  String get eventsLoadError;
+
+  /// Events: body when the calendar cannot be fetched
+  ///
+  /// In en, this message translates to:
+  /// **'Check your internet connection and try again.'**
+  String get eventsLoadErrorBody;
+
+  /// Events: button that fetches the calendar again
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get eventsRetry;
+
+  /// Events: title when the calendar is empty
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming events'**
+  String get eventsNone;
+
+  /// Events: body when the calendar is empty
+  ///
+  /// In en, this message translates to:
+  /// **'New events are announced on nadanmark.dk.'**
+  String get eventsNoneBody;
+
+  /// Accessible position of a home event card
+  ///
+  /// In en, this message translates to:
+  /// **'Event {position} of {count}'**
+  String eventCardPosition(int position, int count);
 }
 
 class _AppLocalizationsDelegate

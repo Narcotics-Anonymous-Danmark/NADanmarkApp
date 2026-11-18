@@ -43,6 +43,10 @@ final class WordPressEndpoints {
       '${_trimmed(base: base)}/wp-json/wp/v2/speaks'
       '?excerpt[]=${language.excerpt.value}';
 
+  String calendar({required EventCategory category}) =>
+      '${_trimmed(base: base)}/wp-json/wp/v2/calendar'
+      '?category-slug=${Uri.encodeQueryComponent(category.slug)}';
+
   static String _trimmed({required WordPressBaseUrl base}) =>
       base.value.endsWith('/')
       ? base.value.substring(0, base.value.length - 1)

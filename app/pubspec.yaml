@@ -37,6 +37,8 @@ dependencies:
     path: ../packages/features/feature_cleantime
   feature_contact:
     path: ../packages/features/feature_contact
+  feature_events:
+    path: ../packages/features/feature_events
   feature_jft:
     path: ../packages/features/feature_jft
   feature_legacy_migration:
