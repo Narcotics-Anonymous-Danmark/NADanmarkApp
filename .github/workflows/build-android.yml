@@ -49,7 +49,7 @@ jobs:
       aab: ${{ steps.build.outputs.aab }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ inputs.ref || github.ref }}
 
@@ -106,7 +106,7 @@ jobs:
           echo "\`$(basename "$aab")\` — $(du -h "$aab" | cut -f1)" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload the bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ inputs.artifact_name || 'android-release' }}
           path: dist/*.aab
