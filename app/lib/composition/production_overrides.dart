@@ -3,13 +3,16 @@ import 'package:adapter_audio/adapter_audio.dart';
 import 'package:adapter_bmlt/adapter_bmlt.dart';
 import 'package:adapter_clock/adapter_clock.dart';
 import 'package:adapter_geolocation/adapter_geolocation.dart';
+import 'package:adapter_google_maps/adapter_google_maps.dart';
 import 'package:adapter_jft/adapter_jft.dart';
 import 'package:adapter_legacy_store/adapter_legacy_store.dart';
 import 'package:adapter_links/adapter_links.dart';
 import 'package:adapter_notifications/adapter_notifications.dart';
+import 'package:adapter_places/adapter_places.dart';
 import 'package:adapter_storage/adapter_storage.dart';
 import 'package:adapter_wordpress/adapter_wordpress.dart';
 import 'package:dio/dio.dart';
+import 'package:feature_meetings_map/feature_meetings_map.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:na_app/composition/app_config.dart';
@@ -22,6 +25,8 @@ Dio bmltDio() => networkDio();
 
 Dio wordpressDio() => networkDio();
 
+Dio placesDio() => networkDio();
+
 Dio networkDio() => Dio(
   BaseOptions(
     connectTimeout: const Duration(seconds: 15),
@@ -32,7 +37,44 @@ Dio networkDio() => Dio(
 Future<List<Override>> productionOverrides() async => [
   ...await platformOverrides(),
   ...networkOverrides(bmlt: bmltDio(), wordpress: wordpressDio()),
+  ...mapsOverrides(
+    maps: AppConfig.fromEnvironment().maps,
+    dio: placesDio(),
+    bundle: rootBundle,
+  ),
 ];
+
+List<Override> mapsOverrides({
+  required MapsConfig maps,
+  required Dio dio,
+  required AssetBundle bundle,
+}) => switch (maps) {
+  MapsConfigured(:final places) => [
+    ...placesOverrides(dio: dio, endpoints: places),
+    mapAvailabilityProvider.overrideWithValue(
+      MapsAvailable(
+        surface: googleSurface(icons: MarkerIcons(bundle: bundle)),
+      ),
+    ),
+  ],
+  MapsNotConfigured() => [
+    mapAvailabilityProvider.overrideWithValue(const MapsUnavailable()),
+  ],
+};
+
+MapSurface googleSurface({required MarkerIcons icons}) =>
+    ({
+      required initial,
+      required myLocation,
+      required markers,
+      required events,
+    }) => GoogleMapSurface(
+      icons: icons,
+      initial: initial,
+      myLocation: myLocation,
+      markers: markers,
+      events: events,
+    );
 
 Future<List<Override>> platformOverrides() async => [
   ...clockOverrides(zone: TimeZoneId.copenhagen),

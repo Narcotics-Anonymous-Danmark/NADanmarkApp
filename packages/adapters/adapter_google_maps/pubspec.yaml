@@ -1,0 +1,33 @@
+name: adapter_google_maps
+description: The native Google map surface and MapHandle adapter on google_maps_flutter.
+publish_to: none
+version: 0.0.0
+
+environment:
+  sdk: ^3.11.0
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  google_maps_flutter: 2.18.1
+  google_maps_flutter_android: 2.19.10
+  google_maps_flutter_ios: 2.18.7
+  google_maps_flutter_platform_interface: 2.17.0
+  na_kernel:
+    path: ../../core/na_kernel
+  na_ports:
+    path: ../../core/na_ports
+
+dev_dependencies:
+  custom_lint: 0.8.1
+  flutter_test:
+    sdk: flutter
+  na_lints:
+    path: ../../../tool/na_lints
+  na_testing:
+    path: ../../core/na_testing
+
+flutter:
+  assets:
+    - assets/markers/

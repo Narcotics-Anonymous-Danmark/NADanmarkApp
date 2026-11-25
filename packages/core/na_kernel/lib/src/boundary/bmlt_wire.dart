@@ -104,6 +104,24 @@ final class BmltMeetingDto {
   includeIfNull: false,
   converters: [LenientText()],
 )
+final class BmltSpotDto {
+  const BmltSpotDto({this.idBigint, this.latitude, this.longitude});
+
+  factory BmltSpotDto.fromJson(WireObject json) => _$BmltSpotDtoFromJson(json);
+
+  @JsonKey(name: 'id_bigint')
+  final String? idBigint;
+  final String? latitude;
+  final String? longitude;
+
+  WireObject toJson() => _$BmltSpotDtoToJson(this);
+}
+
+@JsonSerializable(
+  checked: true,
+  includeIfNull: false,
+  converters: [LenientText()],
+)
 final class BmltMunicipalityDto {
   const BmltMunicipalityDto({this.locationMunicipality});
 

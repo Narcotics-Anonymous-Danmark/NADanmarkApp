@@ -18,6 +18,8 @@ dependencies:
     path: ../packages/adapters/adapter_clock
   adapter_geolocation:
     path: ../packages/adapters/adapter_geolocation
+  adapter_google_maps:
+    path: ../packages/adapters/adapter_google_maps
   adapter_jft:
     path: ../packages/adapters/adapter_jft
   adapter_legacy_store:
@@ -26,6 +28,8 @@ dependencies:
     path: ../packages/adapters/adapter_links
   adapter_notifications:
     path: ../packages/adapters/adapter_notifications
+  adapter_places:
+    path: ../packages/adapters/adapter_places
   adapter_storage:
     path: ../packages/adapters/adapter_storage
   adapter_wordpress:
@@ -47,6 +51,8 @@ dependencies:
     path: ../packages/features/feature_media_player
   feature_meetings:
     path: ../packages/features/feature_meetings
+  feature_meetings_map:
+    path: ../packages/features/feature_meetings_map
   feature_meetings_search:
     path: ../packages/features/feature_meetings_search
   feature_readings:

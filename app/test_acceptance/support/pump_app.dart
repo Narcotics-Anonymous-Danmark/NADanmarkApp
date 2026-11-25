@@ -1,8 +1,10 @@
 import 'package:adapter_assets/adapter_assets.dart';
 import 'package:adapter_bmlt/adapter_bmlt.dart';
 import 'package:adapter_jft/adapter_jft.dart';
+import 'package:adapter_places/adapter_places.dart';
 import 'package:adapter_wordpress/adapter_wordpress.dart';
 import 'package:dio/dio.dart';
+import 'package:feature_meetings_map/feature_meetings_map.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,6 +49,16 @@ const testBmltEndpoints = BmltEndpoints(
   tomato: BmltBaseUrl('https://tomato.test/main_server/client_interface/json/'),
 );
 
+const testPlacesEndpoints = PlacesEndpoints(
+  base: PlacesBaseUrl('https://places.test/maps/api/place/'),
+  key: MapsApiKey('test-key'),
+);
+
+const MapCamera fallbackCamera = MapCamera(
+  target: GeoPoint.searchFallback,
+  zoom: MapZoom.initial,
+);
+
 const testWordPressEndpoints = WordPressEndpoints(
   base: WordPressBaseUrl('https://wordpress.test'),
   credentials: BasicAuth(credentials: BasicCredentials('test:test')),
@@ -60,6 +72,9 @@ TestContainer realJftContainer({
   BmltServerMimic? bmlt,
   WordPressMimic? wordpress,
   WordPressEndpoints wordpressEndpoints = testWordPressEndpoints,
+  MapSurfaceMimic? map,
+  PlacesServerMimic? places,
+  MapAvailabilityChoice maps = MapAvailabilityChoice.available,
 }) => TestContainer.buildAt(
   time: time ?? TestTime.copenhagen(startAt: anInstant()),
   storedValues: storedValues,
@@ -67,7 +82,18 @@ TestContainer realJftContainer({
   appInfo: appInfo,
   meetingPorts: MeetingPortBinding.supplied,
   wordpress: WordPressBinding.supplied,
+  places: PlacesBinding.supplied,
   extra: [
+    ...placesOverrides(
+      dio: Dio()..httpClientAdapter = places ?? PlacesServerMimic(),
+      endpoints: testPlacesEndpoints,
+    ),
+    mapAvailabilityProvider.overrideWithValue(switch (maps) {
+      MapAvailabilityChoice.available => MapsAvailable(
+        surface: (map ?? MapSurfaceMimic(camera: fallbackCamera)).surface,
+      ),
+      MapAvailabilityChoice.unavailable => const MapsUnavailable(),
+    }),
     ...bmltOverrides(
       dio: Dio()..httpClientAdapter = bmlt ?? BmltServerMimic(),
       endpoints: testBmltEndpoints,
@@ -80,6 +106,8 @@ TestContainer realJftContainer({
 );
 
 enum AppSettle { idle, frames }
+
+enum MapAvailabilityChoice { available, unavailable }
 
 Future<AppHarness> pumpApp({
   required WidgetTester tester,

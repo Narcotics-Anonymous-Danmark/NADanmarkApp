@@ -16,7 +16,7 @@ same PR as the change it describes.
 | 4 | media-player, audiobooks, readings | Global player, 3 books, resume points, GRC page. Implemented in `openspec/changes/slice-4-media-player` |
 | 5 | speaks | Catalog normalisation, search, filters, continue listening. Implemented in `openspec/changes/slice-5-speaks` |
 | 6 | events, home | Calendar feed, events page, home assembled from slices 0/3/6 |
-| 7 | meetings-map | Map, auto radius, clusters, places search, details modal |
+| 7 | meetings-map | Map, auto radius, clusters, places search, details modal. Implemented in `openspec/changes/slice-7-map-search` |
 | 8 | parity release | legacy-migration, localisation parity, first store release 2.0.0 |
 | 9 | cast/airplay, dark theme | Chromecast handoff, AirPlay picker, dark tokens |
 
@@ -85,7 +85,7 @@ collapse into one ICU plural key. Values shown are the legacy strings.
 | `TAGS` | Tags | Tags | — | dropped (unused BMLT template key) |
 | `CATEGORY` | Kategori | Category | — | dropped (unused BMLT template key) |
 | `MENUS` | Menuer | Menus | — | dropped (unused BMLT template key) |
-| `MAP_SEARCH` | Kort | Map | `pageMap` | ported |
+| `MAP_SEARCH` | Kort | Map | `mapSearch` | ported (menu entry and page title) |
 | `MAP_SEARCH_DESC` |  møder nærmest den røde markør. Træk den røde markør for at flytte søgningen. |  meetings nearest the red marker. Drag the red marker to move the search. | — | dropped (unused BMLT template key) |
 | `MEETINGS` |  Møder |  meetings | — | dropped (unused BMLT template key) |
 | `KM` |  km |  km | `km`, `kmValue` | ported (`kmValue` for the slider end labels) |
@@ -178,7 +178,7 @@ collapse into one ICU plural key. Values shown are the legacy strings.
 | `STEPS` | Trin | *(missing)* | — | dropped (da only, unused) |
 | `TRADITIONS` | Traditioner | *(missing)* | — | dropped (da only, unused) |
 | `NA_HISTORY` | NA's historie | *(missing)* | — | dropped (da only, unused) |
-| `mapsearch.search` | Søg | Search | `mapSearchPlaceholder` | ported |
+| `mapsearch.search` | Søg | Search | `mapsearchSearch` | ported (placeholder of the map's place search field) |
 | `CLEANTIME` | Cleantime | Cleantime | `cleantime` | ported |
 | `DATETIME` | Cleantimeberegner | Cleantime counter | `datetime` | ported |
 | `ENTERCLEANDATE` | Første clean dag | First clean day | `entercleandate` | ported |
@@ -274,11 +274,14 @@ Slice 6 added: `loadingEvents` (the legacy hard-coded "Loading Events..."),
 `eventsLoadError`, `eventsLoadErrorBody`, `eventsRetry`, `eventsNone`,
 `eventsNoneBody` (the legacy page had no failure or empty state) and
 `eventCardPosition`.
+Slice 7 added: `mapUnavailable` (shown instead of the map when no Google
+Maps key is configured) and `mapClearSearch` (the label of the place search
+field's clear button).
 Planned for later slices: `contactMeetingListChangesTitle`, `contactMeetingListServant`,
 `contactNaOnlineTitle`, `contactAboutTitle`, `contactBuildType`,
 `contactVersion`, `contactFinePrintTitle`, `contactFinePrintBody`,
 `contactNotApprovedTitle`, `contactNotApprovedBody`, `contactImportedSettings`,
-`mapUnavailable`, `jftCopyright`,
+`jftCopyright`,
 `menuVersion`.
 
 ## Cordova plugins and libraries
@@ -289,8 +292,8 @@ Planned for later slices: `contactMeetingListChangesTitle`, `contactMeetingListS
 | `cordova-plugin-music-controls2` | `audio_service` (`adapter_audio`; covers copied to the cache directory with `path_provider`) |
 | `na-cast` (local plugin, Cast sender SDK) | `na_cast` Flutter plugin, same Kotlin/Swift over MethodChannel/EventChannel |
 | `na-airplay-picker` (local plugin) | `na_airplay_picker` Flutter plugin, `UiKitView` around `AVRoutePickerView` |
-| `cordova-plugin-googlemaps-2` (map, clusters, `LocationService`, `Geocoder`, `Spherical`) | `google_maps_flutter` + clustering in `feature_meetings_map`, `geolocator`, `geocoding`, kernel haversine |
-| Places JS SDK in `index.html` | Places HTTPS API through `adapter_places` |
+| `cordova-plugin-googlemaps-2` (map, clusters, `LocationService`, `Geocoder`, `Spherical`) | `google_maps_flutter` (`adapter_google_maps`), pure Dart clustering (`MarkerClusterer` in `na_kernel`), `geolocator`, kernel haversine (`GreatCircle`); the `Geocoder` is replaced by Place Details by `place_id` |
+| Places JS SDK in `index.html` | Places web service (`place/autocomplete/json`, `place/details/json`) through `adapter_places` |
 | `cordova-plugin-local-notification` | `flutter_local_notifications` |
 | `@ionic/storage` (localForage / IndexedDB) | `shared_preferences` behind `KeyValueStore`; `adapter_legacy_store` plugin for the one-time import |
 | `@ionic-native/in-app-browser` (`_system`, `tel:`, `mailto:`) | `url_launcher` |

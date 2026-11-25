@@ -6,6 +6,7 @@ import 'package:na_kernel/na_kernel.dart';
 import 'package:na_ports/na_ports.dart';
 import 'package:na_testing/src/builders/bmlt_builders.dart';
 import 'package:na_testing/src/generated/recorded_bmlt.dart';
+import 'package:na_testing/src/meetings/recorded_tomato.dart';
 
 final class PortGate {
   final Completer<void> _opened = Completer<void>();
@@ -33,11 +34,30 @@ final class NearbyQuery {
   String toString() => 'NearbyQuery($centre, ${radius.value} km)';
 }
 
+@immutable
+final class SpotsQuery {
+  const SpotsQuery({required this.centre, required this.radius});
+
+  final GeoPoint centre;
+  final MapRadius radius;
+
+  @override
+  int get hashCode => Object.hash(centre, radius);
+
+  @override
+  bool operator ==(Object other) =>
+      other is SpotsQuery && other.centre == centre && other.radius == radius;
+
+  @override
+  String toString() => 'SpotsQuery($centre, ${radius.code} km)';
+}
+
 final class MeetingSearchMimic implements MeetingSearchPort {
   MeetingSearchMimic({
     required this.meetings,
     required this.municipalities,
     required this.nearby,
+    required this.spots,
   });
 
   factory MeetingSearchMimic.recorded() => MeetingSearchMimic(
@@ -58,11 +78,22 @@ final class MeetingSearchMimic implements MeetingSearchPort {
       Ok(:final value) => Ok(value: value),
       Err(:final error) => Err(error: error),
     },
+    spots: switch (const BmltMapper().spots(json: recordedCopenhagenSpots)) {
+      Ok(:final value) => Ok(value: value),
+      Err(:final error) => Err(error: error),
+    },
   );
 
   Outcome<List<Meeting>, Failure> meetings;
   Outcome<List<MunicipalityName>, Failure> municipalities;
   Outcome<List<Meeting>, Failure> nearby;
+  Outcome<List<MeetingSpot>, Failure> spots;
+  final List<SpotsQuery> spotsQueries = [];
+  final List<List<MeetingId>> byIdQueries = [];
+  final List<PortGate> _spotGates = [];
+  final List<PortGate> _byIdGates = [];
+  final List<Outcome<List<MeetingSpot>, Failure>> _queuedSpots = [];
+  final List<Outcome<List<Meeting>, Failure>> _queuedById = [];
   final Map<Km, Outcome<List<Meeting>, Failure>> _nearbyByRadius = {};
   final List<PortGate> _meetingGates = [];
   final List<PortGate> _municipalityGates = [];
@@ -77,6 +108,16 @@ final class MeetingSearchMimic implements MeetingSearchPort {
   }) => _nearbyByRadius[radius] = result;
 
   PortGate holdNearby() => _gate(into: _nearbyGates);
+
+  PortGate holdSpots() => _gate(into: _spotGates);
+
+  PortGate holdById() => _gate(into: _byIdGates);
+
+  void queueSpots({required Outcome<List<MeetingSpot>, Failure> result}) =>
+      _queuedSpots.add(result);
+
+  void queueById({required Outcome<List<Meeting>, Failure> result}) =>
+      _queuedById.add(result);
 
   PortGate holdMeetings() => _gate(into: _meetingGates);
 
@@ -105,6 +146,36 @@ final class MeetingSearchMimic implements MeetingSearchPort {
     nearbyQueries.add(NearbyQuery(centre: centre, radius: radius));
     await _pass(gates: _nearbyGates);
     return _nearbyByRadius[radius] ?? nearby;
+  }
+
+  @override
+  Future<Outcome<List<MeetingSpot>, Failure>> meetingSpots({
+    required GeoPoint centre,
+    required MapRadius radius,
+  }) async {
+    spotsQueries.add(SpotsQuery(centre: centre, radius: radius));
+    final answer = _queuedSpots.isEmpty ? spots : _queuedSpots.removeAt(0);
+    await _pass(gates: _spotGates);
+    return answer;
+  }
+
+  @override
+  Future<Outcome<List<Meeting>, Failure>> meetingsById({
+    required List<MeetingId> ids,
+  }) async {
+    byIdQueries.add(List.unmodifiable(ids));
+    final answer = _queuedById.isEmpty
+        ? switch (meetings) {
+            Ok(:final value) => Ok<List<Meeting>, Failure>(
+              value: List.unmodifiable(
+                value.where((meeting) => ids.contains(meeting.id)),
+              ),
+            ),
+            Err(:final error) => Err<List<Meeting>, Failure>(error: error),
+          }
+        : _queuedById.removeAt(0);
+    await _pass(gates: _byIdGates);
+    return answer;
   }
 
   static PortGate _gate({required List<PortGate> into}) {

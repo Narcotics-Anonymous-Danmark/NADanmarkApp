@@ -1111,5 +1111,13 @@
         "type": "int"
       }
     }
+  },
+  "mapUnavailable": "Map unavailable",
+  "@mapUnavailable": {
+    "description": "Map: shown instead of the map when no Google Maps key is configured"
+  },
+  "mapClearSearch": "Clear search",
+  "@mapClearSearch": {
+    "description": "Map: label of the button that empties the place search field"
   }
 }

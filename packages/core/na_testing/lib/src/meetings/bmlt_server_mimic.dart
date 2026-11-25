@@ -8,11 +8,14 @@ import 'package:na_kernel/na_kernel.dart';
 import 'package:na_testing/src/builders/bmlt_builders.dart';
 import 'package:na_testing/src/builders/test_values.dart';
 import 'package:na_testing/src/generated/recorded_bmlt.dart';
+import 'package:na_testing/src/meetings/recorded_tomato.dart';
 
 enum BmltEndpoint {
   meetings,
   municipalities,
   nearby,
+  spots,
+  byId,
   formatsDanish,
   formatsEnglish,
 }
@@ -31,6 +34,9 @@ final class BmltRows extends BmltReply {
     required List<BmltMunicipalityDto> municipalities,
   }) : rows = List.unmodifiable(municipalities.map((dto) => dto.toJson()));
 
+  BmltRows.spots({required List<BmltSpotDto> spots})
+    : rows = List.unmodifiable(spots.map((dto) => dto.toJson()));
+
   BmltRows.formats({required List<BmltFormatDto> formats})
     : rows = List.unmodifiable(formats.map((dto) => dto.toJson()));
 
@@ -41,6 +47,12 @@ BmltRows aNearbyBmltResponse({RowCount count = const RowCount(3)}) =>
     BmltRows.meetings(
       meetings: recordedMeetingDtos().take(count.value).toList(),
     );
+
+final class BmltRowsMatchingIds extends BmltReply {
+  const BmltRowsMatchingIds({required this.rows});
+
+  final List<WireObject> rows;
+}
 
 final class BmltNoResults extends BmltReply {
   const BmltNoResults();
@@ -77,6 +89,10 @@ final class BmltServerMimic implements HttpClientAdapter {
           municipalities: recordedMunicipalityDtos(),
         ),
         BmltEndpoint.nearby: const BmltRows(rows: recordedDenmarkMeetings),
+        BmltEndpoint.spots: const BmltRows(rows: recordedCopenhagenSpots),
+        BmltEndpoint.byId: const BmltRowsMatchingIds(
+          rows: recordedDenmarkMeetings,
+        ),
         BmltEndpoint.formatsDanish: const BmltRows(rows: recordedFormatsDa),
         BmltEndpoint.formatsEnglish: const BmltRows(rows: recordedFormatsEn),
       };
@@ -137,7 +153,17 @@ final class BmltServerMimic implements HttpClientAdapter {
         options: options,
       ),
       _Routed(:final endpoint) => _answer(
-        reply: _replies[endpoint] ?? const BmltNoResults(),
+        reply: switch (_replies[endpoint] ?? const BmltNoResults()) {
+          BmltRowsMatchingIds(:final rows) => BmltRows(
+            rows: List.unmodifiable(
+              rows.where(
+                (row) => (uri.queryParametersAll[_byIdKey] ?? const [])
+                    .contains(row['id_bigint']),
+              ),
+            ),
+          ),
+          final BmltReply reply => reply,
+        },
         options: options,
       ),
       _Unrouted() => _answer(
@@ -152,7 +178,7 @@ final class BmltServerMimic implements HttpClientAdapter {
     required RequestOptions options,
   }) async {
     switch (reply) {
-      case BmltRows(:final rows):
+      case BmltRows(:final rows) || BmltRowsMatchingIds(:final rows):
         return _json(body: jsonEncode(rows), statusCode: 200);
       case BmltNoResults():
         return _json(body: '{}', statusCode: 200);
@@ -174,14 +200,23 @@ final class BmltServerMimic implements HttpClientAdapter {
   @override
   void close({bool force = false}) {}
 
+  static const String _byIdKey = 'meeting_ids[]';
+  static const String _spotFields = 'longitude,latitude,id_bigint';
+
   static _Route _routeOf({required Uri uri}) {
     final query = uri.queryParameters;
+    if (query['switcher'] == 'GetSearchResults' &&
+        query.containsKey(_byIdKey)) {
+      return const _Routed(endpoint: BmltEndpoint.byId);
+    }
     return switch ((
       query['switcher'],
       query['data_field_key'],
       query['lang_enum'],
       query['geo_width_km'],
     )) {
+      ('GetSearchResults', _spotFields, String() || null, String()) =>
+        const _Routed(endpoint: BmltEndpoint.spots),
       ('GetSearchResults', null, String() || null, String()) => const _Routed(
         endpoint: BmltEndpoint.nearby,
       ),

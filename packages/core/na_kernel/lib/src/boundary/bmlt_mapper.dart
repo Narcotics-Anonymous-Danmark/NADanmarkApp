@@ -1,5 +1,6 @@
 import 'package:na_kernel/src/boundary/bmlt_wire.dart';
 import 'package:na_kernel/src/boundary/wire_json.dart';
+import 'package:na_kernel/src/maps/meeting_pins.dart';
 import 'package:na_kernel/src/meetings/format_codes.dart';
 import 'package:na_kernel/src/meetings/meeting.dart';
 import 'package:na_kernel/src/meetings/meeting_formats.dart';
@@ -30,6 +31,42 @@ final class BmltMapper {
                   .map((ok) => ok.value),
             ),
           );
+
+  Outcome<List<MeetingSpot>, DecodeFailure> spots({required Object? json}) =>
+      _wire
+          .rows(json: json, fromJson: BmltSpotDto.fromJson, context: 'spots')
+          .map(
+            transform: (dtos) => List<MeetingSpot>.unmodifiable(
+              dtos
+                  .map((dto) => spot(dto: dto))
+                  .whereType<Ok<MeetingSpot, DecodeFailure>>()
+                  .map((ok) => ok.value),
+            ),
+          );
+
+  Outcome<MeetingSpot, DecodeFailure> spot({required BmltSpotDto dto}) {
+    final id = int.tryParse(_text(value: dto.idBigint));
+    final latitude = double.tryParse(_text(value: dto.latitude));
+    final longitude = double.tryParse(_text(value: dto.longitude));
+    if (id == null || latitude == null || longitude == null) {
+      return Err(
+        error: DecodeFailure(
+          detail:
+              'spot: id "${dto.idBigint}" at "${dto.latitude}", '
+              '"${dto.longitude}"',
+        ),
+      );
+    }
+    return Ok(
+      value: MeetingSpot(
+        id: MeetingId(id),
+        point: GeoPoint(
+          latitude: Latitude(latitude),
+          longitude: Longitude(longitude),
+        ),
+      ),
+    );
+  }
 
   Outcome<List<MunicipalityName>, DecodeFailure> municipalities({
     required Object? json,
