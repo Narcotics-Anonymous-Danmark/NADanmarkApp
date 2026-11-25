@@ -1537,6 +1537,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Event {position} of {count}'**
   String eventCardPosition(int position, int count);
+
+  /// Map: shown instead of the map when no Google Maps key is configured
+  ///
+  /// In en, this message translates to:
+  /// **'Map unavailable'**
+  String get mapUnavailable;
+
+  /// Map: label of the button that empties the place search field
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get mapClearSearch;
 }
 
 class _AppLocalizationsDelegate

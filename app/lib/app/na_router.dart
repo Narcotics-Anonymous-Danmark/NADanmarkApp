@@ -4,6 +4,7 @@ import 'package:feature_contact/feature_contact.dart';
 import 'package:feature_events/feature_events.dart';
 import 'package:feature_jft/feature_jft.dart';
 import 'package:feature_meetings/feature_meetings.dart';
+import 'package:feature_meetings_map/feature_meetings_map.dart';
 import 'package:feature_meetings_search/feature_meetings_search.dart';
 import 'package:feature_readings/feature_readings.dart';
 import 'package:feature_settings/feature_settings.dart';
@@ -131,7 +132,7 @@ final class DestinationPage extends StatelessWidget {
         MenuDestination.groupReadings => const ReadingsBody(),
         MenuDestination.speaks => const SpeaksBody(),
         MenuDestination.events => const EventsBody(),
-        MenuDestination.map => const SizedBox.shrink(),
+        MenuDestination.map => const MapSearchBody(),
       },
     );
   }

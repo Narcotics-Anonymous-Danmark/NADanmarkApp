@@ -25,6 +25,19 @@ final class BmltEndpoints {
       '&sort_keys=longitude,latitude'
       '&callingApp=bmlt_search_3_ionic';
 
+  String meetingSpots({required GeoPoint centre, required MapRadius radius}) =>
+      '${tomato.value}?switcher=GetSearchResults'
+      '&data_field_key=longitude,latitude,id_bigint'
+      '&geo_width_km=${radius.code}'
+      '&long_val=${centre.longitude.value}'
+      '&lat_val=${centre.latitude.value}'
+      '&sort_keys=longitude,latitude'
+      '&callingApp=bmlt_search_3_ionic';
+
+  String meetingsById({required List<MeetingId> ids}) =>
+      '${tomato.value}?switcher=GetSearchResults'
+      '${ids.map((id) => '&meeting_ids[]=${id.value}').join()}';
+
   String get danishFormats =>
       '${denmark.value}?switcher=GetFormats&lang_enum=da';
 

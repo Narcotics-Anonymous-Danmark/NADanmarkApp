@@ -28,6 +28,7 @@ void main() {
       readingsPortProvider: 'ReadingsPort',
       speaksFeedPortProvider: 'SpeaksFeedPort',
       eventsFeedPortProvider: 'EventsFeedPort',
+      placesPortProvider: 'PlacesPort',
     };
     for (final entry in expectations.entries) {
       expect(

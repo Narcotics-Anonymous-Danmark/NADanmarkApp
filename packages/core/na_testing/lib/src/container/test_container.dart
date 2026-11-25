@@ -13,6 +13,7 @@ import 'package:na_testing/src/media/audio_engine_mimic.dart';
 import 'package:na_testing/src/media/media_session_mimic.dart';
 import 'package:na_testing/src/meetings/meeting_port_mimics.dart';
 import 'package:na_testing/src/notifications/notifications_mimic.dart';
+import 'package:na_testing/src/places/places_mimics.dart';
 import 'package:na_testing/src/settings/settings_store_mimic.dart';
 import 'package:na_testing/src/speaks/speaks_feed_mimic.dart';
 import 'package:na_testing/src/storage/key_value_store_mimic.dart';
@@ -26,6 +27,8 @@ import 'package:riverpod/riverpod.dart';
 enum MeetingPortBinding { portMimics, supplied }
 
 enum WordPressBinding { portMimics, supplied }
+
+enum PlacesBinding { portMimic, supplied }
 
 final class TestContainer {
   TestContainer._({
@@ -47,12 +50,14 @@ final class TestContainer {
     required this.readings,
     required this.speaksFeed,
     required this.eventsFeed,
+    required this.places,
   });
 
   factory TestContainer.build({
     List<Override> extra = const [],
     MeetingPortBinding meetingPorts = MeetingPortBinding.portMimics,
     WordPressBinding wordpress = WordPressBinding.portMimics,
+    PlacesBinding places = PlacesBinding.portMimic,
     Map<String, String> storedValues = const {},
     LegacyStoreRead legacyStore = const LegacyStoreAbsent(),
     AppInfo appInfo = testAppInfo,
@@ -61,6 +66,7 @@ final class TestContainer {
     extra: extra,
     meetingPorts: meetingPorts,
     wordpress: wordpress,
+    places: places,
     storedValues: storedValues,
     legacyStore: legacyStore,
     appInfo: appInfo,
@@ -71,6 +77,7 @@ final class TestContainer {
     List<Override> extra = const [],
     MeetingPortBinding meetingPorts = MeetingPortBinding.portMimics,
     WordPressBinding wordpress = WordPressBinding.portMimics,
+    PlacesBinding places = PlacesBinding.portMimic,
     Map<String, String> storedValues = const {},
     LegacyStoreRead legacyStore = const LegacyStoreAbsent(),
     AppInfo appInfo = testAppInfo,
@@ -105,6 +112,7 @@ final class TestContainer {
     final readings = ReadingsMimic.synthetic();
     final speaks = SpeaksFeedMimic.sample();
     final calendar = EventsFeedMimic.sample();
+    final placesMimic = PlacesMimic();
     final container = ProviderContainer(
       overrides: [
         clockProvider.overrideWithValue(FakeClock(time: testTime)),
@@ -131,6 +139,12 @@ final class TestContainer {
             meetingFormatsPortProvider.overrideWithValue(meetingFormats),
           ],
           MeetingPortBinding.supplied => const <Override>[],
+        },
+        ...switch (places) {
+          PlacesBinding.portMimic => [
+            placesPortProvider.overrideWithValue(placesMimic),
+          ],
+          PlacesBinding.supplied => const <Override>[],
         },
         ...switch (wordpress) {
           WordPressBinding.portMimics => [
@@ -161,6 +175,7 @@ final class TestContainer {
       readings: readings,
       speaksFeed: speaks,
       eventsFeed: calendar,
+      places: placesMimic,
     );
   }
 
@@ -182,6 +197,7 @@ final class TestContainer {
   final ReadingsMimic readings;
   final SpeaksFeedMimic speaksFeed;
   final EventsFeedMimic eventsFeed;
+  final PlacesMimic places;
 
   T read<T>(ProviderListenable<T> provider) => container.read(provider);
 

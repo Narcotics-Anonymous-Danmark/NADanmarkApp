@@ -206,6 +206,32 @@ Map<String, dynamic> _$BmltMeetingDtoToJson(
   'bus_lines': ?const LenientText().toJson(instance.busLines),
 };
 
+BmltSpotDto _$BmltSpotDtoFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('BmltSpotDto', json, ($checkedConvert) {
+      final val = BmltSpotDto(
+        idBigint: $checkedConvert(
+          'id_bigint',
+          (v) => const LenientText().fromJson(v),
+        ),
+        latitude: $checkedConvert(
+          'latitude',
+          (v) => const LenientText().fromJson(v),
+        ),
+        longitude: $checkedConvert(
+          'longitude',
+          (v) => const LenientText().fromJson(v),
+        ),
+      );
+      return val;
+    }, fieldKeyMap: const {'idBigint': 'id_bigint'});
+
+Map<String, dynamic> _$BmltSpotDtoToJson(BmltSpotDto instance) =>
+    <String, dynamic>{
+      'id_bigint': ?const LenientText().toJson(instance.idBigint),
+      'latitude': ?const LenientText().toJson(instance.latitude),
+      'longitude': ?const LenientText().toJson(instance.longitude),
+    };
+
 BmltMunicipalityDto _$BmltMunicipalityDtoFromJson(Map<String, dynamic> json) =>
     $checkedCreate(
       'BmltMunicipalityDto',

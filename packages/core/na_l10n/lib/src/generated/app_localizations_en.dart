@@ -789,4 +789,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String eventCardPosition(int position, int count) {
     return 'Event $position of $count';
   }
+
+  @override
+  String get mapUnavailable => 'Map unavailable';
+
+  @override
+  String get mapClearSearch => 'Clear search';
 }

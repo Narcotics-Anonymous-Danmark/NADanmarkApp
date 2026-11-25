@@ -41,6 +41,27 @@ final class DioMeetingSearch implements MeetingSearchPort {
     Err(:final error) => Err(error: error),
   };
 
+  @override
+  Future<Outcome<List<MeetingSpot>, Failure>> meetingSpots({
+    required GeoPoint centre,
+    required MapRadius radius,
+  }) async => switch (await _json.get(
+    url: endpoints.meetingSpots(centre: centre, radius: radius),
+  )) {
+    Ok(:final value) => _widen(outcome: _reader.spots(json: value)),
+    Err(:final error) => Err(error: error),
+  };
+
+  @override
+  Future<Outcome<List<Meeting>, Failure>> meetingsById({
+    required List<MeetingId> ids,
+  }) async => switch (await _json.get(
+    url: endpoints.meetingsById(ids: ids),
+  )) {
+    Ok(:final value) => _widen(outcome: _reader.meetings(json: value)),
+    Err(:final error) => Err(error: error),
+  };
+
   static Outcome<T, Failure> _widen<T>({
     required Outcome<T, DecodeFailure> outcome,
   }) => switch (outcome) {

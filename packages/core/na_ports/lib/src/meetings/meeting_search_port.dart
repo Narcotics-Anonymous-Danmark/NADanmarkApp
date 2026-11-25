@@ -11,6 +11,15 @@ abstract interface class MeetingSearchPort {
     required GeoPoint centre,
     required Km radius,
   });
+
+  Future<Outcome<List<MeetingSpot>, Failure>> meetingSpots({
+    required GeoPoint centre,
+    required MapRadius radius,
+  });
+
+  Future<Outcome<List<Meeting>, Failure>> meetingsById({
+    required List<MeetingId> ids,
+  });
 }
 
 final Provider<MeetingSearchPort> meetingSearchPortProvider = unboundPort(

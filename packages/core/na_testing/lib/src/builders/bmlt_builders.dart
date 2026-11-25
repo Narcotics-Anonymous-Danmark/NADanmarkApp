@@ -1,6 +1,7 @@
 import 'package:na_kernel/boundary.dart';
 import 'package:na_kernel/na_kernel.dart';
 import 'package:na_testing/src/generated/recorded_bmlt.dart';
+import 'package:na_testing/src/meetings/recorded_tomato.dart';
 
 const BmltMapper _mapper = BmltMapper();
 
@@ -47,6 +48,22 @@ BmltMeetingDto aBmltMeetingDto({
   trainLines: trainLines,
   busLines: busLines,
 );
+
+BmltSpotDto aBmltSpotDto({
+  int id = 43394,
+  String latitude = '55.6491213',
+  String longitude = '12.5165555',
+}) => BmltSpotDto(idBigint: '$id', latitude: latitude, longitude: longitude);
+
+BmltSpotDto aBmltSpotAt({required int id, required GeoPoint point}) =>
+    aBmltSpotDto(
+      id: id,
+      latitude: '${point.latitude.value}',
+      longitude: '${point.longitude.value}',
+    );
+
+List<BmltSpotDto> recordedSpotDtos() =>
+    List.unmodifiable(recordedCopenhagenSpots.map(BmltSpotDto.fromJson));
 
 BmltMunicipalityDto aBmltMunicipalityDto({String municipality = 'Varde'}) =>
     BmltMunicipalityDto(locationMunicipality: municipality);

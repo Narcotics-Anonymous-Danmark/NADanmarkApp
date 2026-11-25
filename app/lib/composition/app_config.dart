@@ -1,4 +1,5 @@
 import 'package:adapter_bmlt/adapter_bmlt.dart';
+import 'package:adapter_places/adapter_places.dart';
 import 'package:adapter_wordpress/adapter_wordpress.dart';
 
 const String bmltDenmarkDefine = String.fromEnvironment(
@@ -9,15 +10,46 @@ const String naApiBaseDefine = String.fromEnvironment('NA_API_BASE_URL');
 const String naApiBasicAuthDefine = String.fromEnvironment(
   'NA_API_BASIC_AUTH',
 );
+const String googleMapsKeyDefine = String.fromEnvironment(
+  'GOOGLE_MAPS_API_KEY',
+);
+
+sealed class MapsConfig {
+  const MapsConfig();
+
+  factory MapsConfig.of({required String key}) => key.trim().isEmpty
+      ? const MapsNotConfigured()
+      : MapsConfigured(
+          places: PlacesEndpoints(
+            base: PlacesEndpoints.google,
+            key: MapsApiKey(key.trim()),
+          ),
+        );
+}
+
+final class MapsConfigured extends MapsConfig {
+  const MapsConfigured({required this.places});
+
+  final PlacesEndpoints places;
+}
+
+final class MapsNotConfigured extends MapsConfig {
+  const MapsNotConfigured();
+}
 
 final class AppConfig {
-  const AppConfig({required this.bmlt, required this.wordpress});
+  const AppConfig({
+    required this.bmlt,
+    required this.wordpress,
+    required this.maps,
+  });
 
   factory AppConfig.fromDefines({
     required String denmark,
     required String tomato,
     required String naApi,
     required String basicAuth,
+    required String mapsKey,
   }) => AppConfig(
     bmlt: BmltEndpoints(
       denmark: BmltBaseUrl(
@@ -35,6 +67,7 @@ final class AppConfig {
         credentials: BasicCredentials(basicAuth.trim()),
       ),
     ),
+    maps: MapsConfig.of(key: mapsKey),
   );
 
   factory AppConfig.fromEnvironment() => AppConfig.fromDefines(
@@ -42,6 +75,7 @@ final class AppConfig {
     tomato: bmltTomatoDefine,
     naApi: naApiBaseDefine,
     basicAuth: naApiBasicAuthDefine,
+    mapsKey: googleMapsKeyDefine,
   );
 
   static const BmltBaseUrl defaultDenmark = BmltBaseUrl(
@@ -56,4 +90,5 @@ final class AppConfig {
 
   final BmltEndpoints bmlt;
   final WordPressEndpoints wordpress;
+  final MapsConfig maps;
 }
